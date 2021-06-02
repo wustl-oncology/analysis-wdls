@@ -1,0 +1,41 @@
+version 1.0
+
+task markDuplicatesAndSort {
+  input {
+    File bam
+    String? input_sort_order = "queryname"
+    String output_name = "MarkedSorted.bam"
+  }
+  String metrics_file_name = sub(output_name, "\.bam$", ".mark_dups_metrics.txt")
+
+  runtime {
+    docker: "mgibio/mark_duplicates-cwl:1.0.1"
+    memory: "40GB"
+    cpu: 8
+  }
+
+  command <<<
+    set -o pipefail
+    set -o errexit
+    # TODO: $6, how was CWL calling with a sixth argument?
+    if [ ! -z "$6" ]; then
+        MD_BARCODE_TAG="BARCODE_TAG=$6"
+        /usr/bin/java -Xmx16g -jar /opt/picard/picard.jar MarkDuplicates I=~{bam} O=/dev/stdout ASSUME_SORT_ORDER=~{input_sort_order} METRICS_FILE=~{metrics_file_name} QUIET=true COMPRESSION_LEVEL=0 VALIDATION_STRINGENCY=LENIENT "$MD_BARCODE_TAG" \
+          | /usr/bin/sambamba sort -t 8 -m 18G -o ~{output_name} /dev/stdin
+    else
+        /usr/bin/java -Xmx16g -jar /opt/picard/picard.jar MarkDuplicates I=~{bam} O=/dev/stdout ASSUME_SORT_ORDER=~{input_sort_order} METRICS_FILE=~{metrics_file_name} QUIET=true COMPRESSION_LEVEL=0 VALIDATION_STRINGENCY=LENIENT \
+          | /usr/bin/sambamba sort -t 8 -m 18G -o ~{output_name} /dev/stdin
+    fi
+  >>>
+
+  output {
+    File sorted_bam = output_name
+    File sorted_bam_bai = output_name + ".bai"
+    File metrics_file = metrics_file_name
+  }
+}
+
+workflow wf {
+  input { File bam }
+  call markDuplicatesAndSort { input: bam=bam }
+}
