@@ -8,11 +8,12 @@ task mergeBams {
   }
 
   Int cores = 4
+  Int space_needed_gb = 10 + round(size(bams, "GB")*2)
   runtime {
     docker: "mgibio/bam-merge:0.1"
     memory: "8GB"
     cpu: cores
-    # TODO: bootDiskSizeGb
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
   output {
     File merged_bam = name
@@ -48,12 +49,6 @@ task mergeBams {
 }
 
 workflow wf {
-  input {
-    Array[File] bams
-  }
-
-  call mergeBams {
-    input:
-    bams=bams
-  }
+  input { Array[File] bams }
+  call mergeBams { input: bams=bams }
 }

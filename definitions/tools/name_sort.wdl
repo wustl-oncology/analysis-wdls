@@ -1,7 +1,9 @@
 version 1.0
 
 task nameSort {
-  input { File bam }
+  input {
+    File bam
+  }
   Int cores = 8
   String outfile = basename(bam, ".bam") + ".NameSorted.bam"
 
@@ -17,10 +19,16 @@ task nameSort {
     /usr/bin/sambamba sort "~{bam}" -t ~{cores} -m "22GB" -n -o "~{outfile}"
   >>>
 
-  output { File name_sorted_bam = outfile }
+  output {
+    File name_sorted_bam = outfile
+  }
 }
 
 workflow wf {
-  input { File bam }
-  call nameSort { input: bam=bam }
+  input {
+    File bam
+  }
+  call nameSort {
+    input: bam=bam
+  }
 }

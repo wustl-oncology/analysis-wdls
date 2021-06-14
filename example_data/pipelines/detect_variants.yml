@@ -1,0 +1,138 @@
+reference: gs://griffith-lab-cromwell/input_data/maruska/2021-04-15/gc2560/core/model_data/2887491634/build21f22873ebe0486c8e6f69c15435aa96/all_sequences.fa
+reference_fai: gs://griffith-lab-cromwell/input_data/maruska/2021-04-15/gc2560/core/model_data/2887491634/build21f22873ebe0486c8e6f69c15435aa96/all_sequences.fa.fai
+reference_dict: gs://griffith-lab-cromwell/input_data/maruska/2021-04-15/gc2560/core/model_data/2887491634/build21f22873ebe0486c8e6f69c15435aa96/all_sequences.dict
+
+# --- Normal ---
+
+normal_sample_name: H_NJ-HCC1395-HCC1395_BL
+
+normal_bam: gs://griffith-lab-cromwell/cromwell-executions/alignmentExome/5992cdc2-b94d-481a-bd81-43522be983bb/call-alignment/sequenceToBqsr/a5f7899d-f5ef-4083-93bc-884469d79a83/call-indexBam/griffith-lab-cromwell/cromwell-executions/alignmentExome/5992cdc2-b94d-481a-bd81-43522be983bb/call-alignment/sequenceToBqsr/a5f7899d-f5ef-4083-93bc-884469d79a83/call-applyBqsr/H_NJ-HCC1395-HCC1395_BL.bam.bam
+normal_bam_bai: gs://griffith-lab-cromwell/cromwell-executions/alignmentExome/5992cdc2-b94d-481a-bd81-43522be983bb/call-alignment/sequenceToBqsr/a5f7899d-f5ef-4083-93bc-884469d79a83/call-indexBam/H_NJ-HCC1395-HCC1395_BL.bam.bam.bai
+
+# --- Tumor ---
+
+tumor_sample_name: H_NJ-HCC1395-HCC1395
+
+tumor_bam: gs://griffith-lab-cromwell/cromwell-executions/alignmentExome/988f1110-8f6c-4b30-a6e4-dc76288fd88e/call-alignment/sequenceToBqsr/053d0207-dd66-42d8-93f8-290b6e831e9a/call-indexBam/griffith-lab-cromwell/cromwell-executions/alignmentExome/988f1110-8f6c-4b30-a6e4-dc76288fd88e/call-alignment/sequenceToBqsr/053d0207-dd66-42d8-93f8-290b6e831e9a/call-applyBqsr/H_NJ-HCC1395-HCC1395.bam.bam
+tumor_bam_bai: gs://griffith-lab-cromwell/cromwell-executions/alignmentExome/988f1110-8f6c-4b30-a6e4-dc76288fd88e/call-alignment/sequenceToBqsr/053d0207-dd66-42d8-93f8-290b6e831e9a/call-indexBam/H_NJ-HCC1395-HCC1395.bam.bam.bai
+
+# -------------
+
+cle_vcf_filter: false
+
+docm_vcf: gs://griffith-lab-cromwell/input_data/maruska/2021-04-15/gc2560/core/build_merged_alignments/detect-variants--linus2112.gsc.wustl.edu-jwalker-16572-a6fc7db1ea124431af5271c8cb23ee26/snvs.hq.vcf.gz
+
+filter_docm_variants: true
+
+filter_somatic_llr_normal_contamination_rate: 0
+filter_somatic_llr_threshold: 5
+filter_somatic_llr_tumor_purity: 1
+
+pindel_insert_size: 400
+
+roi_intervals: gs://griffith-lab-cromwell/cromwell-executions/wf/e985ed7a-80fd-45aa-ae9a-2e20468de5f3/call-intervalListExpand/hla_and_brca_genes_target.expanded.interval_list
+
+scatter_count: 50
+
+strelka_cpu_reserved: 8
+strelka_exome_mode: true
+
+synonyms_file: gs://griffith-lab-cromwell/input_data/maruska/2021-04-15/gc2560/core/model_data/2887491634/build50f99e75d14340ffb5b7d21b03887637/chromAlias.ensembl.txt
+
+variants_to_table_fields:
+  - CHROM
+  - POS
+  - REF
+  - ALT
+  - set
+variants_to_table_genotype_fields:
+  - GT
+  - AD
+  - AF
+  - DP
+
+varscan_min_coverage: 8
+varscan_min_var_freq: 0.05
+varscan_p_value: 0.99
+
+vep_cache_dir:
+
+vep_custom_annotations:
+- annotation:
+    check_existing: 'true'
+    data_format: vcf
+    file:
+      class: File
+      path: gs://griffith-lab-cromwell/input_data/maruska/2021-04-15/gc2560/core/model_data/genome-db-ensembl-gnomad/2dd4b53431674786b760adad60a29273/fixed_b38_exome.vcf.gz
+      secondaryFiles:
+      - class: File
+        path: gs://griffith-lab-cromwell/input_data/maruska/2021-04-15/gc2560/core/model_data/genome-db-ensembl-gnomad/2dd4b53431674786b760adad60a29273/fixed_b38_exome.vcf.gz.tbi
+    gnomad_filter: 'true'
+    name: gnomADe
+    vcf_fields:
+    - AF
+    - AF_AFR
+    - AF_AMR
+    - AF_ASJ
+    - AF_EAS
+    - AF_FIN
+    - AF_NFE
+    - AF_OTH
+    - AF_SAS
+  force_report_coordinates: 'true'
+  method: exact
+- annotation:
+    check_existing: 'false'
+    data_format: vcf
+    file:
+      class: File
+      path: gs://griffith-lab-cromwell/input_data/maruska/2021-04-15/gc2560/core/custom_clinvar_vcf/v20181028/custom.vcf.gz
+      secondaryFiles:
+      - class: File
+        path: gs://griffith-lab-cromwell/input_data/maruska/2021-04-15/gc2560/core/custom_clinvar_vcf/v20181028/custom.vcf.gz.tbi
+    gnomad_filter: 'false'
+    name: clinvar
+    vcf_fields:
+    - CLINSIGN
+    - PHENOTYPE
+    - SCORE
+    - RCVACC
+    - TESTEDINGTR
+    - PHENOTYPELIST
+    - NUMSUBMIT
+    - GUIDELINES
+  force_report_coordinates: 'true'
+  method: exact
+
+vep_ensembl_assembly: GRCh38
+vep_ensembl_species: homo_sapiens
+vep_ensembl_version: '95'
+vep_to_table_fields:
+  - Consequence
+  - SYMBOL
+  - Feature_type
+  - Feature
+  - HGVSc
+  - HGVSp
+  - cDNA_position
+  - CDS_position
+  - Protein_position
+  - Amino_acids
+  - Codons
+  - HGNC_ID
+  - Existing_variation
+  - gnomADe_AF
+  - CLIN_SIG
+  - SOMATIC
+  - PHENO
+  - clinvar_CLINSIGN
+  - clinvar_PHENOTYPE
+  - clinvar_SCORE
+  - clinvar_RCVACC
+  - clinvar_TESTEDINGTR
+  - clinvar_PHENOTYPELIST
+  - clinvar_NUMSUBMIT
+  - clinvar_GUIDELINES
+# FIND OUT
+
+vep_cache_dir: vep_cache_dir

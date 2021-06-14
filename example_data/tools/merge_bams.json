@@ -1,0 +1,6 @@
+{
+    "wf.bams": [
+        "gs://griffith-lab-cromwell/cromwell-executions/alignmentExome/9f7ac734-7267-4caa-9411-ca827227f3c5/call-alignment/sequenceToBqsr/e5a6fa68-a1f8-4142-beea-6bf12652197c/call-sequenceAlignAndTag/shard-1/stdout",
+        "gs://griffith-lab-cromwell/cromwell-executions/alignmentExome/9f7ac734-7267-4caa-9411-ca827227f3c5/call-alignment/sequenceToBqsr/e5a6fa68-a1f8-4142-beea-6bf12652197c/call-sequenceAlignAndTag/shard-0/stdout"
+    ]
+}
