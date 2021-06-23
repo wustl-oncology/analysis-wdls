@@ -1,6 +1,6 @@
 version 1.0
 
-task vtDecompose {
+task removeEndTags {
   input {
     File vcf
     File vcf_tbi
@@ -8,15 +8,16 @@ task vtDecompose {
 
   runtime {
     memory: "4GB"
-    docker: "quay.io/biocontainers/vt:0.57721--hf74b74d_1"
+    docker: "mgibio/bcftools-cwl:1.3.1"
   }
 
+  String outfile = "pindel.noend.vcf.gz"
   command <<<
-    vt decompose -s -o decomposed.vcf.gz ~{vcf}
+    /opt/bcftools/bin/bcftools annotate -x INFO/END -Oz -o ~{outfile} ~{vcf}
   >>>
 
   output {
-    File decomposed_vcf = "decomposed.vcf.gz"
+    File processed_vcf = outfile
   }
 }
 
@@ -26,7 +27,7 @@ workflow wf {
     File vcf_tbi
   }
 
-  call vtDecompose {
+  call removeEndTags {
     input:
     vcf=vcf,
     vcf_tbi=vcf_tbi

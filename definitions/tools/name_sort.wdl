@@ -7,12 +7,12 @@ task nameSort {
   Int cores = 8
   String outfile = basename(bam, ".bam") + ".NameSorted.bam"
 
-  Int input_size_gb = round(size(bam, "GB"))
+  Int input_size_gb = 10 + 3*round(size(bam, "GB"))
   runtime {
     docker: "mgibio/sambamba-cwl:0.6.4"
     memory: "26GB"
     cpu: cores
-    disks: "local-disk ~{input_size_gb*10} HDD"
+    disks: "local-disk ~{input_size_gb} HDD"
   }
 
   command <<<

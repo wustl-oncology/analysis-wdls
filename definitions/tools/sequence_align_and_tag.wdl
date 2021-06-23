@@ -24,7 +24,7 @@ task sequenceAlignAndTag {
     cpu: cores
     # 1 + just for a buffer
     # data_size*10 because bam uncompresses and streams to /dev/stdout and /dev/stdin, could have a couple flying at once
-    bootDiskSizeGb: 1 + round(data_size*10 + reference_size)
+    bootDiskSizeGb: 10 + round(data_size*10 + reference_size)
   }
 
   command <<<

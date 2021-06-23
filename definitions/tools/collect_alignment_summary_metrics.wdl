@@ -10,7 +10,7 @@ task collectAlignmentSummaryMetrics {
     String metric_accumulation_level
   }
 
-  Int space_needed_gb = round(size([bam, bam_bai, reference, reference_fai, reference_dict],"GB"))
+  Int space_needed_gb = 10 + round(size([bam, bam_bai, reference, reference_fai, reference_dict],"GB"))
   runtime{
     memory: "18GB"
     docker: "broadinstitute/picard:2.23.6"
