@@ -24,10 +24,12 @@ task bqsr {
 
   String outfile = "bqsr.table"
   command <<<
-    # TODO: bqsr.table -> <runtime.output_dir>/bqsr.table, assuming cwd is output_dir
     /gatk/gatk --java-options -Xmx16g BaseRecalibrator -O ~{outfile} ~{sep=" " prefix("-L ", intervals)} -R ~{reference} -I ~{bam} ~{sep=" " prefix("--known-sites ", known_sites)}
   >>>
-  output { File bqsr_table = outfile }
+
+  output {
+    File bqsr_table = outfile
+  }
 }
 
 workflow wf {

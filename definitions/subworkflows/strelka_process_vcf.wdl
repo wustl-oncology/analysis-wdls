@@ -9,7 +9,6 @@ workflow strelkaProcessVcf {
     File vcf
   }
 
-  # TODO: implement
   call asg.addStrelkaGt as addGt {
     input: vcf=vcf
   }

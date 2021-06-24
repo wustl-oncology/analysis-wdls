@@ -41,7 +41,6 @@ workflow strelkaAndPostProcessing {
     cpu_reserved=cpu_reserved
   }
 
-  # TODO: implement/check
   scatter(vcf in [strelka.snvs, strelka.indels]) {
     call spv.strelkaProcessVcf as process {
       input: vcf=vcf
