@@ -20,3 +20,19 @@ struct LabelledFile {
   File file
   String label
 }
+
+# ---- vep_custom_annotation ----
+struct Info {
+  File file
+  String data_format  # enum, ['bed', 'gff', 'gtf', 'vcf', 'bigwig']
+  String name
+  Array[String]? vcf_fields
+  Boolean? gnomad_filter
+  Boolean check_existing
+}
+
+struct VepCustomAnnotation {
+  Boolean force_report_coordinates
+  String method  # enum, ['exact', 'overlap']
+  Info annotation
+}

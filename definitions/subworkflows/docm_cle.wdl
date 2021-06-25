@@ -1,10 +1,10 @@
 version 1.0
 
-import "tools/bgzip.wdl" as b
-import "tools/docm_gatk_haplotype_caller.wdl" as dghc
-import "tools/filter_vcf_docm.wdl" as fvd
-import "tools/index_vcf.wdl" as iv
-import "tools/vt_decompose.wdl" as vd
+import "../tools/bgzip.wdl" as b
+import "../tools/docm_gatk_haplotype_caller.wdl" as dghc
+import "../tools/filter_vcf_docm.wdl" as fvd
+import "../tools/index_vcf.wdl" as iv
+import "../tools/vt_decompose.wdl" as vd
 
 workflow docmCle {
   input {

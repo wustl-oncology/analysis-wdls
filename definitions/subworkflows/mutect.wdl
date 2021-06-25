@@ -1,10 +1,10 @@
 version 1.0
 
-import "subworkflows/fp_filter.wdl" as ff
-import "tools/index_vcf.wdl" as iv
-import "tools/merge_vcf.wdl" as mv
-import "tools/mutect.wdl" as m
-import "tools/split_interval_list.wdl" as sil
+import "../subworkflows/fp_filter.wdl" as ff
+import "../tools/index_vcf.wdl" as iv
+import "../tools/merge_vcf.wdl" as mv
+import "../tools/mutect.wdl" as m
+import "../tools/split_interval_list.wdl" as sil
 
 workflow mutect {
   input {

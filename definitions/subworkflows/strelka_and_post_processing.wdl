@@ -1,12 +1,12 @@
 version 1.0
 
-import "subworkflows/fp_filter.wdl" as ff
-import "subworkflows/strelka_process_vcf.wdl" as spv
-import "tools/index_vcf.wdl" as iv
-import "tools/merge_vcf.wdl" as mv
-import "tools/replace_vcf_sample_name.wdl" as rvsn
-import "tools/select_variants.wdl" as sv
-import "tools/strelka.wdl" as s
+import "../subworkflows/fp_filter.wdl" as ff
+import "../subworkflows/strelka_process_vcf.wdl" as spv
+import "../tools/index_vcf.wdl" as iv
+import "../tools/merge_vcf.wdl" as mv
+import "../tools/replace_vcf_sample_name.wdl" as rvsn
+import "../tools/select_variants.wdl" as sv
+import "../tools/strelka.wdl" as s
 
 workflow strelkaAndPostProcessing {
   input {
@@ -92,5 +92,13 @@ workflow strelkaAndPostProcessing {
     vcf_tbi=regionFilter.filtered_vcf_tbi,
     sample_name=tumor_sample_name,
     variant_caller="strelka"
+  }
+
+  output {
+    File unfiltered_vcf = filter.unfiltered_vcf
+    File unfiltered_vcf_tbi = filter.unfiltered_vcf_tbi
+
+    File filtered_vcf = filter.filtered_vcf
+    File filtered_vcf_tbi = filter.filtered_vcf_tbi
   }
 }

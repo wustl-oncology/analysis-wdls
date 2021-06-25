@@ -1,13 +1,13 @@
 version 1.0
 
-import "subworkflows/fp_filter.wdl" as ff
-import "subworkflows/pindel_cat.wdl" as pc
-import "tools/bgzip.wdl" as b
-import "tools/cat_all.wdl" as ca
-import "tools/index_vcf.wdl" as iv
-import "tools/pindel_somatic_filter.wdl" as psf
-import "tools/remove_end_tags.wdl" as ret
-import "tools/split_interval_list_to_bed.wdl" as siltb
+import "../subworkflows/fp_filter.wdl" as ff
+import "../subworkflows/pindel_cat.wdl" as pc
+import "../tools/bgzip.wdl" as b
+import "../tools/cat_all.wdl" as ca
+import "../tools/index_vcf.wdl" as iv
+import "../tools/pindel_somatic_filter.wdl" as psf
+import "../tools/remove_end_tags.wdl" as ret
+import "../tools/split_interval_list_to_bed.wdl" as siltb
 
 workflow pindel {
   input {
