@@ -30,7 +30,7 @@ task vep {
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
-  String annotated_vcf = basename(vcf, ".vcf") + "_annotated.vcf"
+  String annotated_vcf = basename(basename(vcf, ".gz"), ".vcf") + "_annotated.vcf"
   String runtime_dir = "/cromwell_root"
   String cache_dir = runtime_dir + "/" + basename(cache_dir_zip, ".zip")
   # TODO: custom annotations
@@ -62,7 +62,7 @@ task vep {
 
   output {
     File annotated_vcf = annotated_vcf
-    File vep_summary = basename(vcf, ".vcf") + "_annotated.vcf_summary.html"
+    File vep_summary = annotated_vcf + "_summary.html"
   }
 }
 
