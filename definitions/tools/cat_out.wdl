@@ -5,9 +5,11 @@ task catOut {
     Array[File] pindel_outs
   }
 
+  Int space_needed_gb = 10 + round(size(pindel_outs, "GB"))
   runtime {
     memory: "4GB"
     docker: "ubuntu:xenial"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<

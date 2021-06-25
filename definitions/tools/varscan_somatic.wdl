@@ -1,12 +1,6 @@
 version 1.0
 
 task varscanSomatic {
-  runtime {
-    memory: "12GB"
-    cpu: 2
-    docker: "mgibio/cle:v1.3.1"
-  }
-
   input {
     File reference
     File reference_fai
@@ -24,6 +18,15 @@ task varscanSomatic {
     Float p_value = 0.99
     File? roi_bed
   }
+
+  Int space_needed_gb = 10 + round(size([reference, reference_fai, reference_dict, tumor_bam, tumor_bam_bai, normal_bam, normal_bam_bai], "GB"))
+  runtime {
+    memory: "12GB"
+    cpu: 2
+    docker: "mgibio/cle:v1.3.1"
+    disks: "local-disk ~{space_needed_gb} HDD"
+  }
+
 
   String outdir = "/cromwell_root/"
   command <<<

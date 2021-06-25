@@ -25,6 +25,7 @@ task sequenceAlignAndTag {
     # 1 + just for a buffer
     # data_size*10 because bam uncompresses and streams to /dev/stdout and /dev/stdin, could have a couple flying at once
     bootDiskSizeGb: 10 + round(data_size*10 + reference_size)
+    disks: "local-disk ~{10 + round(data_size + reference_size)} HDD"
   }
 
   command <<<

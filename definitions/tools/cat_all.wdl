@@ -5,6 +5,7 @@ task catAll {
     Array[File] region_pindel_outs
   }
 
+
   runtime {
     memory: "4GB"
     docker: "ubuntu:xenial"

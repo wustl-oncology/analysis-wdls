@@ -6,9 +6,11 @@ task intervalListExpand {
     Int roi_padding
   }
 
+  Int space_needed_gb = 10 + size(interval_list, "GB")
   runtime {
     memory: "4GB"
     docker: "broadinstitute/picard:2.23.6"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String output_file = basename(interval_list, ".interval_list") + ".expanded.interval_list"

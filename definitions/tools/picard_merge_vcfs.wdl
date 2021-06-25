@@ -1,15 +1,17 @@
 version 1.0
 
 task picardMergeVcfs {
-  runtime {
-    memory: "40GB"
-    docker: "broadinstitute/gatk:4.1.8.1"
-  }
-
   input {
     String merged_vcf_basename = "merged"
     File? sequence_dictionary
     Array[File] vcfs
+  }
+
+  Int space_needed_gb = 10 + round(size(sequence_dictionary, "GB") + size(vcfs, "GB"))
+  runtime {
+    memory: "40GB"
+    docker: "broadinstitute/gatk:4.1.8.1"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<

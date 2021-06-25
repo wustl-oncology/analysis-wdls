@@ -1,13 +1,13 @@
 version 1.0
 
 task addStrelkaGt {
+  input {
+    File vcf
+  }
+
   runtime {
     docker: "ubuntu:bionic"
     memory: "4GB"
-  }
-
-  input {
-    File vcf
   }
 
   String outfile = "/cromwell_root/add_gt.vcf"

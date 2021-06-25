@@ -7,9 +7,11 @@ task mergeVcf {
     String merged_vcf_basename = "merged"
   }
 
+  Int space_needed_gb = 10 + round(size(vcfs, "GB") + size(vcf_tbis, "GB"))
   runtime {
     docker: "mgibio/bcftools-cwl:1.3.1"
     memory: "4GB"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String output_file = merged_vcf_basename + ".vcf.gz"

@@ -10,11 +10,15 @@ task docmAddVariants {
     File docm_vcf
     File docm_vcf_tbi
   }
-
+  Int reference_size = size([reference, reference_fai, reference_dict], "GB")
+  Int callers_size = size([callers_vcf, callers_vcf_tbi], "GB")
+  Int docm_size = size([docm_vcf, docm_vcf_tbi], "GB")
+  Int space_needed_gb = 10 + round(reference_size + callers_size + docm_size)
   runtime {
     memory: "9GB"
     bootDiskSizeGb: 25
     docker: "mgibio/gatk-cwl:3.6.0"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String outfile = "merged.vcf.gz"
