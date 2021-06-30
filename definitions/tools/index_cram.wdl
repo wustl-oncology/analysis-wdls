@@ -10,12 +10,13 @@ task indexCram {
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
-command <<<
-    /usr/local/bin/samtools index ~{cram} ~{basename(cram)}.crai
+  command <<<
+    mv ~{cram} ~{basename(cram)}
+    /usr/local/bin/samtools index ~{basename(cram)} ~{basename(cram)}.crai
   >>>
 
   output {
-    File indexed_cram = cram
+    File indexed_cram = basename(cram)
     File indexed_cram_crai = "~{basename(cram)}.crai"
   }
 }

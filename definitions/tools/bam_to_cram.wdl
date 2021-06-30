@@ -24,3 +24,20 @@ task bamToCram {
     File cram = outfile
   }
 }
+
+workflow wf {
+  input {
+    File reference
+    File reference_fai
+    File reference_dict
+    File bam
+  }
+
+  call bamToCram {
+    input:
+    reference=reference,
+    reference_fai=reference_fai,
+    reference_dict=reference_dict,
+    bam=bam
+  }
+}
