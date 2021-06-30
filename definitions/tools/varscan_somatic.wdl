@@ -28,7 +28,7 @@ task varscanSomatic {
   }
 
 
-  String outdir = "/cromwell_root/"
+  String outdir = "/cromwell_root"
   command <<<
     set -o errexit
     set -o nounset

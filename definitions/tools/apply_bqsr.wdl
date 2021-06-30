@@ -10,15 +10,18 @@ task applyBqsr {
     File bqsr_table
     String output_name = "final"
   }
+
   Int space_needed_gb = 10 + round(size([bqsr_table, reference, reference_fai, reference_dict], "GB") + size([bam, bam_bai], "GB") * 2)
   runtime {
     docker: "broadinstitute/gatk:4.1.8.1"
     memory: "18GB"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
+
   command <<<
     /gatk/gatk --java-options -Xmx16g ApplyBQSR -O ~{output_name}.bam ~{sep=" " prefix("--static-quantized-quals ", [10, 20, 30])} -R ~{reference} -I ~{bam} -bqsr ~{bqsr_table}
   >>>
+
   output {
     File bqsr_bam = "~{output_name}.bam"
     File bqsr_bam_bai = "~{output_name}.bai"

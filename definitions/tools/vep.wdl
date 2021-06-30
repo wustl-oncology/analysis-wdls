@@ -101,6 +101,6 @@ workflow wf {
     custom_annotations=custom_annotations,
     coding_only=coding_only,
     everything=everything,
-    pick=pick,
+    pick=pick
   }
 }

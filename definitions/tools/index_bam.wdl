@@ -10,10 +10,11 @@ task indexBam {
     disks: "local-disk ~{space_needed_gb} HDD"
   }
   command <<<
-    /usr/local/bin/samtools index ~{bam} "~{basename(bam)}.bai"
+    mv ~{bam} ~{basename(bam)}
+    /usr/local/bin/samtools index ~{basename(bam)} ~{basename(bam)}.bai
   >>>
   output {
-    File indexed_bam = bam
+    File indexed_bam = basename(bam)
     File indexed_bam_bai = "~{basename(bam)}.bai"
   }
 }

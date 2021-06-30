@@ -6,7 +6,7 @@ task intervalListExpand {
     Int roi_padding
   }
 
-  Int space_needed_gb = 10 + size(interval_list, "GB")
+  Int space_needed_gb = 10 + round(size(interval_list, "GB"))
   runtime {
     memory: "4GB"
     docker: "broadinstitute/picard:2.23.6"

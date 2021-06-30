@@ -1,8 +1,8 @@
 version 1.0
 
-import "types.wdl"
-import "subworkflows/sequence_to_bqsr.wdl" as s2b
-import "subworkflows/qc_exome.wdl" as qe
+import "../types.wdl"
+import "../subworkflows/sequence_to_bqsr.wdl" as s2b
+import "../subworkflows/qc_exome.wdl" as qe
 
 workflow alignmentExome {
   input {
