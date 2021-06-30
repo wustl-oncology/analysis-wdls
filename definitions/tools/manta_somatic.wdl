@@ -34,13 +34,13 @@ task mantaSomatic {
     /usr/bin/python /usr/bin/manta/bin/configManta.py \
     ~{if non_wgs then "--exome" else ""} \
     ~{if output_contigs then "--outputContig" else ""} \
-    ~{if defined(call_regions) then "--callRegions ~{call_regions}" else ""} \  # -5
-    --referenceFasta ~{reference} \  # -4
-    --tumorBam ~{tumor_bam} \  # -3
-    ~{if defined(normal_bam) then "--normalBam ~{normal_bam}" else ""} \  # -2
-    --runDir ~{outdir} \  # -1
-    && /usr/bin/python runWorkflow.py -m local \  # 0
-    -j ~{cores} \  # 1
+    ~{if defined(call_regions) then "--callRegions ~{call_regions}" else ""} \
+    --referenceFasta ~{reference} \
+    --tumorBam ~{tumor_bam} \
+    ~{if defined(normal_bam) then "--normalBam ~{normal_bam}" else ""} \
+    --runDir ~{outdir} \
+    && /usr/bin/python runWorkflow.py -m local \
+    -j ~{cores}
   >>>
 
   output {
@@ -58,5 +58,36 @@ task mantaSomatic {
 
     File? tumor_only_variants = "results/variants/tumorSV.vcf.gz"
     File? tumor_only_variants_tbi = "results/variants/tumorSV.vcf.gz.tbi"
+  }
+}
+
+workflow wf {
+  input {
+    File? normal_bam
+    File? normal_bam_bai
+    File tumor_bam
+    File tumor_bam_bai
+    File reference
+    File reference_fai
+    File reference_dict
+    File? call_regions
+    File? call_regions_tbi
+    Boolean non_wgs = false
+    Boolean output_contigs = false
+  }
+
+  call mantaSomatic {
+    input:
+    normal_bam=normal_bam,
+    normal_bam_bai=normal_bam_bai,
+    tumor_bam=tumor_bam,
+    tumor_bam_bai=tumor_bam_bai,
+    reference=reference,
+    reference_fai=reference_fai,
+    reference_dict=reference_dict,
+    call_regions=call_regions,
+    call_regions_tbi=call_regions_tbi,
+    non_wgs=non_wgs,
+    output_contigs=output_contigs
   }
 }
