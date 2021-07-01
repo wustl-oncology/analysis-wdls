@@ -11,13 +11,12 @@ task splitIntervalList {
     memory: "6GB"
   }
 
-  String outdir = "/cromwell_root/"
   command <<<
     /usr/bin/perl -e '
     use File::Copy;
     use warnings;
     use strict;
-    my $output_dir = q(~{outdir});
+    my $output_dir = $ENV{q(PWD)};
     my $interval_list = q(~{interval_list});
     my $scatter_count = ~{scatter_count};
     my $i = 1;

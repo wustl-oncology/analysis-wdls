@@ -14,7 +14,7 @@ task filterVcfCustomAlleleFreq {
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
-  String outfile = "/cromwell_root/annotated.af_filtered.vcf"
+  String outfile = "annotated.af_filtered.vcf"
   command <<<
     /usr/bin/perl /usr/bin/vcf_check.pl ~{vcf} ~{outfile} \
     /usr/bin/perl /opt/vep/src/ensembl-vep/filter_vep --format vcf -o ~{outfile} -i ~{vcf} \

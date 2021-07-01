@@ -22,7 +22,7 @@ task fpFilter {
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
-  String output_vcf = "/cromwell_root/" + output_vcf_basename + ".vcf"
+  String output_vcf = output_vcf_basename + ".vcf"
   command <<<
     /usr/bin/perl /usr/bin/fpfilter.pl --bam-readcount /usr/bin/bam-readcount --samtools /opt/samtools/bin/samtools --output ~{output_vcf} --reference ~{reference} --bam-file ~{bam} --vcf-file ~{vcf} --sample ~{sample_name} --min-var-freq ~{min_var_freq}
   >>>

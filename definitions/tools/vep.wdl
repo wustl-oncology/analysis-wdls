@@ -31,8 +31,7 @@ task vep {
   }
 
   String annotated_vcf = basename(basename(vcf, ".gz"), ".vcf") + "_annotated.vcf"
-  String runtime_dir = "/cromwell_root"
-  String cache_dir = runtime_dir + "/" + basename(cache_dir_zip, ".zip")
+  String cache_dir = basename(cache_dir_zip, ".zip")
   # TODO: custom annotations
   command <<<
     mkdir ~{cache_dir} && unzip -qq ~{cache_dir_zip} -d ~{cache_dir}

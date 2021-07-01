@@ -16,9 +16,6 @@ task varscanProcessSomatic {
     mv ~{variants} ~{basename(variants)}
     java -jar /opt/varscan/VarScan.jar processSomatic \
     ~{basename(variants)} ~{if defined(max_normal_freq) then "--max-normal-freq {max_normal_freq}" else ""}
-
-    echo "=== Root files are: ==="
-    ls /cromwell_root/
   >>>
 
   output {

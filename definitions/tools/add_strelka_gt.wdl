@@ -10,7 +10,7 @@ task addStrelkaGt {
     memory: "4GB"
   }
 
-  String outfile = "/cromwell_root/add_gt.vcf"
+  String outfile = "add_gt.vcf"
   command <<<
     /usr/bin/perl -e '
     use strict;

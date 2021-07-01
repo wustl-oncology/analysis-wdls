@@ -15,9 +15,8 @@ task pindelSomaticFilter {
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
-  String outdir = "/cromwell_root"
   command <<<
-    /usr/bin/perl /usr/bin/write_pindel_filter_config.pl ~{pindel_output_summary} ~{reference} ~{outdir}
+    /usr/bin/perl /usr/bin/write_pindel_filter_config.pl ~{pindel_output_summary} ~{reference} $PWD
     /usr/bin/perl /usr/bin/somatic_indelfilter.pl filter.config
   >>>
 

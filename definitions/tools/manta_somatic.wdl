@@ -29,7 +29,6 @@ task mantaSomatic {
     disks: "local-disk ~{size_needed_gb} HDD"
   }
 
-  String outdir = "/cromwell_root"
   command <<<
     /usr/bin/python /usr/bin/manta/bin/configManta.py \
     ~{if non_wgs then "--exome" else ""} \
@@ -38,7 +37,7 @@ task mantaSomatic {
     --referenceFasta ~{reference} \
     --tumorBam ~{tumor_bam} \
     ~{if defined(normal_bam) then "--normalBam ~{normal_bam}" else ""} \
-    --runDir ~{outdir} \
+    --runDir $PWD \
     && /usr/bin/python runWorkflow.py -m local \
     -j ~{cores}
   >>>

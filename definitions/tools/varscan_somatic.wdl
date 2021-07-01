@@ -27,15 +27,13 @@ task varscanSomatic {
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
-
-  String outdir = "/cromwell_root"
   command <<<
     set -o errexit
     set -o nounset
 
     java -jar /opt/varscan/VarScan.jar somatic \
     <(/opt/samtools/bin/samtools mpileup --no-baq ~{if defined(roi_bed) then "-l ~{roi_bed}" else ""} -f "~{reference}" "~{normal_bam}" "~{tumor_bam}") \
-    "~{outdir}/output" \
+    "output" \
     --strand-filter "~{strand_filter}" \
     --min-coverage "~{min_coverage}" \
     --min-var-freq "~{min_var_freq}" \
@@ -45,8 +43,8 @@ task varscanSomatic {
   >>>
 
   output {
-    File snvs = "~{outdir}/output.snp.vcf"
-    File indels = "~{outdir}/output.indel.vcf"
+    File snvs = "output.snp.vcf"
+    File indels = "output.indel.vcf"
   }
 }
 

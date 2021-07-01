@@ -11,10 +11,8 @@ task splitIntervalListToBed {
     docker: "mgibio/cle:v1.4.2"
   }
 
-  String outdir = "/cromwell_root/"
   command <<<
-    mkdir ~{outdir}
-    /usr/bin/perl /usr/bin/split_interval_list_to_bed_helper.pl OUTPUT=~{outdir} INPUT=~{interval_list} SCATTER_COUNT=~{scatter_count}
+    /usr/bin/perl /usr/bin/split_interval_list_to_bed_helper.pl OUTPUT=$PWD INPUT=~{interval_list} SCATTER_COUNT=~{scatter_count}
   >>>
 
   output {

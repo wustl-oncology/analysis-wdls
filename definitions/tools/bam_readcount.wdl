@@ -21,7 +21,6 @@ task bamReadcount {
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
-  String outdir = "/cromwell_root"
   String stdout_file = sample + "_bam_readcount.tsv"
   String prefixed_sample = (if prefix == "NOPREFIX" then "" else (prefix + "_")) + sample
   command <<<
@@ -62,7 +61,7 @@ task bamReadcount {
 
     min_base_qual = ~{min_base_quality}
     min_mapping_qual = ~{min_mapping_quality}
-    output_dir = "~{outdir}"
+    output_dir = os.environ["PWD"]
     sample = "~{sample}"
     ref_fasta = "~{reference}"
     bam_file = "~{basename(bam)}"
