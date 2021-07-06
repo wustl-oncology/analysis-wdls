@@ -12,14 +12,13 @@ task indexVcf {
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
-  # TODO: check how to run locally
   command <<<
-    cp ~{vcf} "test.vcf.gz"
-    /usr/local/bin/tabix -p vcf "test.vcf.gz"
+    cp ~{vcf} ~{basename(vcf)}
+    /usr/local/bin/tabix -p vcf ~{basename(vcf)}
   >>>
   output {
-    File indexed_vcf = "test.vcf.gz"
-    File indexed_vcf_tbi = "test.vcf.gz.tbi"
+    File indexed_vcf = basename(vcf)
+    File indexed_vcf_tbi = basename(vcf) + ".tbi"
   }
 }
 

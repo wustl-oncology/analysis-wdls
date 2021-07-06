@@ -21,12 +21,12 @@ task cnvkitBatch {
     bootDiskSizeGb: 10
     memory: "4GB"
     cpu: 1
-    docker: "etal/cnvkit:0.9.5"
+    docker: "etal/cnvkit:0.9.8"
     disks: "local-disk ~{size_needed_gb} HDD"
   }
 
   command <<<
-    /usr/bin/python /usr/local/bin/cnvkit.py batch \
+    /usr/bin/python3 /usr/local/bin/cnvkit.py batch \
     ~{tumor_bam} \
     ~{if defined(normal_bam) then "--normal ~{normal_bam}" else ""} \
     --fasta ~{reference} \

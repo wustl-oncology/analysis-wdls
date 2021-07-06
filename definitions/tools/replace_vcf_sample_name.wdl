@@ -9,7 +9,7 @@ task replaceVcfSampleName {
 
   runtime {
     memory: "8GB"
-    docker: "mgibio/bcftools-cwl:1.9"
+    docker: "mgibio/bcftools-cwl:1.12"
   }
 
   String basen = "renamed." + basename(input_vcf)

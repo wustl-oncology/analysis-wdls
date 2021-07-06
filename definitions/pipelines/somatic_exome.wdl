@@ -92,6 +92,8 @@ workflow somaticExome {
     File somalier_vcf
     File? validated_variants
     File? validated_variants_tbi
+
+    Int? cnvkit_target_average_size
   }
 
   call ae.alignmentExome as tumorAlignmentAndQc {
@@ -215,7 +217,8 @@ workflow somaticExome {
     tumor_bam=tumorAlignmentAndQc.bam,
     normal_bam=normalAlignmentAndQc.bam,
     reference=reference,
-    bait_intervals=bait_intervals
+    bait_intervals=bait_intervals,
+    target_average_size=cnvkit_target_average_size
   }
 
   call ms.mantaSomatic as manta {

@@ -77,7 +77,6 @@ workflow wf {
     String ensembl_version
     String ensembl_species
     File? synonyms_file
-    # TODO custom_annotations
     Array[VepCustomAnnotation] custom_annotations = []
     Boolean coding_only = false
     Boolean everything = true

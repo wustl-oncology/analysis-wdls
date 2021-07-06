@@ -233,7 +233,6 @@ workflow detectVariants {
     minimum_mapping_quality=readcount_minimum_mapping_quality
   }
 
-  # TODO: i am here
   call fv.filterVcf {
     input:
     vcf=vcfReadcount.readcounted_vcf,

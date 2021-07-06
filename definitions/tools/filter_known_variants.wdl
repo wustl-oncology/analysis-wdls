@@ -9,7 +9,7 @@ task filterKnownVariants {
 }
 
   runtime {
-    docker: "mgibio/bcftools-cwl:1.9"
+    docker: "mgibio/bcftools-cwl:1.12"
     memory: "8GB"
   }
 
