@@ -3,8 +3,8 @@ version 1.0
 task mergeBams {
   input {
     Array[File] bams
-    Boolean? sorted = false
-    String? name = "merged.bam"
+    Boolean sorted = false
+    String name = "merged.bam"
   }
 
   Int cores = 4

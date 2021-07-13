@@ -30,7 +30,7 @@ task vep {
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
-  String annotated_vcf = basename(basename(vcf, ".gz"), ".vcf") + "_annotated.vcf"
+  String annotated_path = basename(basename(vcf, ".gz"), ".vcf") + "_annotated.vcf"
   String cache_dir = basename(cache_dir_zip, ".zip")
   # TODO: custom annotations
   command <<<
@@ -45,7 +45,7 @@ task vep {
     --offline \
     --cache \
     --symbol \
-    -o ~{annotated_vcf} \
+    -o ~{annotated_path} \
     -i ~{vcf} \
     ~{if defined(synonyms_file) then "--synonyms ~{synonyms_file}" else ""} \
     --coding_only ~{coding_only} \
@@ -60,8 +60,8 @@ task vep {
   >>>
 
   output {
-    File annotated_vcf = annotated_vcf
-    File vep_summary = annotated_vcf + "_summary.html"
+    File annotated_vcf = annotated_path
+    File vep_summary = annotated_path + "_summary.html"
   }
 }
 

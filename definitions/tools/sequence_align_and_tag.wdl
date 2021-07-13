@@ -40,8 +40,8 @@ task sequenceAlignAndTag {
     FASTQ2="~{unaligned.sequence.fastq2}"
     # destructure trimming
     RUN_TRIMMING=~{if defined(trimming) then "true" else "false"}
-    TRIMMING_ADAPTERS=~{if defined(trimming) then "~{trimming.adapters}" else ""}
-    TRIMMING_ADAPTER_MIN_OVERLAP=~{if defined(trimming) then "~{trimming.min_overlap}" else ""}
+    TRIMMING_ADAPTERS=~{if defined(trimming) then "~{select_first([trimming]).adapters}" else ""}
+    TRIMMING_ADAPTER_MIN_OVERLAP=~{if defined(trimming) then "~{select_first([trimming]).min_overlap}" else ""}
 
     if [[ "$MODE" == "fastq" ]]; then
         if [[ "$RUN_TRIMMING" == 'false' ]]; then

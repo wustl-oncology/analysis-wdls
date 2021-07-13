@@ -40,9 +40,9 @@ workflow varscanPreAndPostProcessing {
     scatter_count=scatter_count
   }
 
-  scatter (interval_list in splitIntervalList.split_interval_lists) {
+  scatter (intervals_segment in splitIntervalList.split_interval_lists) {
     call itb.intervalsToBed {
-      input: interval_list=interval_list
+      input: interval_list=intervals_segment
     }
 
     call v.varscan {

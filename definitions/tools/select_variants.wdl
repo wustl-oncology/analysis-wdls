@@ -1,4 +1,4 @@
-version 1.0
+version 1.1
 
 task selectVariants {
   input {
@@ -33,7 +33,7 @@ task selectVariants {
     --variant ~{vcf} \
     ~{if defined(interval_list) then "-L ~{interval_list}" else ""} \
     ~{if defined(exclude_filtered) then "--exclude-filtered ~{exclude_filtered}" else ""} \
-    ~{if defined(samples_to_include) then "--sample-name ~{sep=" " samples_to_include}" else ""} \
+    ~{if defined(samples_to_include) then "--sample-name ~{sep(" ", select_first([samples_to_include]))}" else ""} \
     ~{if defined(select_type) then "-select-type ~{select_type}" else ""}
   >>>
 

@@ -45,7 +45,7 @@ workflow fpFilter {
     input: vcf=decomposeVariants.decomposed_vcf
   }
 
-  call ff.fpFilter {
+  call ff.fpFilter as firstFilter {
     input:
     reference=reference,
     reference_fai=reference_fai,
@@ -58,7 +58,7 @@ workflow fpFilter {
   }
 
   call b.bgzip as fpBgzip {
-    input: file=fpFilter.filtered_vcf
+    input: file=firstFilter.filtered_vcf
   }
 
   call iv.indexVcf as fpIndex {

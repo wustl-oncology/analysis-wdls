@@ -31,7 +31,7 @@ workflow mutect {
   }
 
   scatter(segment in splitIntervalList.split_interval_lists) {
-    call m.mutect {
+    call m.mutect as mutectTask {
       input:
       reference=reference,
       reference_fai=reference_fai,
@@ -46,8 +46,8 @@ workflow mutect {
 
   call mv.mergeVcf {
     input:
-    vcfs=mutect.vcf,
-    vcf_tbis=mutect.vcf_tbi
+    vcfs=mutectTask.vcf,
+    vcf_tbis=mutectTask.vcf_tbi
   }
 
   call iv.indexVcf {
