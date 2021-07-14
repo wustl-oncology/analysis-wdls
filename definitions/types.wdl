@@ -24,6 +24,7 @@ struct LabelledFile {
 # ---- vep_custom_annotation ----
 struct Info {
   File file
+  Array[File]? secondary_files
   String data_format  # enum, ['bed', 'gff', 'gtf', 'vcf', 'bigwig']
   String name
   Array[String]? vcf_fields
