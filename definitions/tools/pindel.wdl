@@ -16,10 +16,11 @@ task pindel {
     Int insert_size = 400
   }
 
+  Int cores = 4
   Int space_needed_gb = 10 + round(size([reference, reference_fai, reference_dict, normal_bam, normal_bam_bai, tumor_bam, tumor_bam_bai, region_file], "GB"))
   runtime {
     bootDiskSizeGb: 100
-    cpu: 4
+    cpu: cores
     disks: "local-disk ~{space_needed_gb} HDD"
     docker: "mgibio/cle:v1.4.2"
     memory: "16GB"
@@ -32,7 +33,7 @@ task pindel {
     echo -e "~{basename(normal_bam)}\t~{insert_size}\t~{normal_sample_name}" > pindel.config
     echo -e "~{basename(tumor_bam)}\t~{insert_size}\t~{tumor_sample_name}" >> pindel.config
 
-    /usr/bin/pindel -i pindel.config -w 30 -T 4 -o all -f ~{reference} \
+    /usr/bin/pindel -i pindel.config -w 30 -T ~{cores} -o all -f ~{reference} \
     ~{if defined(chromosome) then "-c ~{chromosome}" else ""} \
     ~{if defined(region_file) then "-j ~{region_file}" else ""}
   >>>
