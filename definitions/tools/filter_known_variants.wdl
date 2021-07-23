@@ -6,11 +6,13 @@ task filterKnownVariants {
     File vcf_tbi
     File? validated_variants
     File? validated_variants_tbi
-}
+  }
 
+  Int space_needed_gb = 10 + round(size([vcf, vcf_tbi, validated_variants, validated_variants_tbi], "GB")*2)
   runtime {
     docker: "mgibio/bcftools-cwl:1.12"
     memory: "8GB"
+    disks:  "local-disk ~{space_needed_gb} HDD"
   }
 
   String outfile = "validated_annotated_pipeline_variants.vcf.gz"

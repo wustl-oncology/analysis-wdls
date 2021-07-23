@@ -13,7 +13,9 @@ task strelka {
     Int? cpu_reserved
   }
 
-  Int space_needed_gb = 10 + round(size([tumor_bam, tumor_bam_bai, normal_bam, normal_bam_bai, reference, reference_fai, reference_dict], "GB"))
+  Float reference_size = size([reference, reference_fai, reference_dict], "GB")
+  Float bam_size = size([tumor_bam, tumor_bam_bai, normal_bam, normal_bam_bai], "GB")
+  Int space_needed_gb = 10 + round(bam_size*2 + reference_size)
   runtime {
     memory: "4GB"
     cpu: 4
@@ -31,6 +33,7 @@ task strelka {
     ~{if exome_mode then "--exome" else ""}
   >>>
 
+  # TODO: how much space to allocate?
   output {
     File indels = "results/variants/somatic.indels.vcf.gz"
     File indels_tbi = "results/variants/somatic.indels.vcf.gz.tbi"

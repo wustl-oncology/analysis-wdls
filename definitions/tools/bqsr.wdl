@@ -27,6 +27,7 @@ task bqsr {
     /gatk/gatk --java-options -Xmx16g BaseRecalibrator -O ~{outfile} ~{sep=" " prefix("-L ", intervals)} -R ~{reference} -I ~{bam} ~{sep=" " prefix("--known-sites ", known_sites)}
   >>>
 
+  # TODO: how much space to allocate for bqsr_table? what file does it scale with?
   output {
     File bqsr_table = outfile
   }

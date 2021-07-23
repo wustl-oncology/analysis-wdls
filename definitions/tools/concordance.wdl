@@ -29,6 +29,7 @@ task concordance {
     /usr/bin/somalier -o concordance -s ~{vcf} -f ~{reference} ~{bam_1} ~{bam_2} ~{bam_3}
   >>>
 
+  # TODO: how much space to allocate?
   output {
     File somalier_pairs = "concordance.somalier.pairs.tsv"
     File somalier_samples = "concordance.somalier.samples.tsv"

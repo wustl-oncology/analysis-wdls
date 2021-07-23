@@ -19,7 +19,9 @@ task varscanSomatic {
     File? roi_bed
   }
 
-  Int space_needed_gb = 10 + round(size([reference, reference_fai, reference_dict, tumor_bam, tumor_bam_bai, normal_bam, normal_bam_bai], "GB"))
+  Float reference_size = size([reference, reference_fai, reference_dict], "GB")
+  Float bam_size = size([tumor_bam, tumor_bam_bai, normal_bam, normal_bam_bai], "GB")
+  Int space_needed_gb = 10 + round(reference_size + bam_size*2)
   runtime {
     memory: "12GB"
     cpu: 2

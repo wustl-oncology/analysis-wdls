@@ -5,7 +5,7 @@ task catAll {
     Array[File] region_pindel_outs
   }
 
-
+  Int space_needed_gb = 10 + round(size(region_pindel_outs, "GB")*2)
   runtime {
     memory: "4GB"
     docker: "ubuntu:xenial"

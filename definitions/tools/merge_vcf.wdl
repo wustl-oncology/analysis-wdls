@@ -7,7 +7,7 @@ task mergeVcf {
     String merged_vcf_basename = "merged"
   }
 
-  Int space_needed_gb = 10 + round(size(vcfs, "GB") + size(vcf_tbis, "GB"))
+  Int space_needed_gb = 10 + round(2*(size(vcfs, "GB") + size(vcf_tbis, "GB")))
   runtime {
     docker: "mgibio/bcftools-cwl:1.12"
     memory: "4GB"

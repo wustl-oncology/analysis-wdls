@@ -5,9 +5,11 @@ task addStrelkaGt {
     File vcf
   }
 
+  Int space_needed_gb = 10 + round(size(vcf, "GB")*2)
   runtime {
     docker: "ubuntu:bionic"
     memory: "4GB"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String outfile = "add_gt.vcf"

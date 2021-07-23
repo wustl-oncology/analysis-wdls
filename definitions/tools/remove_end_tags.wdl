@@ -6,9 +6,11 @@ task removeEndTags {
     File vcf_tbi
   }
 
+  Int space_needed_gb = 10 + round(size(vcf, "GB")*2)
   runtime {
     memory: "4GB"
     docker: "mgibio/bcftools-cwl:1.12"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String outfile = "pindel.noend.vcf.gz"

@@ -13,7 +13,7 @@ task docmAddVariants {
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
   Float callers_size = size([callers_vcf, callers_vcf_tbi], "GB")
   Float docm_size = size([docm_vcf, docm_vcf_tbi], "GB")
-  Int space_needed_gb = 10 + round(reference_size + callers_size + docm_size)
+  Int space_needed_gb = 10 + round(reference_size + callers_size + docm_size)*2
   runtime {
     memory: "9GB"
     bootDiskSizeGb: 25

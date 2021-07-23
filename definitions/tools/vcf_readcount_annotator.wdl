@@ -9,9 +9,11 @@ task vcfReadcountAnnotator {
     String? sample_name
   }
 
+  Int space_needed_gb = 10 + round(size(vcf, "GB")*2 + size(bam_readcount_tsv, "GB"))
   runtime {
     docker: "griffithlab/vatools:4.1.0"
     memory: "4GB"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String outfile = "annotated.bam_readcount.vcf.gz"

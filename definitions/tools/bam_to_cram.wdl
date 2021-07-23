@@ -8,7 +8,8 @@ task bamToCram {
     File bam
   }
 
-  Int size_needed_gb = 10 + round(size([reference, reference_fai, reference_dict, bam], "GB"))
+  Float reference_size = size([reference, reference_fai, reference_dict], "GB")
+  Int size_needed_gb = 10 + round(size(bam, "GB") * 2 + reference_size)
   runtime {
     docker: "quay.io/biocontainers/samtools:1.11--h6270b1f_0"
     memory: "4GB"

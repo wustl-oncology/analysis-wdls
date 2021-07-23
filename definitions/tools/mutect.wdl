@@ -15,7 +15,9 @@ task mutect {
     File interval_list
   }
 
-  Int space_needed_gb = 10 + 2*round(size([reference, reference_fai, reference_dict, tumor_bam, tumor_bam_bai, normal_bam, normal_bam_bai, interval_list], "GB"))
+  Float reference_size = size([reference, reference_fai, reference_dict], "GB")
+  Float bam_size = size([tumor_bam, tumor_bam_bai, normal_bam, normal_bam_bai], "GB")
+  Int space_needed_gb = 10 + round(reference_size + 2*bam_size + size(interval_list, "GB"))
   runtime {
     docker: "broadinstitute/gatk:4.2.0.0"
     memory: "32GB"

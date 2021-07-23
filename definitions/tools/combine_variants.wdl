@@ -24,7 +24,7 @@ task combineVariants {
   Float varscan_size = size([varscan_vcf, varscan_vcf_tbi], "GB")
   Float strelka_size = size([strelka_vcf, strelka_vcf_tbi], "GB")
   Float pindel_size = size([pindel_vcf, pindel_vcf_tbi], "GB")
-  Int space_needed_gb = 10 + round(ref_size + mutect_size + varscan_size + strelka_size + pindel_size)
+  Int space_needed_gb = 10 + round(ref_size + mutect_size + varscan_size + strelka_size + pindel_size)*2
   runtime {
     memory: "9GB"
     bootDiskSizeGb: 25

@@ -6,6 +6,7 @@ task splitIntervalListToBed {
     Int scatter_count
   }
 
+  Int space_needed_gb = 10 + round(size(interval_list, "GB")*2)
   runtime {
     memory: "6GB"
     docker: "mgibio/cle:v1.4.2"

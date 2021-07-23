@@ -5,7 +5,7 @@ task catOut {
     Array[File] pindel_outs
   }
 
-  Int space_needed_gb = 10 + round(size(pindel_outs, "GB"))
+  Int space_needed_gb = 10 + round(size(pindel_outs, "GB")*2)
   runtime {
     memory: "4GB"
     docker: "ubuntu:xenial"

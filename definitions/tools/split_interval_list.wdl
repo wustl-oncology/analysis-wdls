@@ -6,9 +6,11 @@ task splitIntervalList {
     Int scatter_count
   }
 
+  Int space_needed_gb = 10 + round(size(interval_list, "GB")*2)
   runtime {
     docker: "broadinstitute/picard:2.24.2"
     memory: "6GB"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<

@@ -18,7 +18,7 @@ task selectVariants {
     String? select_type
   }
 
-  Int space_needed_gb = 10 + round(size([vcf, vcf_tbi, reference, reference_fai, reference_dict, interval_list], "GB"))
+  Int space_needed_gb = 10 + round(size([vcf, vcf_tbi], "GB")*3 + size([reference, reference_fai, reference_dict, interval_list], "GB"))
   runtime {
     docker: "broadinstitute/gatk:4.2.0.0"
     memory: "6GB"

@@ -16,7 +16,7 @@ task cnvkitBatch {
   }
 
 
-  Int size_needed_gb = 10 + round(size([tumor_bam, bait_intervals, access, normal_bam, reference], "GB"))
+  Int size_needed_gb = 10 + round(size([tumor_bam, bait_intervals, access, normal_bam, reference], "GB") * 2)
   runtime {
     bootDiskSizeGb: 10
     memory: "4GB"

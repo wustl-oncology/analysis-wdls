@@ -44,6 +44,7 @@ task collectHsMetrics {
     ~{if defined(minimum_base_quality) then "MINIMUM_BASE_QUALITY=~{minimum_base_quality}" else ""}
   >>>
 
+  # TODO: how much space to allocate?
   output {
     File hs_metrics = hs_txt
     File? per_target_coverage_metrics = per_target_txt

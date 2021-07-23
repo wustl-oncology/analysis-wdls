@@ -20,6 +20,7 @@ task pindelSomaticFilter {
     /usr/bin/perl /usr/bin/somatic_indelfilter.pl filter.config
   >>>
 
+  # TODO: how much space to allocate?
   output {
     File vcf = "pindel.out.vcf"
   }

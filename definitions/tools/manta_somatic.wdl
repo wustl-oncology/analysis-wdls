@@ -17,10 +17,9 @@ task mantaSomatic {
 
   Int cores = 12
   Float ref_size = size([reference, reference_fai, reference_dict], "GB")
-  Float tumor_size = size([tumor_bam, tumor_bam_bai], "GB")
-  Float normal_size = size([normal_bam, normal_bam_bai], "GB")
+  Float bam_size = size([tumor_bam, tumor_bam_bai, normal_bam, normal_bam_bai], "GB")
   Float regions_size = size([call_regions, call_regions_tbi], "GB")
-  Int size_needed_gb = 10 + round(ref_size + tumor_size + normal_size + regions_size)
+  Int size_needed_gb = 10 + 2 * round(ref_size + bam_size + regions_size)
   runtime {
     docker: "mgibio/manta_somatic-cwl:1.6.0"
     cpu: cores

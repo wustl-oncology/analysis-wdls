@@ -11,10 +11,14 @@ task variantsToTable {
     Array[String] genotype_fields = ["GT", "AD", "DP", "AF"]
   }
 
+  Float reference_size = size([reference, reference_fai, reference_dict], "GB")
+  Float vcf_size = size([vcf, vcf_tbi], "GB")
+  Int space_needed_gb = 10 + round(vcf_size*2 + reference_size)
   runtime {
     memory: "6GB"
     bootDiskSizeGb: 25
     docker: "broadinstitute/gatk:4.1.8.1"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String outfile = "variants.tsv"

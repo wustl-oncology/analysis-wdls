@@ -127,6 +127,7 @@ task bamReadcount {
     ' > ~{stdout_file}
   >>>
 
+  # TODO: how much space to allocate?
   output {
     File snv_bam_readcount_tsv = prefixed_sample + "_bam_readcount_snv.tsv"
     File indel_bam_readcount_tsv = prefixed_sample + "_bam_readcount_indel.tsv"

@@ -6,6 +6,7 @@ task varscanProcessSomatic {
     Float? max_normal_freq
   }
 
+  Int space_needed_gb = 10 + round(size(variants, "GB")*2)
   runtime {
     memory: "4GB"
     docker: "mgibio/cle:v1.3.1"

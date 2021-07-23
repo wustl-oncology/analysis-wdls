@@ -7,7 +7,7 @@ task verifyBamId {
     File bam_bai
   }
 
-  Int space_needed_gb = 10 + round(size([bam, vcf], "GB"))
+  Int space_needed_gb = 10 + round(size([bam, bam_bai, vcf], "GB"))
   runtime {
     docker: "mgibio/verify_bam_id-cwl:1.1.3"
     memory: "4GB"

@@ -11,7 +11,9 @@ task setFilterStatus {
     File reference_dict
   }
 
-  Int space_needed_gb = 10 + round(size([vcf, vcf_tbi, filtered_vcf, filtered_vcf_tbi, reference, reference_fai, reference_dict], "GB"))
+  Float vcf_size = size([vcf, vcf_tbi, filtered_vcf, filtered_vcf_tbi], "GB")
+  Float reference_size = size([reference, reference_fai, reference_dict], "GB")
+  Int space_needed_gb = 10 + round(reference_size + vcf_size*2)
   runtime {
     disks: "local-disk ~{space_needed_gb} HDD"
     memory: "6GB"

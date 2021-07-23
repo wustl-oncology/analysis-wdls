@@ -13,8 +13,8 @@ task fpFilter {
     String sample_name = "TUMOR"
     Float min_var_freq = 0.05
   }
-  # vcf twice to generate new one
-  Int space_needed_gb = 10 + round(size([reference, reference_fai, reference_dict, bam, vcf, vcf], "GB"))
+
+  Int space_needed_gb = 10 + round(size(vcf, "GB")*2 size([reference, reference_fai, reference_dict, bam], "GB"))
   runtime {
     memory: "6GB"
     bootDiskSizeGb: 25

@@ -8,7 +8,7 @@ task filterVcfDocm {
     Boolean filter_docm_variants
   }
 
-  Int space_needed_gb = 10 + round(size([docm_raw_variants, normal_bam, tumor_bam], "GB"))
+  Int space_needed_gb = 10 + round(size(docm_raw_variants, "GB")*2 + size([normal_bam, tumor_bam], "GB"))
   runtime {
     docker: "mgibio/cle:v1.4.2"
     memory: "4GB"

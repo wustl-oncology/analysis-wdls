@@ -14,7 +14,8 @@ task docmGatkHaplotypeCaller {
     File interval_list
   }
 
-  Int space_needed_gb = 10 + round(size([reference, reference_fai, reference_dict, normal_bam, normal_bam_bai, bam, bam_bai, docm_vcf, docm_vcf_tbi, interval_list], "GB"))
+  Float copied_size = size([docm_vcf, interval_list], "GB")
+  Int space_needed_gb = 10 + round(copied_size*3 + size([reference, reference_fai, reference_dict, normal_bam, normal_bam_bai, bam, bam_bai, docm_vcf_tbi], "GB"))
   runtime {
     memory: "9GB"
     docker: "broadinstitute/gatk:4.1.2.0"

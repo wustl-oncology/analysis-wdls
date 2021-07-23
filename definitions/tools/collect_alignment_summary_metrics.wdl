@@ -22,6 +22,7 @@ task collectAlignmentSummaryMetrics {
     /usr/bin/java -Xmx16g -jar /usr/picard/picard.jar CollectAlignmentSummaryMetrics INPUT=~{bam} OUTPUT=~{summary_metrics} REFERENCE_SEQUENCE=~{reference} METRIC_ACCUMULATION_LEVEL=~{metric_accumulation_level}
   >>>
 
+  # TODO: how much space to allocate?
   output {
     File alignment_summary_metrics = summary_metrics
   }

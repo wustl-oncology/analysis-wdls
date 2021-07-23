@@ -7,9 +7,11 @@ task filterVcfDepth {
     Array[String] sample_names
   }
 
+  Int space_needed_gb = 10 + round(size(vcf, "GB")*2)
   runtime {
     docker: "mgibio/depth-filter:0.1.2"
     memory: "4GB"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String outfile = "depth_filtered.vcf"

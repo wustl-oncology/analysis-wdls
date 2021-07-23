@@ -3,7 +3,7 @@ version 1.0
 task indexBam {
   input { File bam }
 
-  Int space_needed_gb = 10 + round(size(bam, "GB")*2)
+  Int space_needed_gb = 10 + round(size(bam, "GB")*3)
   runtime {
     docker: "quay.io/biocontainers/samtools:1.11--h6270b1f_0"
     memory: "4GB"

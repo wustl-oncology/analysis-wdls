@@ -6,9 +6,11 @@ task filterVcfCle {
     Boolean filter
   }
 
+  Int space_needed_gb = 10 + round(size(vcf, "GB")*2)
   runtime {
     docker: "mgibio/cle:v1.3.1"
     memory: "4GB"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<

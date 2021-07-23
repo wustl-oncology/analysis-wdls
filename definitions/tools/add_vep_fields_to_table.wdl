@@ -8,6 +8,7 @@ task addVepFieldsToTable {
     String prefix = "variants"
   }
 
+  Int space_needed_gb = 10 + round(size([vcf, tsv], "GB")*2)
   runtime {
     memory: "4GB"
     docker: "griffithlab/vatools:4.1.0"

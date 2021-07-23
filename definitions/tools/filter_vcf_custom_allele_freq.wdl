@@ -7,7 +7,7 @@ task filterVcfCustomAlleleFreq {
     String field_name
   }
 
-  Int space_needed_gb = 10 + round(size(vcf, "GB"))
+  Int space_needed_gb = 10 + round(size(vcf, "GB")*2)
   runtime {
     docker: "mgibio/vep_helper-cwl:vep_101.0_v1"
     memory: "4GB"
