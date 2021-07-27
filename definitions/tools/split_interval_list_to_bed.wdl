@@ -10,6 +10,7 @@ task splitIntervalListToBed {
   runtime {
     memory: "6GB"
     docker: "mgibio/cle:v1.4.2"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<

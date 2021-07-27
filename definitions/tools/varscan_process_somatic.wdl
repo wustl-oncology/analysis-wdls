@@ -10,6 +10,7 @@ task varscanProcessSomatic {
   runtime {
     memory: "4GB"
     docker: "mgibio/cle:v1.3.1"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String variantsBase = basename(variants, ".vcf")

@@ -79,4 +79,4 @@ task sequenceAlignAndTag {
   }
 }
 
-workflow wf { call sequenceAlignAndTag {} }
+workflow wf { call sequenceAlignAndTag { input: } }

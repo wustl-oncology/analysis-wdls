@@ -14,7 +14,7 @@ task fpFilter {
     Float min_var_freq = 0.05
   }
 
-  Int space_needed_gb = 10 + round(size(vcf, "GB")*2 size([reference, reference_fai, reference_dict, bam], "GB"))
+  Int space_needed_gb = 10 + round(size(vcf, "GB")*2 + size([reference, reference_fai, reference_dict, bam], "GB"))
   runtime {
     memory: "6GB"
     bootDiskSizeGb: 25

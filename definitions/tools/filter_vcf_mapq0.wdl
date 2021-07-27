@@ -11,10 +11,14 @@ task filterVcfMapq0 {
     Float threshold
   }
 
+  Float reference_size = size([reference, reference_fai, reference_dict], "GB")
+  Float bam_size = size([tumor_bam, tumor_bam_bai], "GB")
+  Int space_needed_gb = 10 + round(reference_size + bam_size + 2*size(vcf, "GB"))
   runtime {
     docker: "mgibio/mapq0-filter:v0.3.1"
     memory: "8GB"
     bootDiskSizeGb: 10
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String outfile = "mapq_filtered.vcf.gz"
@@ -27,3 +31,5 @@ task filterVcfMapq0 {
     File mapq0_filtered_vcf_tbi = outfile + ".tbi"
   }
 }
+
+workflow wf { call filterVcfMapq0 { input: } }
