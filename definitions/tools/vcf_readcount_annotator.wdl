@@ -13,7 +13,7 @@ task vcfReadcountAnnotator {
   runtime {
     docker: "griffithlab/vatools:4.1.0"
     memory: "4GB"
-    disks: "local-disk ~{space_needed_gb} HDD"
+    disks: "local-disk ~{space_needed_gb} SSD"
   }
 
   String outfile = "annotated.bam_readcount.vcf.gz"

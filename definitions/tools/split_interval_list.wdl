@@ -10,7 +10,7 @@ task splitIntervalList {
   runtime {
     docker: "broadinstitute/picard:2.24.2"
     memory: "6GB"
-    disks: "local-disk ~{space_needed_gb} HDD"
+    disks: "local-disk ~{space_needed_gb} SSD"
   }
 
   command <<<

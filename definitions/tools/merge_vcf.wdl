@@ -11,7 +11,7 @@ task mergeVcf {
   runtime {
     docker: "mgibio/bcftools-cwl:1.12"
     memory: "4GB"
-    disks: "local-disk ~{space_needed_gb} HDD"
+    disks: "local-disk ~{space_needed_gb} SSD"
   }
 
   String output_file = merged_vcf_basename + ".vcf.gz"

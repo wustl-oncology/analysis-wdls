@@ -22,7 +22,7 @@ task mutect {
     docker: "broadinstitute/gatk:4.2.0.0"
     memory: "32GB"
     bootDiskSizeGb: space_needed_gb
-    disks: "local-disk ~{space_needed_gb} HDD"
+    disks: "local-disk ~{space_needed_gb} SSD"
   }
 
   String output_vcf = "mutect.filtered.vcf.gz"

@@ -10,7 +10,7 @@ task removeEndTags {
   runtime {
     memory: "4GB"
     docker: "mgibio/bcftools-cwl:1.12"
-    disks: "local-disk ~{space_needed_gb} HDD"
+    disks: "local-disk ~{space_needed_gb} SSD"
   }
 
   String outfile = "pindel.noend.vcf.gz"

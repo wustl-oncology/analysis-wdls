@@ -20,7 +20,7 @@ task strelka {
     memory: "4GB"
     cpu: 4
     docker: "mgibio/strelka-cwl:2.9.9"
-    disks: "local-disk ~{space_needed_gb} HDD"
+    disks: "local-disk ~{space_needed_gb} SSD"
   }
 
   command <<<
