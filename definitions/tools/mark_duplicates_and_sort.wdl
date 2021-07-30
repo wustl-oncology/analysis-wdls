@@ -22,15 +22,8 @@ task markDuplicatesAndSort {
   command <<<
     set -o pipefail
     set -o errexit
-    # TODO: $6, how was CWL calling with a sixth argument?
-    if [ ! -z "$6" ]; then
-        MD_BARCODE_TAG="BARCODE_TAG=$6"
-        /usr/bin/java -Xmx16g -jar /opt/picard/picard.jar MarkDuplicates I=~{bam} O=/dev/stdout ASSUME_SORT_ORDER=~{input_sort_order} METRICS_FILE=~{metrics_file_name} QUIET=true COMPRESSION_LEVEL=0 VALIDATION_STRINGENCY=LENIENT "$MD_BARCODE_TAG" \
-          | /usr/bin/sambamba sort -t 8 -m 18G -o ~{output_name} /dev/stdin
-    else
-        /usr/bin/java -Xmx16g -jar /opt/picard/picard.jar MarkDuplicates I=~{bam} O=/dev/stdout ASSUME_SORT_ORDER=~{input_sort_order} METRICS_FILE=~{metrics_file_name} QUIET=true COMPRESSION_LEVEL=0 VALIDATION_STRINGENCY=LENIENT \
-          | /usr/bin/sambamba sort -t 8 -m 18G -o ~{output_name} /dev/stdin
-    fi
+    /usr/bin/java -Xmx16g -jar /opt/picard/picard.jar MarkDuplicates I=~{bam} O=/dev/stdout ASSUME_SORT_ORDER=~{input_sort_order} METRICS_FILE=~{metrics_file_name} QUIET=true COMPRESSION_LEVEL=0 VALIDATION_STRINGENCY=LENIENT \
+        | /usr/bin/sambamba sort -t 8 -m 18G -o ~{output_name} /dev/stdin
   >>>
 
   output {

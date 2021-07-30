@@ -22,7 +22,7 @@ task cnvkitBatch {
     memory: "4GB"
     cpu: 1
     docker: "etal/cnvkit:0.9.5"
-    disks: "local-disk ~{size_needed_gb} HDD"
+    disks: "local-disk ~{size_needed_gb} SSD"
   }
 
   command <<<
@@ -57,33 +57,4 @@ task cnvkitBatch {
   }
 }
 
-workflow wf {
-  input {
-    File tumor_bam
-    File? bait_intervals
-    File? access
-    File? normal_bam
-    File reference
-    String method = "hybrid"  # enum [hybrid, amplicon, wgs]
-    Boolean diagram = false
-    Boolean scatter_plot = false
-    Boolean drop_low_coverage = false
-    Boolean male_reference = false
-    Int? target_average_size
-  }
-
-  call cnvkitBatch {
-    input:
-    tumor_bam=tumor_bam,
-    bait_intervals=bait_intervals,
-    access=access,
-    normal_bam=normal_bam,
-    reference=reference,
-    method=method,
-    diagram=diagram,
-    scatter_plot=scatter_plot,
-    drop_low_coverage=drop_low_coverage,
-    male_reference=male_reference,
-    target_average_size=target_average_size
-  }
-}
+workflow wf { call cnvkitBatch { input: } }
