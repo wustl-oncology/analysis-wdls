@@ -15,7 +15,6 @@ task hisat2Align {
     File fastq2
     String read_group_id
     Array[String] read_group_fields
-    String read_group_id
     String strand = "unstranded"  # [first, second, unstranded]
   }
 
