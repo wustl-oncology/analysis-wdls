@@ -3,7 +3,7 @@ version 1.0
 task markDuplicatesAndSort {
   input {
     File bam
-    String? input_sort_order = "queryname"
+    String input_sort_order = "queryname"
     String output_name = "MarkedSorted.bam"
   }
   String metrics_file_name = sub(output_name, "\.bam$", ".mark_dups_metrics.txt")
