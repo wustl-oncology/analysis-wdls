@@ -8,7 +8,7 @@ task mergeBams {
   }
 
   Int cores = 4
-  Int space_needed_gb = 10 + round(size(bams, "GB")*2)
+  Int space_needed_gb = 10 + round(4*size(bams, "GB"))
   runtime {
     docker: "mgibio/bam-merge:0.1"
     memory: "8GB"
@@ -30,7 +30,7 @@ task mergeBams {
     if [[ $NUM_BAMS -eq 1 ]]; then
         cp "$BAMS" "~{outname}";
     else
-        if [[ ~{sorted} == "true" ]];then
+        if [[ "~{sorted}" == "true" ]];then
             /usr/bin/sambamba merge -t "~{cores}" "~{outname}" "~{S}{BAMS[@]}"
         else #unsorted bams, use picard
             args=(OUTPUT="~{outname}" ASSUME_SORTED=true USE_THREADING=true SORT_ORDER=unsorted VALIDATION_STRINGENCY=LENIENT)

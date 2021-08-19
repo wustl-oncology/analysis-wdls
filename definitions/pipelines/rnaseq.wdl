@@ -87,6 +87,7 @@ workflow rnaseq {
     gene_transcript_lookup_table=gene_transcript_lookup_table
   }
 
+  # TODO: remove extra sort
   call mb.mergeBams as merge {
     input: bams=flatten(flatten(bamToTrimmedFastqAndHisatAlignments.aligned_bam))
   }

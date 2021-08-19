@@ -3,7 +3,8 @@ version 1.0
 task bamToFastq {
   input { File bam }
 
-  Int space_needed_gb = 10 + round(3*size(bam, "GB"))
+  # ran into issue at 3*, bump to 10*
+  Int space_needed_gb = 10 + round(10*size(bam, "GB"))
   runtime {
     docker: "mgibio/rnaseq:1.0.0"
     cpu: 1

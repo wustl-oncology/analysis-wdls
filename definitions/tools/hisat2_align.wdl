@@ -31,10 +31,11 @@ task hisat2Align {
     reference_index_7ht2,
     reference_index_8ht2
   ], "GB")
-  Int space_needed_gb = 10 + round(3*fastq_size_gb + reference_size_gb)
+  Int space_needed_gb = 10 + round(5*fastq_size_gb + reference_size_gb)
   runtime {
-    memory: "16GB"
+    memory: "32GB"
     cpu: cores
+    bootDiskSizeGb: space_needed_gb
     docker: "mgibio/hisat2-sambamba:0.1"
     disks: "local-disk ~{space_needed_gb} SSD"
   }
@@ -45,6 +46,7 @@ task hisat2Align {
     "second":     "--rna-strandness FR",
     "unstranded": ""
   }
+  # TODO: remove view+sort
   command <<<
     /usr/local/bin/hisat2 \
             ~{strandness[strand]} \
@@ -62,3 +64,5 @@ task hisat2Align {
     File aligned_bam = outfile
   }
 }
+
+workflow wf { call hisat2Align { input: } }
