@@ -8,7 +8,7 @@ task intersectKnownVariants {
     File? validated_variants_tbi
   }
 
-  Int space_needed_gb = 10 + round(size([vcf, vcf_tbi, validated_variants, validated_variants_tbi], "GB"))
+  Int space_needed_gb = 10 + round(2*size([vcf, vcf_tbi, validated_variants, validated_variants_tbi], "GB"))
   runtime {
     memory: "8GB"
     docker: "mgibio/bcftools-cwl:1.12"

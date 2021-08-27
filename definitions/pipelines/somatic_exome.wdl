@@ -1,14 +1,14 @@
 version 1.0
 
-import "types.wdl"
-import "pipelines/alignment_exome.wdl" as ae
-import "pipelines/detect_variants.wdl" as dv
-import "tools/bam_to_cram.wdl" as btc
-import "tools/cnvkit_batch.wdl" as cb
-import "tools/concordance.wdl" as c
-import "tools/index_cram.wdl" as ic
-import "tools/interval_list_expand.wdl" as ile
-import "tools/manta_somatic.wdl" as ms
+import "../types.wdl"
+import "../pipelines/alignment_exome.wdl" as ae
+import "../pipelines/detect_variants.wdl" as dv
+import "../tools/bam_to_cram.wdl" as btc
+import "../tools/cnvkit_batch.wdl" as cb
+import "../tools/concordance.wdl" as c
+import "../tools/index_cram.wdl" as ic
+import "../tools/interval_list_expand.wdl" as ile
+import "../tools/manta_somatic.wdl" as ms
 
 
 workflow somaticExome {
@@ -264,6 +264,7 @@ workflow somaticExome {
 
   output {
     File tumor_cram = tumorIndexCram.indexed_cram
+    File tumor_cram_crai = tumorIndexCram.indexed_cram
     File tumor_mark_duplicates_metrics = tumorAlignmentAndQc.mark_duplicates_metrics
     File tumor_insert_size_metrics = tumorAlignmentAndQc.insert_size_metrics
     File tumor_alignment_summary_metrics = tumorAlignmentAndQc.alignment_summary_metrics

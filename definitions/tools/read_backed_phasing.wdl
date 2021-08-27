@@ -1,6 +1,6 @@
 version 1.0
 
-task {
+task readBackedPhasing {
   input {
     File bam
     File bam_index
@@ -19,11 +19,20 @@ task {
     disks: "local-disk ~{space_needed_gb} SSD"
   }
 
+  String outfile = "phased.vcf"
   command <<<
-    /usr/bin/java -Xmx8g -jar /opt/GenomeAnalysisTK.jar -T ReadBackedPhasing -L ~{vcf} -o phased.vcf
+    echo "~{bam_index}"
+    head -n 1 ~{bam_index}
+    /usr/bin/java -Xmx8g -jar /opt/GenomeAnalysisTK.jar -T ReadBackedPhasing \
+    -L ~{vcf} -o ~{outfile} \
+    -R ~{reference} \
+    -I ~{bam} \
+    -V ~{vcf}
   >>>
 
   output {
-    File phased_vcf = glob("phased.vcf")
+    File phased_vcf = outfile
   }
 }
+
+workflow wf { call readBackedPhasing { input: } }

@@ -10,7 +10,7 @@ task selectVariants {
     File vcf_tbi
 
     File? interval_list
-    Boolean? exclude_filtered
+    Boolean exclude_filtered = false
     String output_vcf_basename = "select_variants"
     Array[String]? samples_to_include  # include genotypes from this sample
 
@@ -27,13 +27,14 @@ task selectVariants {
   }
 
   String outfile = "~{output_vcf_basename}.vcf.gz"
+  Array[String] samples = if defined(samples_to_include) then prefix("--sample-name ", select_first([samples_to_include])) else []
   command <<<
     /gatk/gatk --java-options -Xmx4g SelectVariants -O ~{outfile} \
     -R ~{reference} \
     --variant ~{vcf} \
     ~{if defined(interval_list) then "-L ~{interval_list}" else ""} \
-    ~{if defined(exclude_filtered) then "--exclude-filtered ~{exclude_filtered}" else ""} \
-    ~{if defined(samples_to_include) then "--sample-name ~{sep=" " select_first([samples_to_include])}" else ""} \
+    ~{if exclude_filtered then "--exclude-filtered ~{select_first([exclude_filtered])}" else ""} \
+    ~{sep=" " samples} \
     ~{if defined(select_type) then "-select-type ~{select_type}" else ""}
   >>>
 
