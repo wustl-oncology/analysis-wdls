@@ -92,7 +92,7 @@ workflow germlineExome {
     bai=alignmentAndQc.bam_bai,
     gvcf_gq_bands=gvcf_gq_bands,
     intervals=intervals,
-    verify_bam_id_metrics=verify_bam_id_metrics,
+    verify_bam_id_metrics=alignmentAndQc.verify_bam_id_metrics,
     ploidy=ploidy,
     vep_cache_dir_zip=vep_cache_dir_zip,
     synonyms_file=synonyms_file,

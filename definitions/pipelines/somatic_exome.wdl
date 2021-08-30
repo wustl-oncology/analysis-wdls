@@ -264,7 +264,7 @@ workflow somaticExome {
 
   output {
     File tumor_cram = tumorIndexCram.indexed_cram
-    File tumor_cram_crai = tumorIndexCram.indexed_cram
+    File tumor_cram_crai = tumorIndexCram.indexed_cram_crai
     File tumor_mark_duplicates_metrics = tumorAlignmentAndQc.mark_duplicates_metrics
     File tumor_insert_size_metrics = tumorAlignmentAndQc.insert_size_metrics
     File tumor_alignment_summary_metrics = tumorAlignmentAndQc.alignment_summary_metrics

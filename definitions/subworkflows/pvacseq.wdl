@@ -103,7 +103,7 @@ workflow pvacseq {
     input: vcf=addTranscriptExpressionDataToVcf.annotated_expression_vcf
   }
 
-  call p.pvacseq {
+  call p.pvacseq as ps {
     input:
     input_vcf=index.indexed_vcf,
     input_vcf_tbi=index.indexed_vcf_tbi,
@@ -160,6 +160,6 @@ workflow pvacseq {
   output {
     File annotated_vcf = addTranscriptExpressionDataToVcf.annotated_expression_vcf
     File annotated_tsv = addVepFieldsToTable.annotated_variants_tsv
-    Array[File] pvacseq_predictions = pvacseq.pvacseq_predictions
+    Array[File] pvacseq_predictions = ps.pvacseq_predictions
   }
 }

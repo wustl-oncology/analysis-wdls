@@ -1,12 +1,12 @@
 version 1.0
 
-import "../tools/replace_vcf_sample_name.wdl" as rvsn
-import "../tools/index_vcf.wdl" as iv
-import "../tools/select_variants.wdl" as sev
-import "../tools/pvacseq_combine_variants.wdl" as pcv
-import "../tools/sort_vcf.wdl" as sov
 import "../subworkflows/bgzip_and_index.wdl" as bi
+import "../tools/index_vcf.wdl" as iv
+import "../tools/pvacseq_combine_variants.wdl" as pcv
 import "../tools/read_backed_phasing.wdl" as rbp
+import "../tools/replace_vcf_sample_name.wdl" as rvsn
+import "../tools/select_variants.wdl" as sev
+import "../tools/sort_vcf.wdl" as sov
 
 workflow phaseVcf {
   input {
@@ -69,7 +69,7 @@ workflow phaseVcf {
     input: vcf=sort.sorted_vcf
   }
 
-  call rbp.readBackedPhasing as phaseVcf {
+  call rbp.readBackedPhasing  {
     input:
     reference=reference,
     reference_fai=reference_fai,
@@ -81,7 +81,7 @@ workflow phaseVcf {
   }
 
   call bi.bgzipAndIndex as bgzipAndIndexPhasedVcf {
-    input: vcf=phaseVcf.phased_vcf
+    input: vcf=readBackedPhasing.phased_vcf
   }
 
   output {

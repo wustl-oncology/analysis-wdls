@@ -146,11 +146,11 @@ workflow immuno {
     String? top_score_metric  # enum [lowest, median]
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
-    String? downstream_sequence_length
+    Int? downstream_sequence_length
     Boolean? exclude_nas
     File? phased_proximal_variants_vcf
     File? phased_proximal_variants_vcf_tbi
-    String? maximum_transcript_support_level  # enum [1 2 3 4 5]
+    Int? maximum_transcript_support_level  # enum [1 2 3 4 5]
     Int? normal_cov
     Int? tdna_cov
     Int? trna_cov

@@ -16,7 +16,7 @@ task gatkHaplotypeCaller {
     Int? max_alternate_alleles
     Int? ploidy
     String? read_filter
-    String output_prefix = ""
+    String output_file_name
   }
 
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
@@ -30,8 +30,6 @@ task gatkHaplotypeCaller {
   }
 
   # TODO: also check alphanumeric, /^0-9A-Za-z]+$/
-  String base = if length(intervals) == 1 then intervals[0] else "output"
-  String output_file_name = output_prefix + base + ".g.vcf.gz"
   command <<<
     # requires .bai not .bam.bai
     mv ~{bam} ~{basename(bam)}
@@ -55,7 +53,7 @@ task gatkHaplotypeCaller {
     -R ~{reference} \
     -I ~{basename(bam)} \
     -ERC ~{emit_reference_confidence} \
-    ~{if length(gvcf_gq_bands) > 0 then "~{sep=" " prefix("-GQB", gvcf_gq_bands)}"  else ""} \
+    ~{sep=" " prefix("-GQB", gvcf_gq_bands)} \
     -L ~{sep="," intervals} \
     ~{if(defined(dbsnp_vcf)) then "--dbsnp " + dbsnp_vcf else ""} \
     $CONTAMINATION_ARG \

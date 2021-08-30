@@ -13,9 +13,6 @@ task hlaConsensus {
   }
 
   String clinical_exists = if defined(clinical_mhc_classI_alleles) || defined(clinical_mhc_classII_alleles) then "True" else "False"
-  String optitype_arg = "~{sep="," optitype_hla_alleles}"
-  String classI_arg = "~{sep="," clinical_mhc_classI_alleles}"
-  String classII_arg = "~{sep="," clinical_mhc_classII_alleles}"
   command <<<
     python -c '
     #This script produces 2-4 files depending on inputs and their contents
@@ -90,12 +87,11 @@ task hlaConsensus {
     ########################################
 
     clinical_exists = ~{clinical_exists}
-
-    optitype_calls = ~{optitype_arg}
+    optitype_calls = [~{sep="," optitype_hla_alleles}]
 
     if clinical_exists:
-        raw_clinical_i_calls = "~{classI_arg}".split(",") #MHC Class I clinical typing results
-        raw_clinical_ii_calls = "~{classII_arg}".split(",") #MHC Class II clinical typing results
+        raw_clinical_i_calls = [~{sep="," clinical_mhc_classI_alleles}] #MHC Class I clinical typing results
+        raw_clinical_ii_calls = [~{sep="," clinical_mhc_classII_alleles}] #MHC Class II clinical typing results
         #Each clinical call may be a single high confidence call,
         #or a list of uncertain calls separated by slashes
         hc_clinical_calls = []

@@ -53,13 +53,12 @@ task pvacseq {
 
   # TODO: run CWL to see what this command actually looks like
   # specifically prediction_algorithms and allele-specific-binding-thresholds
-  String e1arg = "-e1 ~{sep="," epitope_lengths_class_i}"
-  String e2arg = "-e2 ~{sep="," epitope_lengths_class_ii}"
   command <<<
     ln -s $TMPDIR /tmp/pvacseq && export TMPDIR=/tmp/pvacseq && \
     /usr/local/bin/pvacseq run --iedb-install-directory /opt/iedb --pass-only \
-    ~{if defined(epitope_lengths_class_i) then e1arg else ""} \
-    ~{if defined(epitope_lengths_class_ii) then e2arg else ""} \
+    # These lines are stupid. This is just optional `-e1 epitope_lengths_class_i` comma separated
+    ~{if defined(epitope_lengths_class_i ) then "-e1 " else ""} ~{sep="," if defined(epitope_lengths_class_i) then epitope_lengths_class_i else []} \
+    ~{if defined(epitope_lengths_class_ii) then "-e2 " else ""} ~{sep="," if defined(epitope_lengths_class_ii) then epitope_lengths_class_ii else []} \
     ~{if defined(binding_threshold) then "-b " + binding_threshold else ""} \
     ~{if defined(percentile_threshold) then "--percentile-threshold " + percentile_threshold else ""} \
     ~{if allele_specific_binding_thresholds then "--allele-specific-binding-thresholds" else ""} \

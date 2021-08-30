@@ -21,12 +21,10 @@ workflow gatkHaplotypecallerIterator {
     String? output_prefix
   }
 
-  String pref = if defined(output_prefix) then select_first([output_prefix]) else ""
-  # TODO: if only alphanumeric
-  String base = if length(intervals) == 1 then intervals[0] else "output"
-  String output_file_name = pref + "." + base + ".g.vcf.gz"
 
   scatter(interval_sublist in intervals) {
+    # TODO: if only alphanumeric
+    String base = if length(interval_sublist) == 1 then interval_sublist[0] else "output"
     call ghc.gatkHaplotypeCaller as haplotypeCaller {
       input:
       reference=reference,
@@ -43,7 +41,7 @@ workflow gatkHaplotypecallerIterator {
       max_alternate_alleles=max_alternate_alleles,
       ploidy=ploidy,
       read_filter=read_filter,
-      output_prefix = output_prefix
+      output_file_name = output_prefix + base + ".g.vcf.gz"
     }
   }
 
