@@ -11,7 +11,7 @@ task filterVcfCustomAlleleFreq {
   runtime {
     docker: "mgibio/vep_helper-cwl:vep_101.0_v1"
     memory: "4GB"
-    disks: "local-disk ~{space_needed_gb} HDD"
+    disks: "local-disk ~{space_needed_gb} SSD"
   }
 
   String outfile = "annotated.af_filtered.vcf"

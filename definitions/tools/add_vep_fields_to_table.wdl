@@ -12,6 +12,7 @@ task addVepFieldsToTable {
   runtime {
     memory: "4GB"
     docker: "griffithlab/vatools:4.1.0"
+    disks: "local-disk ~{space_needed_gb} SSD"
   }
 
   command <<<

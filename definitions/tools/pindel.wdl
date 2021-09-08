@@ -21,7 +21,7 @@ task pindel {
   runtime {
     bootDiskSizeGb: 100
     cpu: cores
-    disks: "local-disk ~{space_needed_gb} HDD"
+    disks: "local-disk ~{space_needed_gb} SSD"
     docker: "mgibio/cle:v1.4.2"
     memory: "16GB"
   }

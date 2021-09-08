@@ -10,7 +10,7 @@ task intervalListExpand {
   runtime {
     memory: "4GB"
     docker: "broadinstitute/picard:2.23.6"
-    disks: "local-disk ~{space_needed_gb} HDD"
+    disks: "local-disk ~{space_needed_gb} SSD"
   }
 
   String output_file = basename(interval_list, ".interval_list") + ".expanded.interval_list"

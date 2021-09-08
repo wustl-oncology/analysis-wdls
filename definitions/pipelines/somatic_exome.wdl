@@ -1,14 +1,14 @@
 version 1.0
 
-import "types.wdl"
-import "pipelines/alignment_exome.wdl" as ae
-import "pipelines/detect_variants.wdl" as dv
-import "tools/bam_to_cram.wdl" as btc
-import "tools/cnvkit_batch.wdl" as cb
-import "tools/concordance.wdl" as c
-import "tools/index_cram.wdl" as ic
-import "tools/interval_list_expand.wdl" as ile
-import "tools/manta_somatic.wdl" as ms
+import "../types.wdl"
+import "../pipelines/alignment_exome.wdl" as ae
+import "../pipelines/detect_variants.wdl" as dv
+import "../tools/bam_to_cram.wdl" as btc
+import "../tools/cnvkit_batch.wdl" as cb
+import "../tools/concordance.wdl" as c
+import "../tools/index_cram.wdl" as ic
+import "../tools/interval_list_expand.wdl" as ile
+import "../tools/manta_somatic.wdl" as ms
 
 
 workflow somaticExome {
@@ -66,6 +66,7 @@ workflow somaticExome {
 
     Boolean filter_docm_variants = true
 
+    String? gnomad_field_name
     Float filter_somatic_llr_threshold = 5
     Float filter_somatic_llr_tumor_purity = 1
     Float filter_somatic_llr_normal_contamination_rate = 0
@@ -190,6 +191,7 @@ workflow somaticExome {
     pindel_insert_size=pindel_insert_size,
     docm_vcf=docm_vcf,
     docm_vcf_tbi=docm_vcf_tbi,
+    gnomad_field_name=gnomad_field_name,
     filter_docm_variants=filter_docm_variants,
     filter_somatic_llr_threshold=filter_somatic_llr_threshold,
     filter_somatic_llr_tumor_purity=filter_somatic_llr_tumor_purity,
@@ -262,6 +264,7 @@ workflow somaticExome {
 
   output {
     File tumor_cram = tumorIndexCram.indexed_cram
+    File tumor_cram_crai = tumorIndexCram.indexed_cram_crai
     File tumor_mark_duplicates_metrics = tumorAlignmentAndQc.mark_duplicates_metrics
     File tumor_insert_size_metrics = tumorAlignmentAndQc.insert_size_metrics
     File tumor_alignment_summary_metrics = tumorAlignmentAndQc.alignment_summary_metrics

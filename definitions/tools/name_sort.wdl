@@ -12,7 +12,7 @@ task nameSort {
     docker: "mgibio/sambamba-cwl:0.6.4"
     memory: "26GB"
     cpu: cores
-    disks: "local-disk ~{input_size_gb} HDD"
+    disks: "local-disk ~{input_size_gb} SSD"
   }
 
   command <<<

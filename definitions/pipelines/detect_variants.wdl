@@ -64,6 +64,7 @@ workflow detectVariants {
     Int? readcount_minimum_base_quality
     Int? readcount_minimum_mapping_quality
 
+    String gnomad_field_name = "gnomAD_AF"  # only change with gnomad_filter annotation
     Float filter_gnomADe_maximum_population_allele_frequency = 0.001
     Float filter_mapq0_threshold = 0.15
     Float filter_somatic_llr_threshold = 5
@@ -251,7 +252,7 @@ workflow detectVariants {
     reference_dict=reference_dict,
     normal_sample_name=normal_sample_name,
     tumor_sample_name=tumor_sample_name,
-    gnomad_field_name="gnomAD_AF",  # TODO: find first .annotation.gnomad_filter + '_AF' or gnomAD_AF
+    gnomad_field_name=gnomad_field_name,
     validated_variants=validated_variants
   }
 
