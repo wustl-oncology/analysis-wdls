@@ -122,6 +122,7 @@ workflow germlineExome {
 
   output {
     File cram = indexCram.indexed_cram
+    File cram_crai = indexCram.indexed_cram_crai
     File mark_duplicates_metrics = alignmentAndQc.mark_duplicates_metrics
     File insert_size_metrics = alignmentAndQc.insert_size_metrics
     File insert_size_histogram = alignmentAndQc.insert_size_histogram

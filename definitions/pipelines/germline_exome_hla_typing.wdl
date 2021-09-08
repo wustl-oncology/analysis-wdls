@@ -83,6 +83,7 @@ workflow germlineExomeHlaTyping {
     reference=reference,
     reference_fai=reference_fai,
     cram=germlineExome.cram,
+    cram_crai=germlineExome.cram_crai,
     optitype_name=optitype_name
   }
 

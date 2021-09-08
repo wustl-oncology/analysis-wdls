@@ -30,6 +30,7 @@ task gatkHaplotypeCaller {
   }
 
   # TODO: also check alphanumeric, /^0-9A-Za-z]+$/
+  Array[String] pref_bands = prefix("-GQB ", gvcf_gq_bands)
   command <<<
     # requires .bai not .bam.bai
     mv ~{bam} ~{basename(bam)}
@@ -53,7 +54,7 @@ task gatkHaplotypeCaller {
     -R ~{reference} \
     -I ~{basename(bam)} \
     -ERC ~{emit_reference_confidence} \
-    ~{sep=" " prefix("-GQB", gvcf_gq_bands)} \
+    ~{sep=" " pref_bands} \
     -L ~{sep="," intervals} \
     ~{if(defined(dbsnp_vcf)) then "--dbsnp " + dbsnp_vcf else ""} \
     $CONTAMINATION_ARG \

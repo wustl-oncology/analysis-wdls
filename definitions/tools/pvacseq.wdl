@@ -46,26 +46,29 @@ task pvacseq {
   Int space_needed_gb = 10 + round(input_size + phased_variants_size)
   runtime {
     memory: "16GB"
-    cores: n_threads
+    cpu: n_threads
     docker: "griffithlab/pvactools:2.0.1"
     disks: "local-disk ~{space_needed_gb} SSD"
   }
 
   # TODO: run CWL to see what this command actually looks like
   # specifically prediction_algorithms and allele-specific-binding-thresholds
+
+  # explicit typing required
+  Array[Int] epitope_i = select_first([epitope_lengths_class_i, []])
+  Array[Int] epitope_ii = select_first([epitope_lengths_class_ii, []])
   command <<<
     ln -s $TMPDIR /tmp/pvacseq && export TMPDIR=/tmp/pvacseq && \
     /usr/local/bin/pvacseq run --iedb-install-directory /opt/iedb --pass-only \
-    # These lines are stupid. This is just optional `-e1 epitope_lengths_class_i` comma separated
-    ~{if defined(epitope_lengths_class_i ) then "-e1 " else ""} ~{sep="," if defined(epitope_lengths_class_i) then epitope_lengths_class_i else []} \
-    ~{if defined(epitope_lengths_class_ii) then "-e2 " else ""} ~{sep="," if defined(epitope_lengths_class_ii) then epitope_lengths_class_ii else []} \
-    ~{if defined(binding_threshold) then "-b " + binding_threshold else ""} \
-    ~{if defined(percentile_threshold) then "--percentile-threshold " + percentile_threshold else ""} \
+    ~{if defined(epitope_lengths_class_i ) then "-e1 " else ""} ~{sep="," epitope_i} \
+    ~{if defined(epitope_lengths_class_ii) then "-e2 " else ""} ~{sep="," epitope_ii} \
+    ~{if defined(binding_threshold) then "-b ~{binding_threshold}" else ""} \
+    ~{if defined(percentile_threshold) then "--percentile-threshold ~{percentile_threshold}" else ""} \
     ~{if allele_specific_binding_thresholds then "--allele-specific-binding-thresholds" else ""} \
     ~{if defined(iedb_retries) then "-r ~{iedb_retries}" else ""} \
     ~{if keep_tmp_files then "-k" else ""} \
     ~{if defined(normal_sample_name) then "--normal-sample-name ~{normal_sample_name}" else ""} \
-    ~{if defined(net_chop_method) then "--net-chop-method " + net_chop_method else ""} \
+    ~{if defined(net_chop_method) then "--net-chop-method ~{net_chop_method}" else ""} \
     ~{if netmhc_stab then "--netmhc-stab" else ""} \
     ~{if run_reference_proteome_similarity then "--run-reference-proteome-similarity" else ""} \
     ~{if defined(top_score_metric) then "-m ~{top_score_metric}" else ""} \
@@ -85,10 +88,7 @@ task pvacseq {
     ~{if defined(expn_val) then "--expn-val ~{expn_val}" else ""} \
     ~{if defined(maximum_transcript_support_level) then "--maximum-transcript-support-level ~{maximum_transcript_support_level}" else ""} \
     --n-threads ~{n_threads} \
-    ~{input_vcf} \
-    ~{sample_name} \
-    ~{sep="," alleles} \
-    ~{sep=" " prediction_algorithms} \
+    ~{input_vcf} ~{sample_name} ~{sep="," alleles} ~{sep=" " prediction_algorithms} \
     "pvacseq_predictions"
   >>>
 

@@ -41,7 +41,7 @@ workflow gatkHaplotypecallerIterator {
       max_alternate_alleles=max_alternate_alleles,
       ploidy=ploidy,
       read_filter=read_filter,
-      output_file_name = output_prefix + base + ".g.vcf.gz"
+      output_file_name = select_first([output_prefix, ""]) + base + ".g.vcf.gz"
     }
   }
 
