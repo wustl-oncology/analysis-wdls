@@ -19,6 +19,7 @@ task extractHlaAlleles {
 
   output {
     Array[String] allele_string = read_lines(outfile)
+    File outfile = outfile
   }
 }
 
