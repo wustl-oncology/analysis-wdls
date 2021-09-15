@@ -83,7 +83,7 @@ workflow somaticExome {
     Array[String] vep_to_table_fields = ["HGVSc", "HGVSp"]
     Array[String] variants_to_table_genotype_fields = ["GT", "AD"]
     Array[String] variants_to_table_fields = ["CHROM", "POS", "ID", "REF", "ALT", "set", "AC", "AF"]
-    Array[VepCustomAnnotation] vep_custom_annotations
+    Array[VepCustomAnnotation] vep_custom_annotations = []
 
     File? manta_call_regions
     File? manta_call_regions_tbi
