@@ -45,8 +45,8 @@ task cnvkitBatch {
   output {
     File? intervals_antitarget = intervals_base + ".antitarget.bed"
     File? intervals_target = intervals_base + ".target.bed"
-    File? normal_antitarget_coverage = normal_base + ".antitarget.bed"
-    File? normal_target_coverage = normal_base + ".target.bed"
+    File? normal_antitarget_coverage = normal_base + ".antitargetcoverage.cnn"
+    File? normal_target_coverage = normal_base + ".targetcoverage.cnn"
     File? reference_coverage = "reference.cnn"
     File? cn_diagram = basename(tumor_bam, ".bam") + "-diagram.pdf"
     File? cn_scatter_plot = basename(tumor_bam, ".bam") + "-scatter.pdf"
