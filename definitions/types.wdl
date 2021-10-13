@@ -8,7 +8,7 @@ struct Sequence {
 # assume either bam or fastqs defined
 struct SequenceData {
   Sequence sequence
-  String readgroup
+  String? readgroup
 }
 
 struct TrimmingOptions {

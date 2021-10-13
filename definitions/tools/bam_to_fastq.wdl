@@ -21,6 +21,7 @@ task bamToFastq {
   output {
     File fastq1 = "read1.fastq"
     File fastq2 = "read2.fastq"
+    Array[File] fastqs = ["read1.fastq", "read2.fastq"]
   }
 }
 
