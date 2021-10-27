@@ -1,8 +1,8 @@
 version 1.0
 
-import "../types.wdl"
-import "../pipelines/germline_exome.wdl" as ge
-import "../tools/optitype_dna.wdl" as od
+import "germline_exome.wdl" as ge
+import "types.wdl"
+import "tools/optitype_dna.wdl" as od
 
 workflow germlineExomeHlaTyping {
   input {

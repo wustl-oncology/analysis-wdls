@@ -1,12 +1,12 @@
 version 1.0
 
-import "../types.wdl"
+import "alignment_exome.wdl" as ae
+import "types.wdl"
 
-import "../pipelines/alignment_exome.wdl" as ae
-import "../tools/interval_list_expand.wdl" as ile
-import "../subworkflows/germline_detect_variants.wdl" as gdv
-import "../tools/bam_to_cram.wdl" as btc
-import "../tools/index_cram.wdl" as ic
+import "tools/interval_list_expand.wdl" as ile
+import "subworkflows/germline_detect_variants.wdl" as gdv
+import "tools/bam_to_cram.wdl" as btc
+import "tools/index_cram.wdl" as ic
 
 workflow germlineExome {
   input {

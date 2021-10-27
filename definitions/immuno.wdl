@@ -1,8 +1,10 @@
 version 1.0
 
-import "pipelines/germline_exome_hla_typing.wdl" as geht
-import "pipelines/rnaseq.wdl" as r
-import "pipelines/somatic_exome.wdl" as se
+# pipelines
+import "germline_exome_hla_typing.wdl" as geht
+import "rnaseq.wdl" as r
+import "somatic_exome.wdl" as se
+# others
 import "subworkflows/phase_vcf.wdl" as pv
 import "subworkflows/pvacseq.wdl" as p
 import "tools/extract_hla_alleles.wdl" as eha

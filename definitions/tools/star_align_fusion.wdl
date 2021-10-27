@@ -2,10 +2,13 @@ version 1.0
 
 task starAlignFusion {
   input {
-    Array[String] out_samtype = ["BAM", "Unsorted"]
-    String run_mode = "alignReads"
     Array[File] fastq
     Array[File] fastq2
+    # START changed from cwl
+    File star_genome_dir_zip
+    # END changed from cwl
+    Array[String] out_samtype = ["BAM", "Unsorted"]
+    String run_mode = "alignReads"
     String out_reads_unmapped = "None"
     Int chim_segment_min = 12
     Int chim_junction_overhang_min = 12
@@ -22,9 +25,6 @@ task starAlignFusion {
     Int peoverlap_nbases_min = 12
     Float peoverlap_mmp = 0.1
     Int chimout_junction_format = 1
-    # START changed from cwl
-    File star_genome_dir_zip
-    # END changed from cwl
     String twopass_mode = "Basic"
     File? gtf_file
     String outfile_name_prefix = "STAR_"
@@ -86,3 +86,5 @@ task starAlignFusion {
     File chim_junc = "~{outfile_name_prefix}Chimeric.out.junction"
   }
 }
+
+workflow wf { call starAlignFusion { input: } }

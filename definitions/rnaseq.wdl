@@ -1,16 +1,16 @@
 version 1.0
 
-import "../subworkflows/bam_to_trimmed_fastq_and_hisat_alignments.wdl" as bttfaha
-import "../tools/bam_to_bigwig.wdl" as btb
-import "../tools/generate_qc_metrics.wdl" as gqm
-import "../tools/index_bam.wdl" as ib
-import "../tools/kallisto.wdl" as k
-import "../tools/mark_duplicates_and_sort.wdl" as mdas
-import "../tools/merge_bams.wdl" as mb
-import "../tools/samtools_sort.wdl" as ss
-import "../tools/stringtie.wdl" as st
-import "../tools/transcript_to_gene.wdl" as ttg
-import "../types.wdl"
+import "subworkflows/bam_to_trimmed_fastq_and_hisat_alignments.wdl" as bttfaha
+import "tools/bam_to_bigwig.wdl" as btb
+import "tools/generate_qc_metrics.wdl" as gqm
+import "tools/index_bam.wdl" as ib
+import "tools/kallisto.wdl" as k
+import "tools/mark_duplicates_and_sort.wdl" as mdas
+import "tools/merge_bams.wdl" as mb
+import "tools/samtools_sort.wdl" as ss
+import "tools/stringtie.wdl" as st
+import "tools/transcript_to_gene.wdl" as ttg
+import "types.wdl"
 
 workflow rnaseq {
   input {
