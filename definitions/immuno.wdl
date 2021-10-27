@@ -1,15 +1,16 @@
 version 1.0
 
-import "types.wdl"
-
-import "pipelines/rnaseq.wdl" as r
-import "pipelines/somatic_exome.wdl" as se
-import "pipelines/germline_exome_hla_typing.wdl" as geht
+# pipelines
+import "germline_exome_hla_typing.wdl" as geht
+import "rnaseq.wdl" as r
+import "somatic_exome.wdl" as se
+# others
 import "subworkflows/phase_vcf.wdl" as pv
+import "subworkflows/pvacseq.wdl" as p
 import "tools/extract_hla_alleles.wdl" as eha
 import "tools/hla_consensus.wdl" as hc
 import "tools/intersect_known_variants.wdl" as ikv
-import "subworkflows/pvacseq.wdl" as p
+import "types.wdl"
 
 workflow immuno {
   input {
@@ -27,7 +28,7 @@ workflow immuno {
     File reference_index_8ht2
 
     File reference_annotation
-    Array[File] rna_bams
+    Array[SequenceData] rna_sequence
     Array[String] rna_readgroups
     Array[Array[String]] read_group_fields
     String sample_name
@@ -43,6 +44,7 @@ workflow immuno {
     String? strand  # [first, second, unstranded]
     File refFlat
     File? ribosomal_intervals
+    Boolean? unzip_fastqs
 
     # --------- Somatic Exome Inputs -----------------------------------
 
@@ -180,7 +182,7 @@ workflow immuno {
     reference_index_7ht2=reference_index_7ht2,
     reference_index_8ht2=reference_index_8ht2,
     reference_annotation=reference_annotation,
-    instrument_data_bams=rna_bams,
+    rna_sequence=rna_sequence,
     read_group_id=rna_readgroups,
     read_group_fields=read_group_fields,
     sample_name=sample_name,
@@ -193,7 +195,8 @@ workflow immuno {
     gene_transcript_lookup_table=gene_transcript_lookup_table,
     strand=strand,
     refFlat=refFlat,
-    ribosomal_intervals=ribosomal_intervals
+    ribosomal_intervals=ribosomal_intervals,
+    unzip_fastqs=unzip_fastqs
   }
 
   call se.somaticExome as somatic {

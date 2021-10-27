@@ -2,11 +2,13 @@ version 1.0
 
 import "../tools/bam_to_fastq.wdl" as b2f
 import "../tools/trim_fastq.wdl" as tf
+import "../sequence_to_fastq_rna.wdl" as stfr
 import "../tools/hisat2_align.wdl" as ha
+import "../types.wdl"
 
 workflow bamToTrimmedFastqAndHisatAlignments {
   input {
-    File bam
+    SequenceData unaligned
     File adapters
     String adapter_trim_end
     Int adapter_min_overlap
@@ -24,16 +26,20 @@ workflow bamToTrimmedFastqAndHisatAlignments {
     File reference_index_7ht2
     File reference_index_8ht2
     String? strand  # [first, second, unstranded]
+    Boolean? unzip_fastqs
   }
 
-  call b2f.bamToFastq {
-    input: bam=bam
+  call stfr.sequenceToFastqRna {
+    input:
+    bam=unaligned.sequence.bam,
+    fastq1=unaligned.sequence.fastq1,
+    fastq2=unaligned.sequence.fastq2
   }
 
   call tf.trimFastq {
     input:
-    reads1=bamToFastq.fastq1,
-    reads2=bamToFastq.fastq2,
+    reads1=sequenceToFastq.fastq1,
+    reads2=sequenceToFastq.fastq2,
     adapters=adapters,
     adapter_trim_end=adapter_trim_end,
     adapter_min_overlap=adapter_min_overlap,

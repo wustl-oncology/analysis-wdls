@@ -3,12 +3,12 @@ version 1.0
 task kallisto {
   input {
     File kallisto_index
-    Array[File] fastqs
+    Array[Array[File]] fastqs
     String strand = "unstranded"  # [first, second, unstranded]
   }
 
   Int cores = 8
-  Int space_needed_gb = 10 + round(size(fastqs, "GB") + size(kallisto_index, "GB"))
+  Int space_needed_gb = 10 + round(size(flatten(fastqs), "GB") + size(kallisto_index, "GB"))
   runtime {
     memory: "32GB"
     cpu: cores
@@ -23,7 +23,7 @@ task kallisto {
   }
   command <<<
     kallisto quant -t ~{cores} -b 100 --fusion -o kallisto \
-    ~{strandness[strand]} -i ~{kallisto_index} ~{sep=" " fastqs}
+    ~{strandness[strand]} -i ~{kallisto_index} ~{sep=" " flatten(fastqs)}
   >>>
 
   # TODO: how much space to allocate

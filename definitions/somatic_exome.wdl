@@ -1,14 +1,15 @@
 version 1.0
 
-import "../types.wdl"
-import "../pipelines/alignment_exome.wdl" as ae
-import "../pipelines/detect_variants.wdl" as dv
-import "../tools/bam_to_cram.wdl" as btc
-import "../tools/cnvkit_batch.wdl" as cb
-import "../tools/concordance.wdl" as c
-import "../tools/index_cram.wdl" as ic
-import "../tools/interval_list_expand.wdl" as ile
-import "../tools/manta_somatic.wdl" as ms
+import "alignment_exome.wdl" as ae
+import "detect_variants.wdl" as dv
+import "types.wdl"
+
+import "tools/bam_to_cram.wdl" as btc
+import "tools/cnvkit_batch.wdl" as cb
+import "tools/concordance.wdl" as c
+import "tools/index_cram.wdl" as ic
+import "tools/interval_list_expand.wdl" as ile
+import "tools/manta_somatic.wdl" as ms
 
 
 workflow somaticExome {

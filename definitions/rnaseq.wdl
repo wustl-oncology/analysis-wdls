@@ -1,15 +1,16 @@
 version 1.0
 
-import "../tools/kallisto.wdl" as k
-import "../tools/transcript_to_gene.wdl" as ttg
-import "../tools/samtools_sort.wdl" as ss
-import "../tools/merge_bams.wdl" as mb
-import "../tools/index_bam.wdl" as ib
-import "../tools/mark_duplicates_and_sort.wdl" as mdas
-import "../tools/stringtie.wdl" as st
-import "../tools/generate_qc_metrics.wdl" as gqm
-import "../tools/bam_to_bigwig.wdl" as btb
-import "../subworkflows/bam_to_trimmed_fastq_and_hisat_alignments.wdl" as bttfaha
+import "subworkflows/bam_to_trimmed_fastq_and_hisat_alignments.wdl" as bttfaha
+import "tools/bam_to_bigwig.wdl" as btb
+import "tools/generate_qc_metrics.wdl" as gqm
+import "tools/index_bam.wdl" as ib
+import "tools/kallisto.wdl" as k
+import "tools/mark_duplicates_and_sort.wdl" as mdas
+import "tools/merge_bams.wdl" as mb
+import "tools/samtools_sort.wdl" as ss
+import "tools/stringtie.wdl" as st
+import "tools/transcript_to_gene.wdl" as ttg
+import "types.wdl"
 
 workflow rnaseq {
   input {
@@ -29,7 +30,7 @@ workflow rnaseq {
 
     File reference_annotation
     Array[String] read_group_id
-    Array[File] instrument_data_bams
+    Array[SequenceData] rna_sequence
     Array[Array[String]] read_group_fields
     String? strand  # [first, second, unstranded]
     String sample_name
@@ -44,14 +45,15 @@ workflow rnaseq {
     File gene_transcript_lookup_table
     File refFlat
     File? ribosomal_intervals
+    Boolean? unzip_fastqs
   }
 
-  scatter(bam in instrument_data_bams) {
+  scatter(sequence in rna_sequence) {
     scatter(id in read_group_id) {
       scatter(fields in read_group_fields) {
-        call bttfaha.bamToTrimmedFastqAndHisatAlignments {
+        call sttfaha.sequenceToTrimmedFastqAndHisatAlignments {
           input:
-          bam=bam,
+          unaligned=sequence,
           read_group_id=id,
           read_group_fields=fields,
           adapters=trimming_adapters,
@@ -68,7 +70,8 @@ workflow rnaseq {
           reference_index_6ht2=reference_index_6ht2,
           reference_index_7ht2=reference_index_7ht2,
           reference_index_8ht2=reference_index_8ht2,
-          strand=strand
+          strand=strand,
+          unzip_fastqs=unzip_fastqs
         }
       }
     }
@@ -89,7 +92,7 @@ workflow rnaseq {
 
   # TODO: remove extra sort
   call mb.mergeBams as merge {
-    input: bams=flatten(flatten(bamToTrimmedFastqAndHisatAlignments.aligned_bam))
+    input: bams=flatten(flatten(sequenceToTrimmedFastqAndHisatAlignments.aligned_bam))
   }
 
   call ss.samtoolsSort as positionSort {

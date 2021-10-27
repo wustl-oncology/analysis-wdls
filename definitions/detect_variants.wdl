@@ -1,21 +1,21 @@
 version 1.0
 
-import "../subworkflows/docm_cle.wdl" as dc
-import "../subworkflows/filter_vcf.wdl" as fv
-import "../subworkflows/mutect.wdl" as m
-import "../subworkflows/pindel.wdl" as p
-import "../subworkflows/strelka_and_post_processing.wdl" as sapp
-import "../subworkflows/varscan_pre_and_post_processing.wdl" as vpapp
-import "../subworkflows/vcf_readcount.wdl" as vr
+import "subworkflows/docm_cle.wdl" as dc
+import "subworkflows/filter_vcf.wdl" as fv
+import "subworkflows/mutect.wdl" as m
+import "subworkflows/pindel.wdl" as p
+import "subworkflows/strelka_and_post_processing.wdl" as sapp
+import "subworkflows/varscan_pre_and_post_processing.wdl" as vpapp
+import "subworkflows/vcf_readcount.wdl" as vr
 
-import "../tools/add_vep_fields_to_table.wdl" as avftt
-import "../tools/bgzip.wdl" as b
-import "../tools/combine_variants.wdl" as cv
-import "../tools/docm_add_variants.wdl" as dav
-import "../tools/index_vcf.wdl" as iv
-import "../tools/variants_to_table.wdl" as vtt
-import "../tools/vep.wdl" as v
-import "../tools/vt_decompose.wdl" as vd
+import "tools/add_vep_fields_to_table.wdl" as avftt
+import "tools/bgzip.wdl" as b
+import "tools/combine_variants.wdl" as cv
+import "tools/docm_add_variants.wdl" as dav
+import "tools/index_vcf.wdl" as iv
+import "tools/variants_to_table.wdl" as vtt
+import "tools/vep.wdl" as v
+import "tools/vt_decompose.wdl" as vd
 
 workflow detectVariants {
   input {
