@@ -1,0 +1,34 @@
+version 1.0
+
+task collectWgsMetrics {
+  input {
+    String sample_name = "final"
+    File bam
+    File bam_bai
+    File reference
+    File reference_fai
+    File reference_dict
+    File? intervals
+    Int? minimum_mapping_quality
+    Int? minimum_base_quality
+  }
+
+  runtime {
+    memory: "18GB"
+    docker: "broadinstitute/picard:2.23.6"
+  }
+
+  String outname = sample_name + ".WgsMetrics.txt"
+  command <<<
+    /usr/bin/java -Xmx16g -jar /usr/picard/picard.jar CollectWgsMetrics \
+    O=~{outname} \
+    I=~{bam} R=~{reference} \
+    ~{if defined(intervals) then "INTERVALS=" + select_first([intervals]) else ""} \
+    ~{if defined(minimum_mapping_quality) then "MINIMUM_MAPPING_QUALITY=" + select_first([minimum_mapping_quality]) else ""} \
+    ~{if defined(minimum_base_quality) then "MINIMUM_BASE_QUALITY=" + select_first([minimum_base_quality]) else ""}
+  >>>
+
+  output {
+    File wgs_metrics = outname
+  }
+}
