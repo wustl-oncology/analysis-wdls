@@ -33,7 +33,6 @@ task strelka {
     ~{if exome_mode then "--exome" else ""}
   >>>
 
-  # TODO: how much space to allocate?
   output {
     File indels = "results/variants/somatic.indels.vcf.gz"
     File indels_tbi = "results/variants/somatic.indels.vcf.gz.tbi"

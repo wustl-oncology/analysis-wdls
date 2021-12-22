@@ -30,7 +30,6 @@ task generateQcMetrics {
     STRAND=~{strandness[strand]} I=~{bam}
   >>>
 
-  # TODO: how much space to allocate?
   output {
     File metrics= "rna_metrics.txt"
     File? chart = "rna_metrics.pdf"

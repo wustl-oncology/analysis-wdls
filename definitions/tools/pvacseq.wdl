@@ -51,10 +51,7 @@ task pvacseq {
     disks: "local-disk ~{space_needed_gb} SSD"
   }
 
-  # TODO: run CWL to see what this command actually looks like
-  # specifically prediction_algorithms and allele-specific-binding-thresholds
-
-  # explicit typing required
+  # explicit typing required, don't inline
   Array[Int] epitope_i = select_first([epitope_lengths_class_i, []])
   Array[Int] epitope_ii = select_first([epitope_lengths_class_ii, []])
   command <<<

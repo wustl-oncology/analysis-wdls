@@ -19,7 +19,6 @@ task transcriptToGene {
         ~{gene_transcript_lookup_table} ~{transcript_table_h5}
   >>>
 
-  # TODO: how much space to allocate
   output {
     File gene_abundance = "gene_abundance.tsv"
   }

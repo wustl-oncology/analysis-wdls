@@ -43,7 +43,7 @@ task starAlignFusion {
     disks: "local-disk ~{space_needed_gb} SSD"
   }
 
-  # TODO: align_sjstitch_mismatch_nmax, outsam_attributes, and outsam_attrrg_line have shellQuote: False
+  # TODO(john): align_sjstitch_mismatch_nmax, outsam_attributes, and outsam_attrrg_line have shellQuote: False
   # do they need special treatment?
   String genome_dir = basename(star_genome_dir_zip, ".zip")
   command <<<

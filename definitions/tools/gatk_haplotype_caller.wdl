@@ -29,7 +29,6 @@ task gatkHaplotypeCaller {
     disks: "local-disk ~{space_needed_gb} SSD"
   }
 
-  # TODO: also check alphanumeric, /^0-9A-Za-z]+$/
   Array[String] pref_bands = prefix("-GQB ", gvcf_gq_bands)
   command <<<
     # requires .bai not .bam.bai

@@ -24,7 +24,6 @@ task collectInsertSizeMetrics {
     /usr/bin/java -Xmx16g -jar /usr/picard/picard.jar CollectInsertSizeMetrics O=~{size_metrics} H=~{size_histogram} I=~{bam} REFERENCE_SEQUENCE=~{reference} METRIC_ACCUMULATION_LEVEL=~{metric_accumulation_level}
   >>>
 
-  # TODO: how much space to allocate for output files? what do they scale with?
   output {
     File insert_size_histogram = size_histogram
     File insert_size_metrics = size_metrics

@@ -38,7 +38,6 @@ task pindel {
     ~{if defined(region_file) then "-j ~{region_file}" else ""}
   >>>
 
-  # TODO: how much space to allocate?
   output {
     File deletions = "all_D"
     File insertions = "all_SI"

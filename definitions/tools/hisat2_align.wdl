@@ -46,7 +46,7 @@ task hisat2Align {
     "second":     "--rna-strandness FR",
     "unstranded": ""
   }
-  # TODO: remove view+sort
+
   command <<<
     /usr/local/bin/hisat2 \
             ~{strandness[strand]} \

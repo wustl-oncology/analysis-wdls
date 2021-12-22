@@ -26,7 +26,6 @@ task kallisto {
     ~{strandness[strand]} -i ~{kallisto_index} ~{sep=" " flatten(fastqs)}
   >>>
 
-  # TODO: how much space to allocate
   output {
     File expression_transcript_table = "kallisto/abundance.tsv"
     File expression_transcript_h5 = "kallisto/abundance.h5"

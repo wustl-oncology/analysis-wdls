@@ -18,12 +18,12 @@ workflow gatkHaplotypecallerIterator {
     Int? max_alternate_alleles
     Int? ploidy
     String? read_filter
-    String? output_prefix
+    String output_prefix = ""
   }
 
 
   scatter(interval_sublist in intervals) {
-    # TODO: if only alphanumeric
+    # TODO(john): if only alphanumeric
     String base = if length(interval_sublist) == 1 then interval_sublist[0] else "output"
     call ghc.gatkHaplotypeCaller as haplotypeCaller {
       input:
@@ -41,7 +41,7 @@ workflow gatkHaplotypecallerIterator {
       max_alternate_alleles=max_alternate_alleles,
       ploidy=ploidy,
       read_filter=read_filter,
-      output_file_name = select_first([output_prefix, ""]) + base + ".g.vcf.gz"
+      output_file_name = output_prefix + base + ".g.vcf.gz"
     }
   }
 

@@ -148,7 +148,7 @@ workflow rnaseqStarFusion {
 
   output {
     File cram = indexCram.indexed_cram
-    File cram_crai = indexCram.indexed_cram_crai  # TODO indexed_crai also?
+    File cram_crai = indexCram.indexed_cram_crai
     File star_fusion_out = starAlignFusion.chim_junc
     File star_junction_out = starAlignFusion.splice_junction_out
     File star_fusion_log = starAlignFusion.log_final
