@@ -2,7 +2,12 @@ version 1.0
 
 import "alignment_wgs.wdl" as aw
 import "detect_variants_wgs.wdl" as dvw
+
+import "tools/bam_to_cram.wdl" as btc
 import "tools/concordance.wdl" as c
+import "tools/index_cram.wdl" as ic
+import "tools/manta_somatic.wdl" as ms
+
 import "types.wdl"
 
 workflow somaticWgs {
@@ -23,7 +28,7 @@ workflow somaticWgs {
     TrimmingOptions? trimming
 
     Array[File] bqsr_known_sites
-    Array[File] bqsr_known_sites_tbis
+    Array[File] bqsr_known_sites_tbi
     Array[String]? bqsr_intervals
 
     File target_intervals
@@ -42,9 +47,6 @@ workflow somaticWgs {
 
     Int strelka_cpu_reserved = 8
     Int scatter_count
-    Boolean mutect_artifact_detection_mode = false
-    Float? mutect_max_alt_allele_in_normal_fraction
-    Int? mutect_max_alt_alleles_in_normal_count
     Int varscan_strand_filter = 0
     Int varscan_min_coverage = 8
     Float varscan_min_var_freq = 0.05
@@ -71,8 +73,6 @@ workflow somaticWgs {
     Array[String] variants_to_table_genotype_fields = ["GT", "AD"]
     Array[String] vep_to_table_fields = ["HGVSc", "HGVSp"]
     Array[VepCustomAnnotation] vep_custom_annotations
-    File? manta_call_regions
-    File? manta_call_regions_tbi
     Boolean manta_non_wgs = false
     Boolean? manta_output_contigs
     File somalier_vcf
@@ -80,7 +80,6 @@ workflow somaticWgs {
     String normal_sample_name
     File? validated_variants
     File? validated_variants_tbi
-    Int? cnvkit_target_average_size
   }
 
   call aw.alignmentWgs as tumorAlignmentAndQc {
@@ -99,13 +98,15 @@ workflow somaticWgs {
     omni_vcf=omni_vcf,
     omni_vcf_tbi=omni_vcf_tbi,
     intervals=qc_intervals,
-    picard_metrics_accumulation_level=picard_metrics_accumulation_level,
+    picard_metric_accumulation_level=picard_metric_accumulation_level,
     bqsr_known_sites=bqsr_known_sites,
+    bqsr_known_sites_tbi=bqsr_known_sites_tbi,
     bqsr_intervals=bqsr_intervals,
     minimum_mapping_quality=qc_minimum_mapping_quality,
     minimum_base_quality=qc_minimum_base_quality,
     per_base_intervals=per_base_intervals,
-    per_target_intervals=per_target_intervals
+    per_target_intervals=per_target_intervals,
+    summary_intervals=summary_intervals
   }
 
   call aw.alignmentWgs as normalAlignmentAndQc {
@@ -124,13 +125,15 @@ workflow somaticWgs {
     omni_vcf=omni_vcf,
     omni_vcf_tbi=omni_vcf_tbi,
     intervals=qc_intervals,
-    picard_metrics_accumulation_level=picard_metrics_accumulation_level,
+    picard_metric_accumulation_level=picard_metric_accumulation_level,
     bqsr_known_sites=bqsr_known_sites,
+    bqsr_known_sites_tbi=bqsr_known_sites_tbi,
     bqsr_intervals=bqsr_intervals,
     minimum_mapping_quality=qc_minimum_mapping_quality,
     minimum_base_quality=qc_minimum_base_quality,
-    per_baes_intervals=per_baes_intervals,
-    per_target_intervals=per_target_intervals
+    per_base_intervals=per_base_intervals,
+    per_target_intervals=per_target_intervals,
+    summary_intervals=summary_intervals
   }
 
   call c.concordance {
@@ -148,17 +151,16 @@ workflow somaticWgs {
   call dvw.detectVariantsWgs as detectVariants {
     input:
     reference=reference,
-    tumor_bam=tumorAlignmentAndQc/bam,
-    tumor_bam_bai=tumorAlignmentAndQc/bam_bai,
-    normal_bam=normalAlignmentAndQc/bam,
-    normal_bam_bai=normalAlignmentAndQc/bam_bai,
+    reference_fai=reference_fai,
+    reference_dict=reference_dict,
+    tumor_bam=tumorAlignmentAndQc.bam,
+    tumor_bam_bai=tumorAlignmentAndQc.bam_bai,
+    normal_bam=normalAlignmentAndQc.bam,
+    normal_bam_bai=normalAlignmentAndQc.bam_bai,
     roi_intervals=target_intervals,
     strelka_exome_mode=false,
     strelka_cpu_reserved=strelka_cpu_reserved,
     scatter_count=scatter_count,
-    mutect_artifact_detection_mode=mutect_artifact_detection_mode,
-    mutect_max_alt_allele_in_normal_fraction=mutect_max_alt_allele_in_normal_fraction,
-    mutect_max_alt_alleles_in_normal_count=mutect_max_alt_alleles_in_normal_count,
     varscan_strand_filter=varscan_strand_filter,
     varscan_min_coverage=varscan_min_coverage,
     varscan_min_var_freq=varscan_min_var_freq,
@@ -187,15 +189,6 @@ workflow somaticWgs {
     vep_custom_annotations=vep_custom_annotations,
     validated_variants=validated_variants,
     validated_variants_tbi=validated_variants_tbi
-  }
-
-  call cb.cnvkitBatch as cnvkit {
-    input:
-    tumor_bam=tumorAlignmentAndQc.bam,
-    normal_bam=normalAlignmentAndQc.bam,
-    reference=reference,
-    method="wgs",
-    target_average_size=cnvkit_target_average_size
   }
 
   call ms.mantaSomatic as manta {
@@ -274,23 +267,23 @@ workflow somaticWgs {
     File normal_wgs_metrics = normalAlignmentAndQc.wgs_metrics
 ##variant calling
     File mutect_unfiltered_vcf = detectVariants.mutect_unfiltered_vcf
-    File mutect_unfiltered_vcf = detectVariants.mutect_unfiltered_vcf_tbi
+    File mutect_unfiltered_vcf_tbi = detectVariants.mutect_unfiltered_vcf_tbi
     File mutect_filtered_vcf = detectVariants.mutect_filtered_vcf
-    File mutect_filtered_vcf = detectVariants.mutect_filtered_vcf_tbi
+    File mutect_filtered_vcf_tbi = detectVariants.mutect_filtered_vcf_tbi
     File strelka_unfiltered_vcf = detectVariants.strelka_unfiltered_vcf
-    File strelka_unfiltered_vcf = detectVariants.strelka_unfiltered_vcf_tbi
+    File strelka_unfiltered_vcf_tbi = detectVariants.strelka_unfiltered_vcf_tbi
     File strelka_filtered_vcf = detectVariants.strelka_filtered_vcf
-    File strelka_filtered_vcf = detectVariants.strelka_filtered_vcf_tbi
+    File strelka_filtered_vcf_tbi = detectVariants.strelka_filtered_vcf_tbi
     File varscan_unfiltered_vcf = detectVariants.varscan_unfiltered_vcf
-    File varscan_unfiltered_vcf = detectVariants.varscan_unfiltered_vcf_tbi
+    File varscan_unfiltered_vcf_tbi = detectVariants.varscan_unfiltered_vcf_tbi
     File varscan_filtered_vcf = detectVariants.varscan_filtered_vcf
-    File varscan_filtered_vcf = detectVariants.varscan_filtered_vcf_tbi
+    File varscan_filtered_vcf_tbi = detectVariants.varscan_filtered_vcf_tbi
     File docm_filtered_vcf = detectVariants.docm_filtered_vcf
-    File docm_filtered_vcf = detectVariants.docm_filtered_vcf_tbi
+    File docm_filtered_vcf_tbi = detectVariants.docm_filtered_vcf_tbi
     File final_vcf = detectVariants.final_vcf
-    File final_vcf = detectVariants.final_vcf_tbi
+    File final_vcf_tbi = detectVariants.final_vcf_tbi
     File final_filtered_vcf = detectVariants.final_filtered_vcf
-    File final_filtered_vcf = detectVariants.final_filtered_vcf_tbi
+    File final_filtered_vcf_tbi = detectVariants.final_filtered_vcf_tbi
     File final_tsv = detectVariants.final_tsv
     File vep_summary = detectVariants.vep_summary
     File tumor_snv_bam_readcount_tsv = detectVariants.tumor_snv_bam_readcount_tsv
@@ -298,15 +291,15 @@ workflow somaticWgs {
     File normal_snv_bam_readcount_tsv = detectVariants.normal_snv_bam_readcount_tsv
     File normal_indel_bam_readcount_tsv = detectVariants.normal_indel_bam_readcount_tsv
     File? diploid_variants = manta.diploid_variants
-    File? diploid_variants = manta.diploid_variants_tbi
+    File? diploid_variants_tbi = manta.diploid_variants_tbi
     File? somatic_variants = manta.somatic_variants
-    File? somatic_variants = manta.somatic_variants_tbi
+    File? somatic_variants_tbi = manta.somatic_variants_tbi
     File all_candidates = manta.all_candidates
-    File all_candidates = manta.all_candidates_tbi
+    File all_candidates_tbi = manta.all_candidates_tbi
     File small_candidates = manta.small_candidates
-    File small_candidates = manta.small_candidates_tbi
+    File small_candidates_tbi = manta.small_candidates_tbi
     File? tumor_only_variants = manta.tumor_only_variants
-    File? tumor_only_variants = manta.tumor_only_variants_tbi
+    File? tumor_only_variants_tbi = manta.tumor_only_variants_tbi
 ##sample concordance check
     File somalier_concordance_metrics = concordance.somalier_pairs
     File somalier_concordance_statistics = concordance.somalier_samples

@@ -18,7 +18,7 @@ task bqsr {
   Float known_sites_size = size(known_sites, "GB") + size(known_sites_tbi, "GB")
   Float bam_size = size([bam, bam_bai], "GB")
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
-  Int space_needed_gb = 10 + round(known_sites_size  + bam_size, reference_size)
+  Int space_needed_gb = 10 + round(known_sites_size  + bam_size + reference_size)
   runtime {
     docker: "broadinstitute/gatk:4.1.8.1"
     memory: "18GB"

@@ -6,7 +6,7 @@ import "../tools/merge_bams.wdl" as mb
 import "../tools/name_sort.wdl" as ns
 import "../tools/mark_duplicates_and_sort.wdl" as mdas
 import "../tools/index_bam.wdl" as ib
-import "../tools/bqsr.wdl" as bqsr
+import "../tools/bqsr.wdl" as b
 import "../tools/apply_bqsr.wdl" as ab
 
 workflow sequenceToBqsr {
@@ -59,7 +59,7 @@ workflow sequenceToBqsr {
     input: bam=nameSort.name_sorted_bam
   }
 
-  call bqsr.bqsr {
+  call b.bqsr {
     input:
     reference=reference,
     reference_fai=reference_fai,

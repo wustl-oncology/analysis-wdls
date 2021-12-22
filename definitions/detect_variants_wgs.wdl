@@ -31,13 +31,12 @@ workflow detectVariantsWgs {
     Int strelka_cpu_reserved = 8
     Int? readcount_minimum_base_quality
     Int? readcount_minimum_mapping_quality
-    Int? scatter_count
+    Int scatter_count
     Int varscan_strand_filter = 0
     Int varscan_min_coverage = 8
     Float varscan_min_var_freq = 0.1
     Float varscan_p_value = 0.99
     Float? varscan_max_normal_freq
-    Int pindel_insert_size = 400
     File docm_vcf
     File docm_vcf_tbi
     Boolean filter_docm_variants = true
@@ -82,7 +81,7 @@ workflow detectVariantsWgs {
     tumor_sample_name=tumor_sample_name
   }
 
-  call sapp.strelkaAndPostProcess as strelka {
+  call sapp.strelkaAndPostProcessing as strelka {
     input:
     reference=reference,
     reference_fai=reference_fai,
@@ -168,8 +167,8 @@ workflow detectVariantsWgs {
 
   call vd.vtDecompose as decompose {
     input:
-    vcf=decompose.decomposed_vcf,
-    vcf_tbi=decompose.decomposed_vcf_tbi
+    vcf=docmAddVariants.merged_vcf,
+    vcf_tbi=docmAddVariants.merged_vcf_tbi
   }
 
   call iv.indexVcf as decomposeIndex {
@@ -222,7 +221,7 @@ workflow detectVariantsWgs {
 
   call vra.vcfReadcountAnnotator as addTumorBamReadcountToVcf {
     input:
-    vcf=annotate_variants.annotated_vcf,
+    vcf=annotateVariants.annotated_vcf,
     snv_bam_readcount_tsv=tumorBamReadcount.snv_bam_readcount_tsv,
     indel_bam_readcount_tsv=tumorBamReadcount.indel_bam_readcount_tsv,
     data_type="DNA",
@@ -293,25 +292,25 @@ workflow detectVariantsWgs {
 
   output {
     File mutect_unfiltered_vcf = mutect.unfiltered_vcf
-    File mutect_unfiltered_vcf = mutect.unfiltered_vcf_tbi
+    File mutect_unfiltered_vcf_tbi = mutect.unfiltered_vcf_tbi
     File mutect_filtered_vcf = mutect.filtered_vcf
-    File mutect_filtered_vcf = mutect.filtered_vcf_tbi
+    File mutect_filtered_vcf_tbi = mutect.filtered_vcf_tbi
     File strelka_unfiltered_vcf = strelka.unfiltered_vcf
-    File strelka_unfiltered_vcf = strelka.unfiltered_vcf_tbi
+    File strelka_unfiltered_vcf_tbi = strelka.unfiltered_vcf_tbi
     File strelka_filtered_vcf = strelka.filtered_vcf
-    File strelka_filtered_vcf = strelka.filtered_vcf_tbi
+    File strelka_filtered_vcf_tbi = strelka.filtered_vcf_tbi
     File varscan_unfiltered_vcf = varscan.unfiltered_vcf
-    File varscan_unfiltered_vcf = varscan.unfiltered_vcf_tbi
+    File varscan_unfiltered_vcf_tbi = varscan.unfiltered_vcf_tbi
     File varscan_filtered_vcf = varscan.filtered_vcf
-    File varscan_filtered_vcf = varscan.filtered_vcf_tbi
+    File varscan_filtered_vcf_tbi = varscan.filtered_vcf_tbi
     File docm_filtered_vcf = docm.docm_variants_vcf
-    File docm_filtered_vcf = docm.docm_variants_vcf_tbi
+    File docm_filtered_vcf_tbi = docm.docm_variants_vcf_tbi
     File final_vcf = index.indexed_vcf
-    File final_vcf = index.indexed_vcf_tbi
+    File final_vcf_tbi = index.indexed_vcf_tbi
     File final_filtered_vcf = annotatedFilterIndex.indexed_vcf
-    File final_filtered_vcf = annotatedFilterIndex.indexed_vcf_tbi
+    File final_filtered_vcf_tbi = annotatedFilterIndex.indexed_vcf_tbi
     File final_tsv = addVepFieldsToTable.annotated_variants_tsv
-    File vep_summary = annotate_variants.vep_summary
+    File vep_summary = annotateVariants.vep_summary
     File tumor_snv_bam_readcount_tsv = tumorBamReadcount.snv_bam_readcount_tsv
     File tumor_indel_bam_readcount_tsv = tumorBamReadcount.indel_bam_readcount_tsv
     File normal_snv_bam_readcount_tsv = normalBamReadcount.snv_bam_readcount_tsv

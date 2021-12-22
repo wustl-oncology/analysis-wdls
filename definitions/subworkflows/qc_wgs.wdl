@@ -1,14 +1,14 @@
 version 1.0
 
-import "subworkflows/hs_metrics.wdl" as hm
-import "tools/bam_to_bigwig.wdl" as btb
-import "tools/collect_alignment_summary_metrics.wdl" as casm
-import "tools/collect_gc_bias_metrics.wdl" as cgbm
-import "tools/collect_insert_size_metrics.wdl" as cism
-import "tools/collect_wgs_metrics.wdl" as cwm
-import "tools/samtools_flagstat.wdl" as sf
-import "tools/verify_bam_id.wdl" as vbi
-import "types.wdl"
+import "../subworkflows/hs_metrics.wdl" as hm
+import "../tools/bam_to_bigwig.wdl" as btb
+import "../tools/collect_alignment_summary_metrics.wdl" as casm
+import "../tools/collect_gc_bias_metrics.wdl" as cgbm
+import "../tools/collect_insert_size_metrics.wdl" as cism
+import "../tools/collect_wgs_metrics.wdl" as cwm
+import "../tools/samtools_flagstat.wdl" as sf
+import "../tools/verify_bam_id.wdl" as vbi
+import "../types.wdl"
 
 workflow qcWgs {
   input {

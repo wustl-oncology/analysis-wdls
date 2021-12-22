@@ -16,7 +16,7 @@ task collectWgsMetrics {
   Float bam_size = size([bam, bam_bai], "GB")
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
   Float intervals_size = size(intervals, "GB")
-  Int space_needed_gb = 10 + round(bam_size_gb + reference_size_gb + intervals_size)
+  Int space_needed_gb = 10 + round(bam_size + reference_size + intervals_size)
   runtime {
     memory: "18GB"
     docker: "broadinstitute/picard:2.23.6"

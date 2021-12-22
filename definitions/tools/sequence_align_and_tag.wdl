@@ -7,7 +7,6 @@ task sequenceAlignAndTag {
     SequenceData unaligned
     TrimmingOptions? trimming
     File reference
-    # secondary files. Must be separate in WDL
     File reference_amb
     File reference_ann
     File reference_bwt

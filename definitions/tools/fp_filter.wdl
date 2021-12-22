@@ -52,6 +52,7 @@ workflow wf {
     reference_dict=reference_dict,
     bam=bam,
     vcf=vcf,
+    output_vcf_basename=output_vcf_basename,
     sample_name=sample_name
   }
 }

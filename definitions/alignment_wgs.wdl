@@ -24,7 +24,7 @@ workflow alignmentWgs {
     File intervals
     String picard_metric_accumulation_level
     Array[File] bqsr_known_sites
-    Array[File] bqsr_known_sites_tbis
+    Array[File] bqsr_known_sites_tbi
 
     Array[String]? bqsr_intervals
     Int? minimum_mapping_quality
@@ -57,6 +57,7 @@ workflow alignmentWgs {
     input:
     sample_name=sample_name,
     bam=alignment.final_bam,
+    bam_bai=alignment.final_bam_bai,
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
@@ -73,6 +74,7 @@ workflow alignmentWgs {
 
   output {
     File bam = alignment.final_bam
+    File bam_bai = alignment.final_bam_bai
     File mark_duplicates_metrics = alignment.mark_duplicates_metrics_file
     File insert_size_metrics = qc.insert_size_metrics
     File insert_size_histogram = qc.insert_size_histogram

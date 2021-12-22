@@ -17,8 +17,7 @@ task combineVariantsWgs {
   Float mutect_size = size([mutect_vcf, mutect_vcf_tbi], "GB")
   Float varscan_size = size([varscan_vcf, varscan_vcf_tbi], "GB")
   Float strelka_size = size([strelka_vcf, strelka_vcf_tbi], "GB")
-  Float pindel_size = size([pindel_vcf, pindel_vcf_tbi], "GB")
-  Int space_needed_gb = 10 + round(ref_size + mutect_size + varscan_size + strelka_size + pindel_size)*2
+  Int space_needed_gb = 10 + round(ref_size + mutect_size + varscan_size + strelka_size)*2
   runtime {
     memory: "9GB"
     docker:  "mgibio/gatk-cwl:3.6.0"
@@ -40,5 +39,6 @@ task combineVariantsWgs {
 
   output {
     File combined_vcf = outfile
+    File combined_vcf_tbi = outfile + ".tbi"
   }
 }

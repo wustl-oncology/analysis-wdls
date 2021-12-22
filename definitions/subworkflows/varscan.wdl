@@ -9,11 +9,9 @@ workflow varscan {
     File reference_fai
     File reference_dict
 
-    String tumor_sample_name
     File tumor_bam
     File tumor_bam_bai
 
-    String normal_sample_name
     File normal_bam
     File normal_bam_bai
 

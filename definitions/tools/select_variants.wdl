@@ -33,7 +33,7 @@ task selectVariants {
     -R ~{reference} \
     --variant ~{vcf} \
     ~{if defined(interval_list) then "-L ~{interval_list}" else ""} \
-    ~{if exclude_filtered then "--exclude-filtered ~{select_first([exclude_filtered])}" else ""} \
+    ~{if exclude_filtered then "--exclude-filtered ~{exclude_filtered}" else ""} \
     ~{sep=" " samples} \
     ~{if defined(select_type) then "-select-type ~{select_type}" else ""}
   >>>
