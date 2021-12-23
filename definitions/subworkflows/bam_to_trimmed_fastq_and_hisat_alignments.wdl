@@ -2,7 +2,7 @@ version 1.0
 
 import "../tools/bam_to_fastq.wdl" as b2f
 import "../tools/trim_fastq.wdl" as tf
-import "../sequence_to_fastq_rna.wdl" as stfr
+import "../tools/sequence_to_fastq_rna.wdl" as stfr
 import "../tools/hisat2_align.wdl" as ha
 import "../types.wdl"
 
