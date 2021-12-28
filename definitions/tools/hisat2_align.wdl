@@ -65,4 +65,38 @@ task hisat2Align {
   }
 }
 
-workflow wf { call hisat2Align { input: } }
+workflow wf {
+  input {
+    File reference_index
+    File reference_index_1ht2
+    File reference_index_2ht2
+    File reference_index_3ht2
+    File reference_index_4ht2
+    File reference_index_5ht2
+    File reference_index_6ht2
+    File reference_index_7ht2
+    File reference_index_8ht2
+    File fastq1
+    File fastq2
+    String read_group_id
+    Array[String] read_group_fields
+    String? strand
+  }
+  call hisat2Align {
+    input:
+    reference_index=reference_index,
+    reference_index_1ht2=reference_index_1ht2,
+    reference_index_2ht2=reference_index_2ht2,
+    reference_index_3ht2=reference_index_3ht2,
+    reference_index_4ht2=reference_index_4ht2,
+    reference_index_5ht2=reference_index_5ht2,
+    reference_index_6ht2=reference_index_6ht2,
+    reference_index_7ht2=reference_index_7ht2,
+    reference_index_8ht2=reference_index_8ht2,
+    fastq1=fastq1,
+    fastq2=fastq2,
+    read_group_id=read_group_id,
+    read_group_fields=read_group_fields,
+    strand=strand
+  }
+}

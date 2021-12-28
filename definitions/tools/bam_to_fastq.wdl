@@ -25,4 +25,7 @@ task bamToFastq {
   }
 }
 
-workflow wf { call bamToFastq { input: } }
+workflow wf {
+  input { File bam }
+  call bamToFastq { input: bam=bam }
+}

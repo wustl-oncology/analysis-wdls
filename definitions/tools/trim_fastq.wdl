@@ -38,4 +38,24 @@ task trimFastq {
   }
 }
 
-workflow wf { call trimFastq { input: } }
+workflow wf {
+  input {
+    File adapters
+    String adapter_trim_end
+    Int adapter_min_overlap
+    Int max_uncalled
+    Int min_readlength
+    File reads1
+    File reads2
+  }
+  call trimFastq {
+    input:
+    adapters=adapters,
+    adapter_trim_end=adapter_trim_end,
+    adapter_min_overlap=adapter_min_overlap,
+    max_uncalled=max_uncalled,
+    min_readlength=min_readlength,
+    reads1=reads1,
+    reads2=reads2
+  }
+}

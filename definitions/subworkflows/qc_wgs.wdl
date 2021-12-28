@@ -8,7 +8,7 @@ import "../tools/collect_insert_size_metrics.wdl" as cism
 import "../tools/collect_wgs_metrics.wdl" as cwm
 import "../tools/samtools_flagstat.wdl" as sf
 import "../tools/verify_bam_id.wdl" as vbi
-import "../types.wdl"
+import "../types.wdl"  # !UnusedImport
 
 workflow qcWgs {
   input {

@@ -2,7 +2,7 @@ version 1.0
 
 import "../tools/sequence_to_fastq_rna.wdl" as stfr
 import "../tools/trim_fastq.wdl" as tf
-import "../types.wdl"
+import "../types.wdl"  # !UnusedImport
 
 workflow sequenceToTrimmedFastq {
   input {
@@ -25,8 +25,8 @@ workflow sequenceToTrimmedFastq {
 
   call tf.trimFastq {
     input:
-    reads1=sequenceToFastq.fastq1,
-    reads2=sequenceToFastq.fastq2,
+    reads1=sequenceToFastq.read1_fastq,
+    reads2=sequenceToFastq.read2_fastq,
     adapters=adapters,
     adapter_trim_end=adapter_trim_end,
     adapter_min_overlap=adapter_min_overlap,

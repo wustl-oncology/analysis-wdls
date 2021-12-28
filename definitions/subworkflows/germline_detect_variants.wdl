@@ -5,8 +5,6 @@ import "../types.wdl"
 import "../subworkflows/gatk_haplotypecaller_iterator.wdl" as ghi
 import "../subworkflows/germline_filter_vcf.wdl" as gfv
 import "../tools/add_vep_fields_to_table.wdl" as avftt
-import "../tools/bgzip.wdl" as b
-import "../tools/index_vcf.wdl" as iv
 import "../tools/picard_merge_vcfs.wdl" as pmv
 import "../tools/staged_rename.wdl" as sr
 import "../tools/variants_to_table.wdl" as vtt
@@ -73,15 +71,8 @@ workflow germlineDetectVariants {
     reference_dict=reference_dict,
     custom_annotations=vep_custom_annotations,
     plugins=vep_plugins
-}
-
-  call b.bgzip as bgzipAnnotatedVcf {
-    input: file=annotateVariants.annotated_vcf
   }
 
-  call iv.indexVcf as indexAnnotatedVcf {
-    input: vcf=bgzipAnnotatedVcf.bgzipped_file
-  }
 
   call gfv.germlineFilterVcf as filterVcf {
     input:

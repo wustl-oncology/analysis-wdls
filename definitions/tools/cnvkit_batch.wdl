@@ -57,4 +57,32 @@ task cnvkitBatch {
   }
 }
 
-workflow wf { call cnvkitBatch { input: } }
+workflow wf {
+  input {
+    File tumor_bam
+    File? bait_intervals
+    File? access
+    File? normal_bam
+    File reference
+    String? method
+    Boolean? diagram
+    Boolean? scatter_plot
+    Boolean? drop_low_coverage
+    Boolean? male_reference
+    Int? target_average_size
+  }
+  call cnvkitBatch {
+    input:
+    tumor_bam=tumor_bam,
+    bait_intervals=bait_intervals,
+    access=access,
+    normal_bam=normal_bam,
+    reference=reference,
+    method=method,
+    diagram=diagram,
+    scatter_plot=scatter_plot,
+    drop_low_coverage=drop_low_coverage,
+    male_reference=male_reference,
+    target_average_size=target_average_size
+  }
+}

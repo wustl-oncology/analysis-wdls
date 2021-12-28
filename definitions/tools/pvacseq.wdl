@@ -55,7 +55,7 @@ task pvacseq {
   Array[Int] epitope_i = select_first([epitope_lengths_class_i, []])
   Array[Int] epitope_ii = select_first([epitope_lengths_class_ii, []])
   command <<<
-    ln -s $TMPDIR /tmp/pvacseq && export TMPDIR=/tmp/pvacseq && \
+    ln -s "$TMPDIR" /tmp/pvacseq && export TMPDIR=/tmp/pvacseq && \
     /usr/local/bin/pvacseq run --iedb-install-directory /opt/iedb --pass-only \
     ~{if defined(epitope_lengths_class_i ) then "-e1 " else ""} ~{sep="," epitope_i} \
     ~{if defined(epitope_lengths_class_ii) then "-e2 " else ""} ~{sep="," epitope_ii} \
@@ -103,4 +103,20 @@ task pvacseq {
   }
 }
 
-workflow wf { call pvacseq { input: } }
+workflow wf {
+  input {
+    File input_vcf
+    File input_vcf_tbi
+    String sample_name
+    Array[String] alleles
+    Array[String] prediction_algorithms
+  }
+  call pvacseq {
+    input:
+    input_vcf=input_vcf,
+    input_vcf_tbi=input_vcf_tbi,
+    sample_name=sample_name,
+    alleles=alleles,
+    prediction_algorithms=prediction_algorithms
+  }
+}

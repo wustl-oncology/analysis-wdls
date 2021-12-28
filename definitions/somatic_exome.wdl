@@ -2,7 +2,7 @@ version 1.0
 
 import "alignment_exome.wdl" as ae
 import "detect_variants.wdl" as dv
-import "types.wdl"
+import "types.wdl"  # !UnusedImport
 
 import "tools/bam_to_cram.wdl" as btc
 import "tools/cnvkit_batch.wdl" as cb
@@ -37,7 +37,7 @@ workflow somaticExome {
     Array[String] bqsr_intervals
 
     File bait_intervals
-    File target_intervals
+    File target_intervanls
     Array[LabelledFile] per_base_intervals
     Array[LabelledFile] per_target_intervals
     Array[LabelledFile] summary_intervals
@@ -84,7 +84,7 @@ workflow somaticExome {
     Array[String] vep_to_table_fields = ["HGVSc", "HGVSp"]
     Array[String] variants_to_table_genotype_fields = ["GT", "AD"]
     Array[String] variants_to_table_fields = ["CHROM", "POS", "ID", "REF", "ALT", "set", "AC", "AF"]
-    Array[VepCustomAnnotation] vep_custom_annotations = []
+    Array[VepCustomAnnotation] vep_custom_annotations = []  # !UnverifiedStruct
 
     File? manta_call_regions
     File? manta_call_regions_tbi

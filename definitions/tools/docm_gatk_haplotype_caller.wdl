@@ -29,7 +29,7 @@ task docmGatkHaplotypeCaller {
 
 
     # Extracting the header from the interval_list
-    cat "~{interval_list}" | grep '^@' > docm.interval_list
+    grep '^@' "~{interval_list}" > docm.interval_list
     # Extracting the docm regions with a 100bp flanking region on both directions
     zcat "~{docm_vcf}" | grep ^chr | awk '{FS = "\t";OFS = "\t";print $1,$2-100,$2+100,"+",$1"_"$2-100"_"$2+100}' >> docm.interval_list
 

@@ -1,7 +1,7 @@
 version 1.0
 
 import "germline_exome.wdl" as ge
-import "types.wdl"
+import "types.wdl"  # !UnusedImport
 import "tools/optitype_dna.wdl" as od
 
 workflow germlineExomeHlaTyping {
@@ -58,6 +58,7 @@ workflow germlineExomeHlaTyping {
     bqsr_intervals=bqsr_intervals,
     bait_intervals=bait_intervals,
     target_intervals=target_intervals,
+    target_interval_padding=target_interval_padding,
     per_base_intervals=per_base_intervals,
     per_target_intervals=per_target_intervals,
     summary_intervals=summary_intervals,

@@ -44,7 +44,6 @@ workflow immuno {
     String? strand  # [first, second, unstranded]
     File refFlat
     File? ribosomal_intervals
-    Boolean? unzip_fastqs
 
     # --------- Somatic Exome Inputs -----------------------------------
 
@@ -143,7 +142,6 @@ workflow immuno {
     Array[Int]? epitope_lengths_class_ii
     Int? binding_threshold
     Int? percentile_threshold
-    Boolean? allele_specific_binding_thresholds
     Float? minimum_fold_change
     String? top_score_metric  # enum [lowest, median]
     String? additional_report_columns  # enum [sample_name]
@@ -195,8 +193,7 @@ workflow immuno {
     gene_transcript_lookup_table=gene_transcript_lookup_table,
     strand=strand,
     refFlat=refFlat,
-    ribosomal_intervals=ribosomal_intervals,
-    unzip_fastqs=unzip_fastqs
+    ribosomal_intervals=ribosomal_intervals
   }
 
   call se.somaticExome as somatic {
@@ -351,7 +348,6 @@ workflow immuno {
     epitope_lengths_class_ii=epitope_lengths_class_ii,
     binding_threshold=binding_threshold,
     percentile_threshold=percentile_threshold,
-    allele_specific_binding_thresholds=allele_specific_binding_thresholds,
     minimum_fold_change=minimum_fold_change,
     top_score_metric=top_score_metric,
     additional_report_columns=additional_report_columns,

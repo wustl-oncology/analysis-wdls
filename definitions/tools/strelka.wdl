@@ -28,7 +28,7 @@ task strelka {
     mv ~{normal_bam} ~{basename(normal_bam)}; mv ~{normal_bam_bai} ~{basename(normal_bam_bai)}
     /usr/bin/perl /usr/bin/docker_helper.pl \
     ~{if defined(cpu_reserved) then cpu_reserved else ""} \
-    $PWD --tumorBam=~{basename(tumor_bam)} --normalBam=~{basename(normal_bam)} \
+    "$PWD" --tumorBam=~{basename(tumor_bam)} --normalBam=~{basename(normal_bam)} \
     --referenceFasta=~{reference} \
     ~{if exome_mode then "--exome" else ""}
   >>>

@@ -11,7 +11,7 @@ import "tools/index_vcf.wdl" as iv
 import "tools/index_cram.wdl" as ic
 import "tools/bam_to_cram.wdl" as btc
 
-import "types.wdl"
+import "types.wdl"  # !UnusedImport
 
 workflow somaticExomeCle {
   input {

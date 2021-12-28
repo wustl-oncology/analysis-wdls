@@ -35,4 +35,24 @@ task readBackedPhasing {
   }
 }
 
-workflow wf { call readBackedPhasing { input: } }
+workflow wf {
+  input {
+    File bam
+    File bam_index
+    File reference
+    File reference_fai
+    File reference_dict
+    File vcf
+    File vcf_tbi
+  }
+  call readBackedPhasing {
+    input:
+    bam=bam,
+    bam_index=bam_index,
+    reference=reference,
+    reference_fai=reference_fai,
+    reference_dict=reference_dict,
+    vcf=vcf,
+    vcf_tbi=vcf_tbi
+  }
+}

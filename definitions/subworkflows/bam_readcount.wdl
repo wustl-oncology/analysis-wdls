@@ -33,7 +33,7 @@ workflow bamReadcount {
     vcf_tbi=normalizeVariants.normalized_vcf_tbi
   }
 
-  call br.bamReadcount as br {
+  call br.bamReadcount as readcount {
     input:
     vcf=decomposeVariants.decomposed_vcf,
     reference=reference,
@@ -48,7 +48,7 @@ workflow bamReadcount {
 
   output {
     File normalized_vcf = decomposeVariants.decomposed_vcf
-    File snv_bam_readcount_tsv = br.snv_bam_readcount_tsv
-    File indel_bam_readcount_tsv = br.indel_bam_readcount_tsv
+    File snv_bam_readcount_tsv = readcount.snv_bam_readcount_tsv
+    File indel_bam_readcount_tsv = readcount.indel_bam_readcount_tsv
   }
 }

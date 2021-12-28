@@ -30,9 +30,7 @@ workflow pvacseq {
     Array[Int]? epitope_lengths_class_ii
     Int? binding_threshold
     Int? percentile_threshold
-    Boolean? allele_specific_binding_thresholds
     Float? minimum_fold_change
-    Int? peptide_sequence_length
     String? top_score_metric  # enum [lowest, median]
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size

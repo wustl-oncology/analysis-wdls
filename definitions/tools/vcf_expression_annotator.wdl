@@ -31,4 +31,20 @@ task vcfExpressionAnnotator {
   }
 }
 
-workflow wf { call vcfExpressionAnnotator { input: } }
+workflow wf {
+  input {
+    File vcf
+    File expression_file
+    String expression_tool
+    String data_type
+    String sample_name
+  }
+  call vcfExpressionAnnotator {
+    input:
+    vcf=vcf,
+    expression_file=expression_file,
+    expression_tool=expression_tool,
+    data_type=data_type,
+    sample_name=sample_name
+  }
+}

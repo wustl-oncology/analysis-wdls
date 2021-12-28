@@ -14,7 +14,7 @@ task vep {
     String ensembl_species
     Array[String] plugins
     Boolean coding_only = false
-    Array[VepCustomAnnotation] custom_annotations = []
+    Array[VepCustomAnnotation] custom_annotations = []  # !UnverifiedStruct
     Boolean everything = true
     # one of [pick, flag_pick, pick-allele, per_gene, pick_allele_gene, flag_pick_allele, flag_pick_allele_gene]
     String pick = "flag_pick"
@@ -80,7 +80,7 @@ workflow wf {
     String ensembl_version
     String ensembl_species
     File? synonyms_file
-    Array[VepCustomAnnotation] custom_annotations = []
+    Array[VepCustomAnnotation] custom_annotations = []  # !UnverifiedStruct
     Boolean coding_only = false
     Boolean everything = true
     # one of [pick, flag_pick, pick-allele, per_gene, pick_allele_gene, flag_pick_allele, flag_pick_allele_gene]

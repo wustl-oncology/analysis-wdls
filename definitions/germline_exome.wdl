@@ -1,7 +1,7 @@
 version 1.0
 
 import "alignment_exome.wdl" as ae
-import "types.wdl"
+import "types.wdl"  # !UnusedImport
 
 import "tools/interval_list_expand.wdl" as ile
 import "subworkflows/germline_detect_variants.wdl" as gdv

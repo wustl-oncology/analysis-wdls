@@ -13,7 +13,7 @@ task catAll {
   }
 
   command <<<
-    /bin/cat ~{sep=" " region_pindel_outs} | /bin/grep "ChrID" /dev/stdin > all_region_pindel.head
+    /bin/grep "ChrID" ~{sep=" " region_pindel_outs} > all_region_pindel.head
   >>>
 
   output {

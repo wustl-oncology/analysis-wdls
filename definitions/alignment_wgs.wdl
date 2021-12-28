@@ -2,7 +2,7 @@ version 1.0
 
 import "subworkflows/qc_wgs.wdl" as qw
 import "subworkflows/sequence_to_bqsr.wdl" as stb
-import "types.wdl"
+import "types.wdl"  # !UnusedImport
 
 workflow alignmentWgs {
   input {

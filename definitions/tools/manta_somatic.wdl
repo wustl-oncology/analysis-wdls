@@ -36,7 +36,7 @@ task mantaSomatic {
     --referenceFasta ~{reference} \
     --tumorBam ~{tumor_bam} \
     ~{if defined(normal_bam) then "--normalBam ~{normal_bam}" else ""} \
-    --runDir $PWD \
+    --runDir "$PWD" \
     && /usr/bin/python runWorkflow.py -m local \
     -j ~{cores}
   >>>

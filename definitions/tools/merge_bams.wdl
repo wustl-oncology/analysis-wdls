@@ -18,8 +18,7 @@ task mergeBams {
 
   String outname = name + ".bam"
   String S = "$"  # https://github.com/broadinstitute/cromwell/issues/1819
-  command <<<
-    #!/bin/bash
+  command <<< #!/bin/bash
     set -o pipefail
     set -o errexit
     set -o nounset

@@ -45,13 +45,12 @@ workflow rnaseq {
     File gene_transcript_lookup_table
     File refFlat
     File? ribosomal_intervals
-    Boolean? unzip_fastqs
   }
 
   scatter(sequence in rna_sequence) {
     scatter(id in read_group_id) {
       scatter(fields in read_group_fields) {
-        call sttfaha.sequenceToTrimmedFastqAndHisatAlignments {
+        call bttfaha.bamToTrimmedFastqAndHisatAlignments {
           input:
           unaligned=sequence,
           read_group_id=id,
@@ -70,8 +69,7 @@ workflow rnaseq {
           reference_index_6ht2=reference_index_6ht2,
           reference_index_7ht2=reference_index_7ht2,
           reference_index_8ht2=reference_index_8ht2,
-          strand=strand,
-          unzip_fastqs=unzip_fastqs
+          strand=strand
         }
       }
     }
@@ -81,7 +79,7 @@ workflow rnaseq {
     input:
     kallisto_index=kallisto_index,
     strand=strand,
-    fastqs=flatten(flatten(flatten(bamToTrimmedFastqAndHisatAlignments.fastqs)))
+    fastqs=flatten(flatten(bamToTrimmedFastqAndHisatAlignments.fastqs))
   }
 
   call ttg.transcriptToGene {
@@ -92,7 +90,7 @@ workflow rnaseq {
 
   # TODO(john): remove extra sort, as an optimization
   call mb.mergeBams as merge {
-    input: bams=flatten(flatten(sequenceToTrimmedFastqAndHisatAlignments.aligned_bam))
+    input: bams=flatten(flatten(bamToTrimmedFastqAndHisatAlignments.aligned_bam))
   }
 
   call ss.samtoolsSort as positionSort {

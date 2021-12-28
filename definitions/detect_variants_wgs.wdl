@@ -15,7 +15,7 @@ import "tools/index_vcf.wdl" as iv
 import "tools/variants_to_table.wdl" as vtt
 import "tools/vep.wdl" as v
 import "tools/vt_decompose.wdl" as vd
-import "types.wdl"
+import "types.wdl"  # !UnusedImport
 
 workflow detectVariantsWgs {
   input {

@@ -50,6 +50,7 @@ workflow germlineFilterVcf {
     reference_dict=reference_dict,
     vcf=indexFilteredVcf.indexed_vcf,
     vcf_tbi=indexFilteredVcf.indexed_vcf_tbi,
+    interval_list=limit_variant_intervals,
     exclude_filtered=true,
     output_vcf_basename="annotated.filtered.final"
   }

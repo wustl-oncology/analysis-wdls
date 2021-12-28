@@ -14,7 +14,7 @@ task filterVcfCle {
   }
 
   command <<<
-    /usr/bin/perl /usr/bin/docm_and_coding_indel_selection.pl ~{vcf} $PWD filter ~{filter}
+    /usr/bin/perl /usr/bin/docm_and_coding_indel_selection.pl ~{vcf} "$PWD" filter ~{filter}
   >>>
 
   output {

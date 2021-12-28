@@ -66,7 +66,7 @@ task sequenceToFastqRna {
   >>>
 
   output {
-    File fastq1 = "~{outdir}/read1.fastq"
-    File fastq2 = "~{outdir}/read2.fastq"
+    File read1_fastq = "~{outdir}/read1.fastq"
+    File read2_fastq = "~{outdir}/read2.fastq"
   }
 }

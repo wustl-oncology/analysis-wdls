@@ -32,4 +32,24 @@ task filterVcfMapq0 {
   }
 }
 
-workflow wf { call filterVcfMapq0 { input: } }
+workflow wf {
+  input {
+    File vcf
+    File tumor_bam
+    File tumor_bam_bai
+    File reference
+    File reference_fai
+    File reference_dict
+    Float threshold
+  }
+  call filterVcfMapq0 {
+    input:
+    vcf=vcf,
+    tumor_bam=tumor_bam,
+    tumor_bam_bai=tumor_bam_bai,
+    reference=reference,
+    reference_fai=reference_fai,
+    reference_dict=reference_dict,
+    threshold=threshold
+  }
+}

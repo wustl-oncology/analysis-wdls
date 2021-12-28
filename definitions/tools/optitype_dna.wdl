@@ -28,4 +28,20 @@ task optitypeDna {
   }
 }
 
-workflow wf { call optitypeDna { input: } }
+workflow wf {
+  input {
+    String? optitype_name
+    File cram
+    File cram_crai
+    File reference
+    File reference_fai
+  }
+  call optitypeDna {
+    input:
+    optitype_name=optitype_name,
+    cram=cram,
+    cram_crai=cram_crai,
+    reference=reference,
+    reference_fai=reference_fai,
+  }
+}
