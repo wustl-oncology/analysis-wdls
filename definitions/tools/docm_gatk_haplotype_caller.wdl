@@ -5,8 +5,8 @@ task docmGatkHaplotypeCaller {
     File reference
     File reference_fai
     File reference_dict
-    File normal_bam
-    File normal_bam_bai
+    File? normal_bam
+    File? normal_bam_bai
     File bam
     File bam_bai
     File docm_vcf
