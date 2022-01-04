@@ -28,7 +28,7 @@ task mergeBams {
         cp "~{bams[0]}" "~{outname}";
     else
         if [[ "~{sorted}" == "true" ]];then
-            /usr/bin/sambamba merge -t "~{cores}" "~{outname}" "~{S}{BAMS[@]}"
+            /usr/bin/sambamba merge -t "~{cores}" "~{outname}" ~{sep=" " bams}
         else #unsorted bams, use picard
             java -jar -Xmx6g /opt/picard/picard.jar MergeSamFiles \
                 OUTPUT="~{outname}" ASSUME_SORTED=true USE_THREADING=true \
