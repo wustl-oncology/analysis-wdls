@@ -1,12 +1,14 @@
 version 1.0
 
 task cnvkitBatch {
+  # TODO(john) do we need to support cnn_file input and switch reference on it?
   input {
     File tumor_bam
     File? bait_intervals
     File? access
     File? normal_bam
     File reference
+    File? reference_cnn
     String method = "hybrid"  # enum [hybrid, amplicon, wgs]
     Boolean diagram = false
     Boolean scatter_plot = false
