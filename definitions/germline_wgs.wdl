@@ -134,8 +134,7 @@ workflow germlineWgs {
     input_file=detectVariants.filtered_vcf,
     line_number=2,
     some_text="##disclaimer=~{disclaimer_text}",
-    # separate basename calls because I'm not sure if final_vcf is .gz or not
-    output_name=basename(basename(detectVariants.filtered_vcf, ".gz"), ".vcf")
+    output_name=basename(detectVariants.filtered_vcf)
   }
 
   call iv.indexVcf as indexDisclaimerFilteredVcf {
@@ -147,8 +146,7 @@ workflow germlineWgs {
     input_file=detectVariants.final_vcf,
     line_number=2,
     some_text="##disclaimer=~{disclaimer_text}",
-    # separate basename calls because I'm not sure if final_vcf is .gz or not
-    output_name=basename(basename(detectVariants.final_vcf, ".gz"), ".vcf")
+    output_name=basename(detectVariants.final_vcf)
   }
 
   call iv.indexVcf as indexDisclaimerFinalVcf {
@@ -160,7 +158,7 @@ workflow germlineWgs {
     input_file=detectVariants.filtered_tsv,
     line_number=1,
     some_text="#~{disclaimer_text}",
-    output_name=basename(detectVariants.filtered_tsv, ".tsv")
+    output_name=basename(detectVariants.filtered_tsv)
   }
 
   call asal.addStringAtLine as addDisclaimerFinalTsv {
@@ -168,7 +166,7 @@ workflow germlineWgs {
     input_file=detectVariants.final_tsv,
     line_number=1,
     some_text="#~{disclaimer_text}",
-    output_name=basename(detectVariants.final_tsv, ".tsv")
+    output_name=basename(detectVariants.final_tsv)
   }
 
   call sssc.singleSampleSvCallers as svDetectVariants {
@@ -211,7 +209,7 @@ workflow germlineWgs {
     input_file=svDetectVariants.survivor_merged_vcf,
     line_number=2,
     some_text="##disclaimer=~{disclaimer_text}",
-    output_name=basename(basename(svDetectVariants.survivor_merged_vcf, ".gz"), ".vcf")
+    output_name=basename(svDetectVariants.survivor_merged_vcf)
   }
 
   call asalb.addStringAtLineBgzipped as addDisclaimerBcftoolsSvVcf {
@@ -219,7 +217,7 @@ workflow germlineWgs {
     input_file=svDetectVariants.bcftools_merged_vcf,
     line_number=2,
     some_text="##disclaimer=~{disclaimer_text}",
-    output_name=basename(basename(svDetectVariants.bcftools_merged_vcf, ".gz"), ".vcf")
+    output_name=basename(svDetectVariants.bcftools_merged_vcf)
   }
 
   call asal.addStringAtLine as addDisclaimerSurvivorSvTsv {
@@ -227,7 +225,7 @@ workflow germlineWgs {
     input_file=svDetectVariants.survivor_merged_annotated_tsv,
     line_number=1,
     some_text="#~{disclaimer_text}",
-    output_name=basename(svDetectVariants.survivor_merged_annotated_tsv, ".tsv")
+    output_name=basename(svDetectVariants.survivor_merged_annotated_tsv)
   }
 
   call asal.addStringAtLine as addDisclaimerBcftoolsSvTsv {
@@ -235,7 +233,7 @@ workflow germlineWgs {
     input_file=svDetectVariants.bcftools_merged_annotated_tsv,
     line_number=1,
     some_text="#~{disclaimer_text}",
-    output_name=basename(svDetectVariants.bcftools_merged_annotated_tsv, ".tsv")
+    output_name=basename(svDetectVariants.bcftools_merged_annotated_tsv)
   }
 
   call asal.addStringAtLine as addDisclaimerBcftoolsFilteredSvTsv {
@@ -243,7 +241,7 @@ workflow germlineWgs {
     input_file=svDetectVariants.bcftools_merged_filtered_annotated_tsv,
     line_number=1,
     some_text="#~{disclaimer_text}",
-    output_name=basename(svDetectVariants.bcftools_merged_filtered_annotated_tsv, ".tsv")
+    output_name=basename(svDetectVariants.bcftools_merged_filtered_annotated_tsv)
   }
 
   call btc.bamToCram {
