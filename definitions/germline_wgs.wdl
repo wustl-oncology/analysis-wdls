@@ -75,7 +75,7 @@ workflow germlineWgs {
     Array[String]? vep_to_table_fields
     Int? cnv_filter_min_size
     File? blocklist_bedpe
-    String disclaimer_text = 'Workflow source can be found at https://github.com/genome/analysis-workflows'
+    String disclaimer_text = "Workflow source can be found at https://github.com/genome/analysis-workflows"
   }
 
   call aw.alignmentWgs as alignmentAndQc {
