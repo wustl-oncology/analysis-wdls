@@ -48,7 +48,7 @@ the generated input file will have this handled already.
 - [ ] chipseq
 - [ ] chipseq\_alignment\_nonhuman
 - [x] detect\_variants
-- [ ] detect\_variants\_nonhuman
+- [x] detect\_variants\_nonhuman
 - [x] detect\_variants\_wgs
 - [ ] downsample\_and\_recall
 - [ ] gathered\_downsample\_and\_recall
@@ -90,7 +90,7 @@ the generated input file will have this handled already.
 - [x] docm\_germline
 - [ ] duplex\_alignment
 - [x] filter\_vcf
-- [ ] filter\_vcf\_nonhuman
+- [x] filter\_vcf\_nonhuman
 - [x] fp\_filter
 - [x] gatk\_haplotypecaller\_iterator
 - [x] germline\_detect\_variants

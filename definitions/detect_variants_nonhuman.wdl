@@ -1,23 +1,20 @@
 version 1.0
 
-import "subworkflows/docm_cle.wdl" as dc
-import "subworkflows/filter_vcf.wdl" as fv
+import "subworkflows/vcf_readcount.wdl" as vr
+import "subworkflows/filter_vcf_nonhuman.wdl" as fvn
 import "subworkflows/mutect.wdl" as m
 import "subworkflows/pindel.wdl" as p
 import "subworkflows/strelka_and_post_processing.wdl" as sapp
 import "subworkflows/varscan_pre_and_post_processing.wdl" as vpapp
-import "subworkflows/vcf_readcount.wdl" as vr
-
 import "tools/add_vep_fields_to_table.wdl" as avftt
 import "tools/bgzip.wdl" as b
 import "tools/combine_variants.wdl" as cv
-import "tools/docm_add_variants.wdl" as dav
 import "tools/index_vcf.wdl" as iv
 import "tools/variants_to_table.wdl" as vtt
 import "tools/vep.wdl" as v
 import "tools/vt_decompose.wdl" as vd
 
-workflow detectVariants {
+workflow detectVariantsNonhuman {
   input {
     File reference
     File reference_fai
@@ -32,7 +29,7 @@ workflow detectVariants {
     File normal_bam_bai
 
     File roi_intervals
-    Int scatter_count = 50
+    Int scatter_count
 
     Boolean strelka_exome_mode
     Int strelka_cpu_reserved = 8
@@ -45,11 +42,6 @@ workflow detectVariants {
     Float varscan_p_value = 0.99
     Float? varscan_max_normal_freq
 
-    File docm_vcf
-    File docm_vcf_tbi
-
-    Boolean filter_docm_variants = true
-
     File vep_cache_dir_zip
     String vep_ensembl_assembly
     String vep_ensembl_version
@@ -59,13 +51,10 @@ workflow detectVariants {
     # one of [pick, flag_pick, pick-allele, per_gene, pick_allele_gene, flag_pick_allele, flag_pick_allele_gene]
     String? vep_pick
     Array[String] vep_plugins = ["Frameshift", "Wildtype"]
-    Array[VepCustomAnnotation] vep_custom_annotations
 
     Int? readcount_minimum_base_quality
     Int? readcount_minimum_mapping_quality
 
-    String gnomad_field_name = "gnomAD_AF"  # only change with gnomad_filter annotation
-    Float filter_gnomADe_maximum_population_allele_frequency = 0.001
     Float filter_mapq0_threshold = 0.15
     Float filter_somatic_llr_threshold = 5
     Float filter_somatic_llr_tumor_purity = 1
@@ -74,10 +63,7 @@ workflow detectVariants {
     Boolean cle_vcf_filter = false
     Array[String] variants_to_table_fields = ["CHROM", "POS", "ID", "REF", "ALT", "set", "AC", "AF"]
     Array[String] variants_to_table_genotype_fields = ["GT", "AD"]
-    Array[String] vep_to_table_fields = ["HGVSc", "HGVSp"]
-    # Both or neither
-    File? validated_variants
-    File? validated_variants_tbi
+    Array[String] vep_to_table_fields = []
   }
 
   call m.mutect {
@@ -146,21 +132,6 @@ workflow detectVariants {
     normal_sample_name=normal_sample_name,
   }
 
-  call dc.docmCle as docm {
-    input:
-    reference=reference,
-    reference_fai=reference_fai,
-    reference_dict=reference_dict,
-    tumor_bam=tumor_bam,
-    tumor_bam_bai=tumor_bam_bai,
-    normal_bam=normal_bam,
-    normal_bam_bai=normal_bam_bai,
-    docm_vcf=docm_vcf,
-    docm_vcf_tbi=docm_vcf_tbi,
-    interval_list=roi_intervals,
-    filter_docm_variants=filter_docm_variants
-  }
-
   call cv.combineVariants as combine {
     input:
     reference=reference,
@@ -180,21 +151,10 @@ workflow detectVariants {
     pindel_vcf_tbi=pindel.filtered_vcf_tbi
   }
 
-  call dav.docmAddVariants as addDocmVariants {
-    input:
-    reference=reference,
-    reference_fai=reference_fai,
-    reference_dict=reference_dict,
-    docm_vcf=docm.docm_variants_vcf,
-    docm_vcf_tbi=docm.docm_variants_vcf_tbi,
-    callers_vcf=combine.combined_vcf,
-    callers_vcf_tbi=combine.combined_vcf_tbi
-  }
-
   call vd.vtDecompose as decompose {
     input:
-    vcf=addDocmVariants.merged_vcf,
-    vcf_tbi=addDocmVariants.merged_vcf_tbi
+    vcf=combine.combined_vcf,
+    vcf_tbi=combine.combined_vcf_tbi
   }
 
   call iv.indexVcf as decomposeIndex {
@@ -209,7 +169,6 @@ workflow detectVariants {
     reference_fai=reference_fai,
     cache_dir_zip=vep_cache_dir_zip,
     coding_only=annotate_coding_only,
-    custom_annotations=vep_custom_annotations,
     ensembl_assembly=vep_ensembl_assembly,
     ensembl_species=vep_ensembl_species,
     ensembl_version=vep_ensembl_version,
@@ -234,12 +193,10 @@ workflow detectVariants {
     minimum_mapping_quality=readcount_minimum_mapping_quality
   }
 
-  call fv.filterVcf {
+  call fvn.filterVcfNonhuman as filterVcf {
     input:
     vcf=vcfReadcount.readcounted_vcf,
-    vcf_tbi=vcfReadcount.readcounted_vcf_tbi,
     filter_mapq0_threshold=filter_mapq0_threshold,
-    filter_gnomADe_maximum_population_allele_frequency=filter_gnomADe_maximum_population_allele_frequency,
     filter_somatic_llr_threshold=filter_somatic_llr_threshold,
     filter_somatic_llr_tumor_purity=filter_somatic_llr_tumor_purity,
     filter_somatic_llr_normal_contamination_rate=filter_somatic_llr_normal_contamination_rate,
@@ -251,9 +208,7 @@ workflow detectVariants {
     reference_fai=reference_fai,
     reference_dict=reference_dict,
     normal_sample_name=normal_sample_name,
-    tumor_sample_name=tumor_sample_name,
-    gnomad_field_name=gnomad_field_name,
-    validated_variants=validated_variants
+    tumor_sample_name=tumor_sample_name
   }
 
   call b.bgzip as annotatedFilterBgzip {
@@ -302,10 +257,6 @@ workflow detectVariants {
     File pindel_unfiltered_vcf_tbi = pindel.unfiltered_vcf_tbi
     File pindel_filtered_vcf = pindel.filtered_vcf
     File pindel_filtered_vcf_tbi = pindel.filtered_vcf_tbi
-
-    File docm_filtered_vcf = docm.docm_variants_vcf
-    File docm_filtered_vcf_tbi = docm.docm_variants_vcf_tbi
-
     File vep_summary = annotateVariants.vep_summary
 
     File final_vcf = vcfReadcount.readcounted_vcf
