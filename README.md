@@ -37,7 +37,7 @@ the generated input file will have this handled already.
 ## Pipelines
 
 - [x] alignment\_exome
-- [ ] alignment\_exome\_nonhuman
+- [x] alignment\_exome\_nonhuman
 - [ ] alignment\_umi\_duplex
 - [ ] alignment\_umi\_molecular
 - [x] alignment\_wgs
@@ -107,7 +107,7 @@ the generated input file will have this handled already.
 - [ ] pindel\_region
 - [x] pvacseq
 - [x] qc\_exome
-- [ ] qc\_exome\_no\_verify\_bam
+- [x] qc\_exome\_no\_verify\_bam
 - [x] qc\_wgs
 - [x] qc\_wgs\_nonhuman
 - [ ] sequence\_align\_and\_tag\_adapter
