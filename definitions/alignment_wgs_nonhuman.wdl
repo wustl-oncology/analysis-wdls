@@ -31,8 +31,6 @@ workflow alignmentWgsNonhuman {
   call stbn.sequenceToBqsrNonhuman as alignment {
     input:
     reference=reference,
-    reference_fai=reference_fai,
-    reference_dict=reference_dict,
     reference_amb=reference_amb,
     reference_ann=reference_ann,
     reference_bwt=reference_bwt,
