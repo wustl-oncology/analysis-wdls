@@ -14,7 +14,7 @@ workflow gatkHaplotypecallerIterator {
     Array[Array[String]] intervals
     File? dbsnp_vcf
     File? dbsnp_vcf_tbi
-    File verify_bam_id_metrics
+    String contamination_fraction
     Int? max_alternate_alleles
     Int? ploidy
     String? read_filter
@@ -37,7 +37,7 @@ workflow gatkHaplotypecallerIterator {
       intervals=interval_sublist,
       dbsnp_vcf=dbsnp_vcf,
       dbsnp_vcf_tbi=dbsnp_vcf_tbi,
-      verify_bam_id_metrics=verify_bam_id_metrics,
+      contamination_fraction=contamination_fraction,
       max_alternate_alleles=max_alternate_alleles,
       ploidy=ploidy,
       read_filter=read_filter,

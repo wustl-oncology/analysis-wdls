@@ -4,6 +4,7 @@ import "types.wdl"
 import "alignment_exome.wdl" as ae
 import "tools/index_cram.wdl" as ic
 import "tools/bam_to_cram.wdl" as btc
+import "tools/freemix.wdl" as f
 import "subworkflows/gatk_haplotypecaller_iterator.wdl" as ghi
 
 workflow germlineExomeGvcf {
@@ -64,6 +65,11 @@ workflow germlineExomeGvcf {
     qc_minimum_base_quality=qc_minimum_base_quality
   }
 
+  call f.freemix {
+    input:
+    verify_bam_id_metrics=alignmentAndQc.verify_bam_id_metrics
+  }
+
   call ghi.gatkHaplotypecallerIterator as generateGvcfs {
     input:
     bam=alignmentAndQc.bam,
@@ -74,7 +80,7 @@ workflow germlineExomeGvcf {
     emit_reference_confidence=emit_reference_confidence,
     gvcf_gq_bands=gvcf_gq_bands,
     intervals=intervals,
-    verify_bam_id_metrics=alignmentAndQc.verify_bam_id_metrics,
+    contamination_fraction=freemix.out,
     ploidy=ploidy
   }
 

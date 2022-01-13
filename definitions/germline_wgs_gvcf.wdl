@@ -7,6 +7,7 @@ import "alignment_wgs.wdl" as aw
 import "subworkflows/gatk_haplotypecaller_iterator.wdl" as ghi
 import "tools/index_cram.wdl" as ic
 import "tools/bam_to_cram.wdl" as btc
+import "tools/freemix.wdl" as f
 
 workflow germlineWgsGvcf {
   input {
@@ -65,6 +66,12 @@ workflow germlineWgsGvcf {
     per_target_intervals=per_target_intervals,
     summary_intervals=summary_intervals
   }
+
+  call f.freemix {
+    input:
+    verify_bam_id_metrics=alignmentAndQc.verify_bam_id_metrics
+  }
+
   call ghi.gatkHaplotypecallerIterator as generateGvcfs {
     input:
     bam=alignmentAndQc.bam,
@@ -76,8 +83,9 @@ workflow germlineWgsGvcf {
     gvcf_gq_bands=gvcf_gq_bands,
     intervals=intervals,
     ploidy=ploidy,
-    verify_bam_id_metrics=alignmentAndQc.verify_bam_id_metrics
+    contamination_fraction=freemix.out
   }
+
   call btc.bamToCram {
     input:
     bam=alignmentAndQc.bam,

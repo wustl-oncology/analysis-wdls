@@ -5,6 +5,7 @@ import "../types.wdl"
 import "../subworkflows/gatk_haplotypecaller_iterator.wdl" as ghi
 import "../subworkflows/germline_filter_vcf.wdl" as gfv
 import "../tools/add_vep_fields_to_table.wdl" as avftt
+import "../tools/freemix.wdl" as f
 import "../tools/picard_merge_vcfs.wdl" as pmv
 import "../tools/staged_rename.wdl" as sr
 import "../tools/variants_to_table.wdl" as vtt
@@ -39,6 +40,11 @@ workflow germlineDetectVariants {
     Float filter_gnomAD_maximum_population_allele_frequency = 0.05
   }
 
+  call f.freemix {
+    input:
+    verify_bam_id_metrics=verify_bam_id_metrics
+  }
+
   call ghi.gatkHaplotypecallerIterator as haplotypeCaller {
     input:
     reference=reference,
@@ -49,7 +55,7 @@ workflow germlineDetectVariants {
     emit_reference_confidence="NONE",
     gvcf_gq_bands=gvcf_gq_bands,
     intervals=intervals,
-    verify_bam_id_metrics=verify_bam_id_metrics,
+    contamination_fraction=freemix.out,
     ploidy=ploidy
   }
 

@@ -12,7 +12,7 @@ task gatkHaplotypeCaller {
     Array[String] intervals
     File? dbsnp_vcf
     File? dbsnp_vcf_tbi
-    File verify_bam_id_metrics
+    String contamination_fraction  # empty or a float. See `tools/freemix.wdl` for context
     Int? max_alternate_alleles
     Int? ploidy
     String? read_filter
@@ -35,17 +35,8 @@ task gatkHaplotypeCaller {
     mv ~{bam} ~{basename(bam)}
     mv ~{bai} ~{basename(basename(bai, ".bai"), ".bam") + ".bai"}
 
-    # get FREEMIX value for contamination fraction
-    python <<CODE
-    with open("~{verify_bam_id_metrics}", "r") as f:
-        header = f.readline().split("\t")
-        if len(header) >= 7 and header[6] == "FREEMIX":
-            with open("freemix.txt", "w") as w:
-                w.write(f.readline().split("\t")[6])
-    CODE
-    CONTAMINATION_FRACTION=$(cat freemix.txt 2> /dev/null)
-    if [ -z CONTAMINATION_FRACTION ]; then
-        CONTAMINATION_ARG="--contamination $CONTAMINATION_FRACTION"
+    if [ -z "~{contamination_fraction}" ]; then
+        CONTAMINATION_ARG="--contamination ~{contamination_fraction}"
     fi
 
     # do the task itself
@@ -70,7 +61,7 @@ task gatkHaplotypeCaller {
 }
 
 workflow wf {
-    input {
+  input {
     File reference
     File reference_fai
     File reference_dict
@@ -81,7 +72,7 @@ workflow wf {
     Array[String] intervals
     File? dbsnp_vcf
     File? dbsnp_vcf_tbi
-    File verify_bam_id_metrics
+    String contamination_fraction
     Int? max_alternate_alleles
     Int? ploidy
     String? read_filter
@@ -99,7 +90,7 @@ workflow wf {
     intervals=intervals,
     dbsnp_vcf=dbsnp_vcf,
     dbsnp_vcf_tbi=dbsnp_vcf_tbi,
-    verify_bam_id_metrics=verify_bam_id_metrics,
+    contamination_fraction=contamination_fraction,
     max_alternate_alleles=max_alternate_alleles,
     ploidy=ploidy,
     read_filter=read_filter,
