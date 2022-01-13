@@ -63,9 +63,9 @@ the generated input file will have this handled already.
 - [x] rnaseq\_star\_fusion\_with\_xenosplit
 - [x] somatic\_exome
 - [x] somatic\_exome\_cle
-- [ ] somatic\_exome\_cle\_gathered
-- [ ] somatic\_exome\_gathered
-- [ ] somatic\_exome\_nonhuman
+- [ ] somatic\_exome\_cle\_gathered  # This doesn't make sense in cloud
+- [ ] somatic\_exome\_gathered       # This doesn't make sense in cloud
+- [x] somatic\_exome\_nonhuman
 - [x] somatic\_wgs
 - [x] tumor\_only\_detect\_variants
 - [x] tumor\_only\_exome
