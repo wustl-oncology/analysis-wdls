@@ -50,7 +50,7 @@ the generated input file will have this handled already.
 - [x] detect\_variants
 - [x] detect\_variants\_nonhuman
 - [x] detect\_variants\_wgs
-- [ ] downsample\_and\_recall
+- [x] downsample\_and\_recall
 - [ ] gathered\_downsample\_and\_recall
 - [x] germline\_exome
 - [x] germline\_exome\_gvcf
@@ -186,7 +186,7 @@ the generated input file will have this handled already.
 - [ ] cram\_to\_bam
 - [x] docm\_add\_variants
 - [x] docm\_gatk\_haplotype\_caller
-- [ ] downsample
+- [x] downsample
 - [x] duphold
 - [ ] duplex\_seq\_metrics
 - [ ] eval\_cle\_gold
