@@ -1,6 +1,6 @@
 version 1.0
 
-import "tools/downsample.wdl" as d  # TODO(john) implement
+import "tools/downsample.wdl" as
 import "subworkflows/gatk_haplotypecaller_iterator.wdl" as ghi
 import "tools/collect_wgs_metrics.wdl" as cwm
 

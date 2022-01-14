@@ -16,7 +16,6 @@ task annotsvFilter {
     disks: "local-disk ~{space_needed_gb} SSD"
   }
 
-  # TODO(john) does True and False insert without quotes like intended?
   command <<<
     python -c '
     import csv

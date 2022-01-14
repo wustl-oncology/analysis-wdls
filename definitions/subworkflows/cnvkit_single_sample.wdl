@@ -13,7 +13,6 @@ workflow cnvkitSingleSample {
     Boolean? scatter_plot
     Boolean? drop_low_coverage
     Boolean? male_reference
-    # TODO(john) do we need reference_cnn here?
     File? reference_cnn
     String cnvkit_vcf_name = "cnvkit.vcf"
     String segment_filter  # enum ["ampdel" "ci" "cn" "sem"]

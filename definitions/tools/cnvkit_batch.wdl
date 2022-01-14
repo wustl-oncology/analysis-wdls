@@ -1,14 +1,13 @@
 version 1.0
 
 task cnvkitBatch {
-  # TODO(john) do we need to support cnn_file input and switch reference on it?
   input {
     File tumor_bam
     File? bait_intervals
     File? access
     File? normal_bam
-    File reference
-    File? reference_cnn
+    File? reference_fasta  # fasta or CNN must exist
+    File? reference_cnn    # fasta or CNN must exist
     String method = "hybrid"  # enum [hybrid, amplicon, wgs]
     Boolean diagram = false
     Boolean scatter_plot = false
@@ -27,11 +26,10 @@ task cnvkitBatch {
     disks: "local-disk ~{size_needed_gb} SSD"
   }
 
+  String ref_str = if defined(normal_bam) then "--normal ~{normal_bam} --fasta ~{reference_fasta}" else "--reference ~{reference_cnn}"
   command <<<
     /usr/bin/python /usr/local/bin/cnvkit.py batch \
-    ~{tumor_bam} \
-    ~{if defined(normal_bam) then "--normal ~{normal_bam}" else ""} \
-    --fasta ~{reference} \
+    ~{tumor_bam} ~{ref_str} \
     ~{if defined(bait_intervals) then "--targets ~{bait_intervals}" else ""} \
     ~{if defined(access) then "--access ~{access}" else ""} \
     --method ~{method} \
