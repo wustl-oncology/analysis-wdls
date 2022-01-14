@@ -39,19 +39,23 @@ the generated input file will have this handled already.
 - [x] alignment\_exome
 - [x] alignment\_exome\_nonhuman
 - [ ] alignment\_umi\_duplex
+         # this depends on a thing with non-trivial embedded javascript
 - [ ] alignment\_umi\_molecular
+         # this depends on a thing with non-trivial embedded javascript
 - [x] alignment\_wgs
 - [x] alignment\_wgs\_nonhuman
 - [ ] aml\_trio\_cle
-- [ ] aml\_trio\_cle\_gathered
+- [ ] aml\_trio\_cle\_gathered  # This doesn't make sense in cloud
 - [x] bisulfite
 - [ ] chipseq
+         # This depends on homer-tag-directory, doesn't make sense in cloud
 - [ ] chipseq\_alignment\_nonhuman
+         # This depends on homer-tag-directory, doesn't make sense in cloud
 - [x] detect\_variants
 - [x] detect\_variants\_nonhuman
 - [x] detect\_variants\_wgs
 - [x] downsample\_and\_recall
-- [ ] gathered\_downsample\_and\_recall
+- [ ] gathered\_downsample\_and\_recall  # This doesn't make sense in cloud
 - [x] germline\_exome
 - [x] germline\_exome\_gvcf
 - [x] germline\_exome\_hla\_typing
@@ -220,6 +224,7 @@ the generated input file will have this handled already.
 - [x] hisat2\_align
 - [x] hla\_consensus
 - [ ] homer\_tag\_directory
+         # This doesn't make sense in cloud
 - [x] index\_bam
 - [x] index\_cram
 - [x] index\_vcf
@@ -258,6 +263,7 @@ the generated input file will have this handled already.
 - [x] select\_variants
 - [x] sequence\_align\_and\_tag
 - [ ] sequence\_to\_bam
+         # this uses non-trivial embedded javascript
 - [x] set\_filter\_status
 - [x] single\_sample\_docm\_filter
 - [x] smoove

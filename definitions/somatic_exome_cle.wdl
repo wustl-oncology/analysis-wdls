@@ -199,7 +199,7 @@ workflow somaticExomeCle {
     input_file=detectVariants.final_tsv,
     line_number=1,
     some_text="#~{disclaimer_text}",
-    output_name=basename(detectVariants.final_tsv, ".tsv")
+    output_name=basename(detectVariants.final_tsv)
   }
 
   call asal.addStringAtLine as addDisclaimerVersionToFinalTsv {
@@ -207,7 +207,7 @@ workflow somaticExomeCle {
     input_file=addDisclaimerToFinalTsv.output_file,
     line_number=2,
     some_text="#The software version is ~{disclaimer_version}",
-    output_name=basename(addDisclaimerToFinalTsv.output_file)  # TODO(john) what file extension?
+    output_name=basename(addDisclaimerToFinalTsv.output_file)
   }
 
   call asalb.addStringAtLineBgzipped as addDisclaimerToFinalFilteredVcf {
@@ -215,7 +215,7 @@ workflow somaticExomeCle {
     input_file=detectVariants.final_filtered_vcf,
     line_number=2,
     some_text="##DisclaimerText=~{disclaimer_text}",
-    output_name=basename(detectVariants.final_filtered_vcf, ".vcf")
+    output_name=basename(detectVariants.final_filtered_vcf)
   }
 
   call asalb.addStringAtLineBgzipped as addDisclaimerVersionToFinalFilteredVcf {
