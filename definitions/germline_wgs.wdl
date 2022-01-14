@@ -110,7 +110,7 @@ workflow germlineWgs {
     reference_fai=reference_fai,
     reference_dict=reference_dict,
     bam=alignmentAndQc.bam,
-    bai=alignmentAndQc.bam_bai,  # TODO(john): does this have to be .bai or is .bam.bai ok?
+    bai=alignmentAndQc.bai,
     verify_bam_id_metrics=alignmentAndQc.verify_bam_id_metrics,
     gvcf_gq_bands=gvcf_gq_bands,
     intervals=intervals,

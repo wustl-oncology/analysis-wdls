@@ -75,6 +75,7 @@ workflow alignmentWgs {
   output {
     File bam = alignment.final_bam
     File bam_bai = alignment.final_bam_bai
+    File bai = alignment.final_bai
     File mark_duplicates_metrics = alignment.mark_duplicates_metrics_file
     File insert_size_metrics = qc.insert_size_metrics
     File insert_size_histogram = qc.insert_size_histogram

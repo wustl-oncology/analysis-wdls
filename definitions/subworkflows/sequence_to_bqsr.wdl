@@ -94,6 +94,7 @@ workflow sequenceToBqsr {
   output {
     File final_bam = indexBam.indexed_bam
     File final_bam_bai = indexBam.indexed_bam_bai
+    File final_bai = indexBam.indexed_bai
     File mark_duplicates_metrics_file = markDuplicatesAndSort.metrics_file
   }
 }

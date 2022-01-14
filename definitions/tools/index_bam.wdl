@@ -15,7 +15,8 @@ task indexBam {
   >>>
   output {
     File indexed_bam = basename(bam)
-    File indexed_bam_bai = "~{basename(bam)}.bai"
+    File indexed_bam_bai = basename(bam) + ".bai"
+    File indexed_bai = basename(bam, ".bam") + ".bai"
   }
 }
 
