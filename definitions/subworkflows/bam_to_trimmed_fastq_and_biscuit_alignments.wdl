@@ -45,9 +45,10 @@ workflow bamToTrimmedFastqAndBiscuitAlignments {
     input: bam=biscuitAlign.aligned_bam
   }
 
-  # TODO(john) does this need indexBam.indexed_bam_bai? if not then why have that call?
   call bm.biscuitMarkdup {
-    input: bam=indexBam.indexed_bam
+    input:
+    bam=indexBam.indexed_bam,
+    bam_bai=indexBam.indexed_bam_bai
   }
 
   output {

@@ -2,7 +2,8 @@ version 1.0
 
 task biscuitMarkdup {
   input {
-    File bam  # TODO(john) does this need bam_bai also?
+    File bam
+    File bam_bai
   }
 
   Int cores = 4
