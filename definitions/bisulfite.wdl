@@ -58,6 +58,7 @@ workflow bisulfite {
     vcf=pileup.vcf,
     bam=merge.merged_bam,
     reference=reference,
+    reference_fai=reference_fai,
     QCannotation=QCannotation
   }
 

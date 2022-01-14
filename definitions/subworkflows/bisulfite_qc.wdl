@@ -9,7 +9,8 @@ workflow bisulfiteQc {
   input {
     File vcf
     File bam
-    File reference  # TODO(john) this is, yet again, string type. what secondary files needed??
+    File reference  # TODO(john) any secondary files other than fai?
+    File reference_fai
     File QCannotation
   }
 
@@ -19,6 +20,7 @@ workflow bisulfiteQc {
     vcf=vcf,
     bam=bam,
     reference=reference,
+    reference_fai=reference_fai,
     QCannotation=QCannotation
   }
 
@@ -27,6 +29,7 @@ workflow bisulfiteQc {
     vcf=vcf,
     bam=bam,
     reference=reference,
+    reference_fai=reference_fai,
     QCannotation=QCannotation
   }
 
@@ -35,6 +38,7 @@ workflow bisulfiteQc {
     vcf=vcf,
     bam=bam,
     reference=reference,
+    reference_fai=reference_fai,
     QCannotation=QCannotation
   }
 
@@ -43,6 +47,7 @@ workflow bisulfiteQc {
     vcf=vcf,
     bam=bam,
     reference=reference,
+    reference_fai=reference_fai,
     QCannotation=QCannotation
   }
 

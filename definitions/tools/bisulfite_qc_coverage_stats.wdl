@@ -5,10 +5,11 @@ task bisulfiteQcCoverageStats {
     File vcf
     File bam
     File reference
+    File reference_fai
     File QCannotation
   }
 
-  Int space_needed_gb = 10 + round(size([vcf, bam, reference, QCannotation], "GB"))
+  Int space_needed_gb = 10 + round(size([vcf, bam, reference, reference_fai, QCannotation], "GB"))
   runtime {
     cpu: 1
     memory: "16GB"

@@ -5,6 +5,7 @@ task bisulfiteQcConversion {
     File vcf
     File bam
     File reference
+    File reference_fai
     File QCannotation
   }
 
