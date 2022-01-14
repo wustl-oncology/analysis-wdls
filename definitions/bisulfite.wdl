@@ -66,6 +66,7 @@ workflow bisulfite {
     input:
     vcf=pileup.vcf,
     reference=reference,
+    reference_fai=reference_fai,
     assay_non_cpg_sites=assay_non_cpg_sites
   }
 

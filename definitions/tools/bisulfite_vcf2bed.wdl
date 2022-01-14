@@ -3,7 +3,9 @@ version 1.0
 task bisulfiteVcf2bed {
   input {
     File vcf
+    # TODO(john) reference dict,etc?
     File reference
+    File reference_fai
     Boolean assay_non_cpg_sites
   }
 
@@ -30,7 +32,6 @@ task bisulfiteVcf2bed {
 
     fi
   >>>
-
 
   output {
     Array[File] methylation_bed = glob("*.bed.gz")
