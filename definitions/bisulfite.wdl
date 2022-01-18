@@ -1,7 +1,7 @@
 version 1.0
 
 import "subworkflows/bam_to_trimmed_fastq_and_biscuit_alignments.wdl" as bttfaba
-import "subworkflows/bisulfite_qc.wdl" as bq
+import "tools/bisulfite_qc.wdl" as bq
 import "tools/bam_to_cram.wdl" as btc
 import "tools/bedgraph_to_bigwig.wdl" as btb
 import "tools/biscuit_pileup.wdl" as bp
