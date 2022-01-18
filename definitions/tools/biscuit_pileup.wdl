@@ -2,9 +2,9 @@ version 1.0
 
 task biscuitPileup {
   input {
-    # TODO(john) bam_bai, reference fai,dict,etc?
     File bam
     File reference
+    File reference_fai
   }
   Int cores = 4
 

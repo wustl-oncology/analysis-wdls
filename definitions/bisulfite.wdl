@@ -50,7 +50,8 @@ workflow bisulfite {
   call bp.biscuitPileup as pileup {
     input:
     bam=merge.merged_bam,
-    reference=reference
+    reference=reference,
+    reference_fai=reference_fai
   }
 
   call bq.bisulfiteQc {

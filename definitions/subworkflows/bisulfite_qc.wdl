@@ -9,7 +9,7 @@ workflow bisulfiteQc {
   input {
     File vcf
     File bam
-    File reference  # TODO(john) any secondary files other than fai?
+    File reference
     File reference_fai
     File QCannotation
   }
