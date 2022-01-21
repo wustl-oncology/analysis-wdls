@@ -219,7 +219,7 @@ workflow somaticExome {
     input:
     tumor_bam=tumorAlignmentAndQc.bam,
     normal_bam=normalAlignmentAndQc.bam,
-    reference=reference,
+    reference_fasta=reference,
     bait_intervals=bait_intervals,
     target_average_size=cnvkit_target_average_size
   }

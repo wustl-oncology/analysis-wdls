@@ -13,18 +13,24 @@ task sequenceAlignAndTag {
     File reference_pac
     File reference_sa
   }
-  Int cores = 8
 
+  # Disk space
   Float data_size = size([unaligned.sequence.bam, unaligned.sequence.fastq1, unaligned.sequence.fastq2], "GB")
   Float reference_size = size([reference, reference_amb, reference_ann, reference_bwt, reference_pac, reference_sa], "GB")
+  Int space_needed_gb = 10 + ceil(5*data_size + reference_size)
+  # Memory / RAM
+  Int instance_memory_gb = 20 + ceil(reference_size + 2*data_size)
+  Int jvm_memory_gb = 4
+  # CPU
+  Int cores = 8
   runtime {
     docker: "mgibio/alignment_helper-cwl:1.1.0"
-    memory: "20GB"
+    memory: "~{instance_memory_gb}GB"
     cpu: cores
     # 1 + just for a buffer
     # data_size*10 because bam uncompresses and streams to /dev/stdout and /dev/stdin, could have a couple flying at once
-    bootDiskSizeGb: 10 + round(5*data_size + reference_size)
-    disks: "local-disk ~{10 + round(5*data_size + reference_size)} SSD"
+    bootDiskSizeGb: space_needed_gb
+    disks: "local-disk ~{space_needed_gb} SSD"
   }
 
   String outname = "refAligned.bam"
@@ -63,10 +69,10 @@ task sequenceAlignAndTag {
     fi
     if [[ "$MODE" == "bam" ]]; then
         if [[ "$RUN_TRIMMING" == "false" ]]; then
-            /usr/bin/java -Xmx4g -jar /opt/picard/picard.jar SamToFastq I=$BAM INTERLEAVE=true INCLUDE_NON_PF_READS=true FASTQ=/dev/stdout \
+            /usr/bin/java -Xmx~{jvm_memory_gb}g -jar /opt/picard/picard.jar SamToFastq I=$BAM INTERLEAVE=true INCLUDE_NON_PF_READS=true FASTQ=/dev/stdout \
                 | bwa_blast_view > "~{outname}"
         else
-            /usr/bin/java -Xmx4g -jar /opt/picard/picard.jar SamToFastq I=$BAM INTERLEAVE=true INCLUDE_NON_PF_READS=true FASTQ=/dev/stdout \
+            /usr/bin/java -Xmx~{jvm_memory_gb}g -jar /opt/picard/picard.jar SamToFastq I=$BAM INTERLEAVE=true INCLUDE_NON_PF_READS=true FASTQ=/dev/stdout \
                 | /opt/flexbar/flexbar --adapters "$TRIMMING_ADAPTERS" --reads - --interleaved --adapter-trim-end LTAIL --adapter-min-overlap "$TRIMMING_ADAPTER_MIN_OVERLAP" --adapter-error-rate 0.1 --max-uncalled 300 --stdout-reads \
                 | bwa_blast_view > "~{outname}"
         fi
