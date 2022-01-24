@@ -34,7 +34,7 @@ task combineVariantsWgs {
     -R ~{reference} \
     --variant:mutect ~{mutect_vcf} \
     --variant:varscan ~{varscan_vcf} \
-    --variant:strelka_vcf ~{strelka_vcf}
+    --variant:strelka ~{strelka_vcf}
   >>>
 
   output {
