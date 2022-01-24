@@ -19,7 +19,6 @@ task vtDecompose {
 
   output {
     File decomposed_vcf = "decomposed.vcf.gz"
-    File decomposed_vcf_tbi = "decomposed.vcf.gz.tbi"
   }
 }
 
