@@ -23,6 +23,5 @@ task normalizeVariants {
 
   output {
     File normalized_vcf = "normalized.vcf.gz"
-    File normalized_vcf_tbi = "normalized.vcf.gz.tbi"
   }
 }

@@ -18,14 +18,14 @@ task collectWgsMetrics {
   Float intervals_size = size(intervals, "GB")
   Int space_needed_gb = 10 + round(bam_size + reference_size + intervals_size)
   runtime {
-    memory: "18GB"
+    memory: "32GB"
     docker: "broadinstitute/picard:2.23.6"
     disks: "local-disk ~{space_needed_gb} SSD"
   }
 
   String outname = sample_name + ".WgsMetrics.txt"
   command <<<
-    /usr/bin/java -Xmx16g -jar /usr/picard/picard.jar CollectWgsMetrics \
+    /usr/bin/java -Xmx32g -jar /usr/picard/picard.jar CollectWgsMetrics \
     O=~{outname} \
     I=~{bam} R=~{reference} \
     ~{if defined(intervals) then "INTERVALS=" + select_first([intervals]) else ""} \

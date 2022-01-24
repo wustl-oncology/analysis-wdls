@@ -16,7 +16,7 @@ task collectGcBiasMetrics {
   Float reference_size_gb = size([reference, reference_fai, reference_dict], "GB")
   Int space_needed_gb = 10 + round(bam_size_gb + reference_size_gb)
   runtime {
-    memory: "18GB"
+    memory: "32GB"
     docker: "broadinstitute/picard:2.23.6"
     disks: "local-disk ~{space_needed_gb} SSD"
   }
@@ -25,7 +25,7 @@ task collectGcBiasMetrics {
   String bias_metrics_summary = sample_name + ".GcBiasMetricsSummary.txt"
   String bias_metrics_chart = sample_name + ".GcBiasMetricsChart.pdf"
   command <<<
-    /usr/bin/java -Xmx16g -jar /usr/picard/picard.jar CollectGcBiasMetrics \
+    /usr/bin/java -Xmx32g -jar /usr/picard/picard.jar CollectGcBiasMetrics \
     O=~{bias_metrics} \
     CHART=~{bias_metrics_chart} \
     S=~{bias_metrics_summary} \

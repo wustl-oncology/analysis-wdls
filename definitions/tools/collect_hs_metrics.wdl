@@ -31,7 +31,7 @@ task collectHsMetrics {
   String per_target_txt = "~{bamroot}.~{output_prefix}-PerTargetCoverage.txt"
   String per_base_txt = "~{bamroot}.~{output_prefix}-PerBaseCoverage.txt"
   command <<<
-    /usr/bin/java -Xmx16g -jar /usr/picard/picard.jar CollectHsMetrics \
+    /usr/bin/java -Xmx32g -jar /usr/picard/picard.jar CollectHsMetrics \
     O=~{hs_txt} \
     I=~{bam} \
     R=~{reference} \

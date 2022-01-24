@@ -12,14 +12,14 @@ task collectAlignmentSummaryMetrics {
 
   Int space_needed_gb = 10 + round(size([bam, bam_bai, reference, reference_fai, reference_dict],"GB"))
   runtime{
-    memory: "18GB"
+    memory: "32GB"
     docker: "broadinstitute/picard:2.23.6"
     disks: "local-disk ~{space_needed_gb} SSD"
   }
   String bamroot = basename(bam, ".bam")
   String summary_metrics = "~{bamroot}.AlignmentSummaryMetrics.txt"
   command <<<
-    /usr/bin/java -Xmx16g -jar /usr/picard/picard.jar CollectAlignmentSummaryMetrics INPUT=~{bam} OUTPUT=~{summary_metrics} REFERENCE_SEQUENCE=~{reference} METRIC_ACCUMULATION_LEVEL=~{metric_accumulation_level}
+    /usr/bin/java -Xmx32g -jar /usr/picard/picard.jar CollectAlignmentSummaryMetrics INPUT=~{bam} OUTPUT=~{summary_metrics} REFERENCE_SEQUENCE=~{reference} METRIC_ACCUMULATION_LEVEL=~{metric_accumulation_level}
   >>>
 
   output {
