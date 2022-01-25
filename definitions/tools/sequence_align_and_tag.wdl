@@ -19,10 +19,12 @@ task sequenceAlignAndTag {
   Float reference_size = size([reference, reference_amb, reference_ann, reference_bwt, reference_pac, reference_sa], "GB")
   Int space_needed_gb = 10 + ceil(5*data_size + reference_size)
   # Memory / RAM
-  Int instance_memory_gb = 20 + ceil(reference_size + 2*data_size)
+  # Int instance_memory_gb = 20 + ceil(reference_size + 2*data_size)
   Int jvm_memory_gb = 4
-  # CPU
-  Int cores = 8
+  # CPU |  Memory / RAM
+  Int cores = 32
+  Int instance_memory_gb = 20 + ceil(reference_size * cores)
+  Int jvm_memory_gb = 4
   runtime {
     docker: "mgibio/alignment_helper-cwl:1.1.0"
     memory: "~{instance_memory_gb}GB"
@@ -104,6 +106,6 @@ workflow wf {
     reference_ann=reference_ann,
     reference_bwt=reference_bwt,
     reference_pac=reference_pac,
-    reference_sa=reference_sa,
+    reference_sa=reference_sa
   }
 }

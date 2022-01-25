@@ -25,7 +25,7 @@ task variantsToTable {
   command <<<
     /gatk/gatk --java-options -Xmx4g VariantsToTable -O ~{outfile} \
     -R ~{reference} --variant ~{vcf} \
-    ~{sep=" " prefix("-F ", fields)} ~{sep=" " prefix("-GF", genotype_fields)}
+    ~{sep=" " prefix("-F ", fields)} ~{sep=" " prefix("-GF ", genotype_fields)}
   >>>
 
   output {
