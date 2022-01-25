@@ -18,9 +18,6 @@ task sequenceAlignAndTag {
   Float data_size = size([unaligned.sequence.bam, unaligned.sequence.fastq1, unaligned.sequence.fastq2], "GB")
   Float reference_size = size([reference, reference_amb, reference_ann, reference_bwt, reference_pac, reference_sa], "GB")
   Int space_needed_gb = 10 + ceil(5*data_size + reference_size)
-  # Memory / RAM
-  # Int instance_memory_gb = 20 + ceil(reference_size + 2*data_size)
-  Int jvm_memory_gb = 4
   # CPU |  Memory / RAM
   Int cores = 32
   Int instance_memory_gb = 20 + ceil(reference_size * cores)
