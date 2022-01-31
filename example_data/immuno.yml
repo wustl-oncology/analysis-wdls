@@ -15,9 +15,11 @@ immuno.normal_sample_name: 'H_NJ-HCC1395-HCC1395_BL'
 
 immuno.gene_transcript_lookup_table: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/rna_inputs/subset_transcriptToGene.tsv
 
-immuno.rna_bams:
-- gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/unaligned_subset_bams/rna/2895626107.bam
-- gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/unaligned_subset_bams/rna/2895626112.bam
+immuno.rna_sequence:
+  - sequence:
+      bam: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/unaligned_subset_bams/rna/2895626107.bam
+  - sequence:
+      bam: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/unaligned_subset_bams/rna/2895626112.bam
 
 immuno.kallisto_index: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/rna_inputs/subset_transcripts_kallisto.idx
 
