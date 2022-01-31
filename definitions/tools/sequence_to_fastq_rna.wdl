@@ -10,10 +10,12 @@ task sequenceToFastqRna {
     Boolean unzip_fastqs = false
   }
 
+  Int space_needed_gb = 10 + ceil(2*size([bam, fastq1, fastq2], "GB"))
   runtime {
     memory: "16GB"
     bootDiskSizeGb: 25
     docker: "mgibio/rnaseq:1.0.0"
+    disks: "local-disk ~{space_needed_gb} SSD"
   }
 
   String outdir = "outdir"
