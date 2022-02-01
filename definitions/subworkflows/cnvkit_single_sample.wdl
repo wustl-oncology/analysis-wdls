@@ -26,7 +26,7 @@ workflow cnvkitSingleSample {
     scatter_plot=scatter_plot,
     drop_low_coverage=drop_low_coverage,
     male_reference=male_reference,
-    reference=reference,
+    reference_fasta=reference,
     reference_cnn=reference_cnn
   }
 
