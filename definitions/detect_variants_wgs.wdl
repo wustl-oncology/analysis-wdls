@@ -29,6 +29,8 @@ workflow detectVariantsWgs {
     File roi_intervals
     Boolean strelka_exome_mode
     Int strelka_cpu_reserved = 8
+    File? strelka_call_regions
+    File? strelka_call_regions_tbi
     Int? readcount_minimum_base_quality
     Int? readcount_minimum_mapping_quality
     Int scatter_count
@@ -97,7 +99,9 @@ workflow detectVariantsWgs {
 
     interval_list=roi_intervals,
     exome_mode=strelka_exome_mode,
-    cpu_reserved=strelka_cpu_reserved
+    cpu_reserved=strelka_cpu_reserved,
+    call_regions=strelka_call_regions,
+    call_regions_tbi=strealk_call_regions_tbi
   }
 
   call vpapp.varscanPreAndPostProcessing as varscan {

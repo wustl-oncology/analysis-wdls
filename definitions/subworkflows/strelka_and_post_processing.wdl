@@ -26,6 +26,9 @@ workflow strelkaAndPostProcessing {
 
     Boolean exome_mode
     Int cpu_reserved = 8
+
+    File? call_regions
+    File? call_regions_tbi
   }
 
   call s.strelka {
@@ -38,7 +41,9 @@ workflow strelkaAndPostProcessing {
     normal_bam=normal_bam,
     normal_bam_bai=normal_bam_bai,
     exome_mode=exome_mode,
-    cpu_reserved=cpu_reserved
+    cpu_reserved=cpu_reserved,
+    call_regions=call_regions,
+    call_regions_tbi=call_regions_tbi
   }
 
   scatter(vcf in [strelka.snvs, strelka.indels]) {

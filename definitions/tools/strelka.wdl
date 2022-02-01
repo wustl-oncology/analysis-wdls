@@ -11,6 +11,10 @@ task strelka {
     File reference_dict
     Boolean exome_mode
     Int? cpu_reserved
+    # `call_regions` is available to avoid performance issues in specific cases
+    # https://github.com/Illumina/strelka/blob/master/docs/userGuide/README.md#improving-runtime-for-references-with-many-short-contigs-such-as-grch38
+    File? call_regions
+    File? call_regions_tbi
   }
 
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
@@ -24,12 +28,15 @@ task strelka {
   }
 
   command <<<
+    # Ensure bam and bai have same paths, bai timestamp after bam timestamp
     mv ~{tumor_bam} ~{basename(tumor_bam)}; mv ~{tumor_bam_bai} ~{basename(tumor_bam_bai)}
     mv ~{normal_bam} ~{basename(normal_bam)}; mv ~{normal_bam_bai} ~{basename(normal_bam_bai)}
+
     /usr/bin/perl /usr/bin/docker_helper.pl \
     ~{if defined(cpu_reserved) then cpu_reserved else ""} \
     "$PWD" --tumorBam=~{basename(tumor_bam)} --normalBam=~{basename(normal_bam)} \
     --referenceFasta=~{reference} \
+    ~{if defined(call_regions) then "--callRegions=~{call_regions}" else ""} \
     ~{if exome_mode then "--exome" else ""}
   >>>
 

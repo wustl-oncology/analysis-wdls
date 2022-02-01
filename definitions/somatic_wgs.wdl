@@ -46,6 +46,8 @@ workflow somaticWgs {
     Int? qc_minimum_base_quality
 
     Int strelka_cpu_reserved = 8
+    File? strelka_call_regions
+    File? strelka_call_regions_tbi
     Int scatter_count
     Int varscan_strand_filter = 0
     Int varscan_min_coverage = 8
@@ -159,6 +161,8 @@ workflow somaticWgs {
     roi_intervals=target_intervals,
     strelka_exome_mode=false,
     strelka_cpu_reserved=strelka_cpu_reserved,
+    strelka_call_regions=strelka_call_regions,
+    strelka_call_regions_tbi=strelka_call_regions_tbi,
     scatter_count=scatter_count,
     varscan_strand_filter=varscan_strand_filter,
     varscan_min_coverage=varscan_min_coverage,
