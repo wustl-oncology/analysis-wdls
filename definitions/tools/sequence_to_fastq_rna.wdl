@@ -33,7 +33,7 @@ task sequenceToFastqRna {
 
     mkdir -p $OUTDIR
 
-    if [[ "$MODE" == 'fastq' ]]; then #must be fastq input
+    if [[ "$MODE" == "fastq" ]]; then #must be fastq input
         if $UNZIP; then
             if gzip -t $FASTQ1 2> /dev/null; then
                 gunzip -c $FASTQ1 > $OUTDIR/read1.fastq
@@ -68,7 +68,7 @@ task sequenceToFastqRna {
   >>>
 
   output {
-    File read1_fastq = "~{outdir}/read1.fastq"
-    File read2_fastq = "~{outdir}/read2.fastq"
+    File read1_fastq = glob("~{outdir}/read1.fastq*")[0]
+    File read2_fastq = glob("~{outdir}/read2.fastq*")[0]
   }
 }
