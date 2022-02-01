@@ -72,3 +72,20 @@ task sequenceToFastqRna {
     File read2_fastq = glob("~{outdir}/read2.fastq*")[0]
   }
 }
+
+workflow wf {
+  input {
+    File? bam
+    File? fastq1
+    File? fastq2
+    Boolean unzip_fastqs = false
+  }
+
+  call sequenceToFastqRna {
+    input:
+    bam=bam,
+    fastq1=fastq1,
+    fastq2=fastq2,
+    unzip_fastqs=unzip_fastqs
+  }
+}
