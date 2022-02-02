@@ -26,10 +26,14 @@ task cnvkitBatch {
     disks: "local-disk ~{size_needed_gb} SSD"
   }
 
-  String ref_str = if defined(normal_bam) then "--normal ~{normal_bam} --fasta ~{reference_fasta}" else "--reference ~{reference_cnn}"
   command <<<
+    if ~{defined(normal_bam)}; then
+      REF="--normal ~{normal_bam} --fasta ~{reference_fasta}"
+    else
+      REF="--reference ~{reference_cnn}"
+    fi
     /usr/bin/python /usr/local/bin/cnvkit.py batch \
-    ~{tumor_bam} ~{ref_str} \
+    ~{tumor_bam} $REF \
     ~{if defined(bait_intervals) then "--targets ~{bait_intervals}" else ""} \
     ~{if defined(access) then "--access ~{access}" else ""} \
     --method ~{method} \
@@ -54,5 +58,39 @@ task cnvkitBatch {
     File tumor_target_coverage = basename(tumor_bam, ".bam") + ".targetcoverage.cnn"
     File tumor_bin_level_ratios = basename(tumor_bam, ".bam") + ".cnr"
     File tumor_segmented_ratios = basename(tumor_bam, ".bam") + ".cns"
+  }
+}
+
+
+workflow wf {
+  input {
+    File tumor_bam
+    File? bait_intervals
+    File? access
+    File? normal_bam
+    File? reference_fasta  # fasta or CNN must exist
+    File? reference_cnn    # fasta or CNN must exist
+    String method = "hybrid"  # enum [hybrid, amplicon, wgs]
+    Boolean diagram = false
+    Boolean scatter_plot = false
+    Boolean drop_low_coverage = false
+    Boolean male_reference = false
+    Int? target_average_size
+  }
+
+  call cnvkitBatch {
+    input:
+    tumor_bam=tumor_bam,
+    bait_intervals=bait_intervals,
+    access=access,
+    normal_bam=normal_bam,
+    reference_fasta=reference_fasta,
+    reference_cnn=reference_cnn,
+    method=method,
+    diagram=diagram,
+    scatter_plot=scatter_plot,
+    drop_low_coverage=drop_low_coverage,
+    male_reference=male_reference,
+    target_average_size=target_average_size
   }
 }
