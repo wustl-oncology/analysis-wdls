@@ -6,7 +6,7 @@ task freemix {
   }
 
   runtime {
-    docker: "ubuntu:xenial"
+    docker: "python:3.10"
   }
 
   command <<<
@@ -22,5 +22,16 @@ task freemix {
     # Contains EITHER the FREEMIX contamination fraction value, or is empty
     # WDL doesn't have a good way to extract `Float?` from a command...
     String out = stdout()
+  }
+}
+
+workflow wf {
+  input {
+    File verify_bam_id_metrics
+  }
+
+  call freemix {
+    input:
+    verify_bam_id_metrics=verify_bam_id_metrics
   }
 }
