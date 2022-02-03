@@ -101,7 +101,7 @@ workflow detectVariantsWgs {
     exome_mode=strelka_exome_mode,
     cpu_reserved=strelka_cpu_reserved,
     call_regions=strelka_call_regions,
-    call_regions_tbi=strealk_call_regions_tbi
+    call_regions_tbi=strelka_call_regions_tbi
   }
 
   call vpapp.varscanPreAndPostProcessing as varscan {
