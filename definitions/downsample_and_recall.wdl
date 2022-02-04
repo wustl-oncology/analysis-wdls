@@ -49,7 +49,7 @@ workflow downsampleAndRecall {
       emit_reference_confidence=emit_reference_confidence,
       gvcf_gq_bands=[],
       intervals=intervals,
-      contamination_fraction="~{x.contamination}",
+      contamination_fraction=write_lines(["~{x.contamination}"]),
       max_alternate_alleles=max_alternate_alleles,
       ploidy=ploidy,
       read_filter=read_filter,

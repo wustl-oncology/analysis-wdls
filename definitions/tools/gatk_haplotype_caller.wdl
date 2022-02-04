@@ -12,7 +12,7 @@ task gatkHaplotypeCaller {
     Array[String] intervals
     File? dbsnp_vcf
     File? dbsnp_vcf_tbi
-    String contamination_fraction  # empty or a float. See `tools/freemix.wdl` for context
+    File? contamination_fraction  # contains a float. See `tools/freemix.wdl` for context
     Int? max_alternate_alleles
     Int? ploidy
     String? read_filter
@@ -35,8 +35,9 @@ task gatkHaplotypeCaller {
     mv ~{bam} ~{basename(bam)}
     mv ~{bai} ~{basename(basename(bai, ".bai"), ".bam") + ".bai"}
 
-    if [ -z "~{contamination_fraction}" ]; then
-        CONTAMINATION_ARG="--contamination ~{contamination_fraction}"
+    CONTAMINATION_FILE=~{contamination_fraction}
+    if [ -z "$CONTAMINATION_FILE" ]; then
+        CONTAMINATION_ARG="--contamination $(head -n 1 $CONTAMINATION_FILE})"
     fi
 
     # do the task itself
@@ -47,7 +48,7 @@ task gatkHaplotypeCaller {
     ~{sep=" " pref_bands} \
     -L ~{sep="," intervals} \
     ~{if(defined(dbsnp_vcf)) then "--dbsnp " + dbsnp_vcf else ""} \
-    "$CONTAMINATION_ARG" \
+    $CONTAMINATION_ARG \
     ~{if(defined(max_alternate_alleles)) then "--max_alternate_alleles " + max_alternate_alleles else ""} \
     ~{if(defined(ploidy)) then "-ploidy " + ploidy else ""} \
     ~{if(defined(read_filter)) then "--read_filter " + read_filter else ""} \
@@ -72,7 +73,7 @@ workflow wf {
     Array[String] intervals
     File? dbsnp_vcf
     File? dbsnp_vcf_tbi
-    String contamination_fraction
+    File? contamination_fraction
     Int? max_alternate_alleles
     Int? ploidy
     String? read_filter

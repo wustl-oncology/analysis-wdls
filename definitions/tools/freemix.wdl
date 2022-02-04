@@ -14,14 +14,13 @@ task freemix {
     with open("~{verify_bam_id_metrics}", "r") as f:
         header = f.readline().split("\t")
         if len(header) >= 7 and header[6] == "FREEMIX":
-            print(f.readline().split("\t")[6])
+            with open("contamination.txt", "w") as out:
+                out.write(f.readline().split("\t")[6])
     CODE
   >>>
 
   output {
-    # Contains EITHER the FREEMIX contamination fraction value, or is empty
-    # WDL doesn't have a good way to extract `Float?` from a command...
-    String out = stdout()
+    File? out = "contamination.txt"
   }
 }
 
