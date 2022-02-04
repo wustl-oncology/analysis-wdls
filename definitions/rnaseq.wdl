@@ -47,31 +47,27 @@ workflow rnaseq {
     File? ribosomal_intervals
   }
 
-  scatter(sequence in rna_sequence) {
-    scatter(id in read_group_id) {
-      scatter(fields in read_group_fields) {
-        call bttfaha.bamToTrimmedFastqAndHisatAlignments {
-          input:
-          unaligned=sequence,
-          read_group_id=id,
-          read_group_fields=fields,
-          adapters=trimming_adapters,
-          adapter_trim_end=trimming_adapter_trim_end,
-          adapter_min_overlap=trimming_adapter_min_overlap,
-          max_uncalled=trimming_max_uncalled,
-          min_readlength=trimming_min_readlength,
-          reference_index=reference_index,
-          reference_index_1ht2=reference_index_1ht2,
-          reference_index_2ht2=reference_index_2ht2,
-          reference_index_3ht2=reference_index_3ht2,
-          reference_index_4ht2=reference_index_4ht2,
-          reference_index_5ht2=reference_index_5ht2,
-          reference_index_6ht2=reference_index_6ht2,
-          reference_index_7ht2=reference_index_7ht2,
-          reference_index_8ht2=reference_index_8ht2,
-          strand=strand
-        }
-      }
+  scatter(idx in range(length(rna_sequence))) {
+    call bttfaha.bamToTrimmedFastqAndHisatAlignments {
+      input:
+      unaligned=rna_sequence[idx],
+      read_group_id=read_group_id[idx],
+      read_group_fields=read_group_fields[idx],
+      adapters=trimming_adapters,
+      adapter_trim_end=trimming_adapter_trim_end,
+      adapter_min_overlap=trimming_adapter_min_overlap,
+      max_uncalled=trimming_max_uncalled,
+      min_readlength=trimming_min_readlength,
+      reference_index=reference_index,
+      reference_index_1ht2=reference_index_1ht2,
+      reference_index_2ht2=reference_index_2ht2,
+      reference_index_3ht2=reference_index_3ht2,
+      reference_index_4ht2=reference_index_4ht2,
+      reference_index_5ht2=reference_index_5ht2,
+      reference_index_6ht2=reference_index_6ht2,
+      reference_index_7ht2=reference_index_7ht2,
+      reference_index_8ht2=reference_index_8ht2,
+      strand=strand
     }
   }
 
@@ -79,7 +75,7 @@ workflow rnaseq {
     input:
     kallisto_index=kallisto_index,
     strand=strand,
-    fastqs=flatten(flatten(bamToTrimmedFastqAndHisatAlignments.fastqs))
+    fastqs=bamToTrimmedFastqAndHisatAlignments.fastqs
   }
 
   call ttg.transcriptToGene {
@@ -90,7 +86,7 @@ workflow rnaseq {
 
   # TODO(john): remove extra sort, as an optimization
   call mb.mergeBams as merge {
-    input: bams=flatten(flatten(bamToTrimmedFastqAndHisatAlignments.aligned_bam))
+    input: bams=bamToTrimmedFastqAndHisatAlignments.aligned_bam
   }
 
   call ss.samtoolsSort as positionSort {
