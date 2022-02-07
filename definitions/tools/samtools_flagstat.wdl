@@ -22,3 +22,16 @@ task samtoolsFlagstat {
     File flagstats = outfile
   }
 }
+
+workflow wf {
+  input {
+    File bam
+    File bam_bai
+  }
+
+  call samtoolsFlagstat {
+    input:
+    bam=bam,
+    bam_bai=bam_bai
+  }
+}
