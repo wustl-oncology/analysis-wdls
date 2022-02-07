@@ -23,19 +23,14 @@ task docmGatkHaplotypeCaller {
   }
 
   command <<<
-    ~{if defined(normal_bam) then "mv ~{normal_bam} ~{basename(normal_bam)}" else ""}
-    ~{if defined(normal_bam_bai) then "mv ~{normal_bam_bai} ~{basename(normal_bam_bai)}" else ""}
-    mv ~{bam} ~{basename(bam)}; mv ~{bam_bai} ~{basename(bam_bai)}
-
-
     # Extracting the header from the interval_list
-    grep '^@' "~{interval_list}" > docm.interval_list
+    grep '^@' ~{interval_list} > docm.interval_list
     # Extracting the docm regions with a 100bp flanking region on both directions
-    zcat "~{docm_vcf}" | grep ^chr | awk '{FS = "\t";OFS = "\t";print $1,$2-100,$2+100,"+",$1"_"$2-100"_"$2+100}' >> docm.interval_list
+    zcat ~{docm_vcf} | grep ^chr | awk '{FS = "\t";OFS = "\t";print $1,$2-100,$2+100,"+",$1"_"$2-100"_"$2+100}' >> docm.interval_list
 
     /gatk/gatk HaplotypeCaller --java-options "-Xmx8g" -R "~{reference}" \
-    -I "~{basename(bam)}" ~{if defined(normal_bam) then "-I ~{basename(normal_bam)}" else ""} \
-    --alleles "~{docm_vcf}" \
+    -I ~{bam} ~{if defined(normal_bam) then "-I ~{normal_bam}" else ""} \
+    --alleles ~{docm_vcf} \
     -L docm.interval_list \
     --genotyping-mode GENOTYPE_GIVEN_ALLELES \
     -O docm_raw_variants.vcf
