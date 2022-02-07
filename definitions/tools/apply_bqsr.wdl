@@ -11,7 +11,7 @@ task applyBqsr {
     String output_name = "final"
   }
 
-  Int space_needed_gb = 10 + round(size([bqsr_table, reference, reference_fai, reference_dict], "GB") + size([bam, bam_bai], "GB") * 2)
+  Int space_needed_gb = 10 + round(size([bqsr_table, reference, reference_fai, reference_dict], "GB") + size([bam, bam_bai], "GB") * 5)
   runtime {
     docker: "broadinstitute/gatk:4.1.8.1"
     memory: "18GB"
