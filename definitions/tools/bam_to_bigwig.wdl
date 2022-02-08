@@ -27,3 +27,23 @@ task bamToBigwig {
     File outfile = output_bw
   }
 }
+
+
+workflow wf {
+  input {
+    File bam
+    File bam_bai
+    File reference
+    File reference_fai
+    File reference_dict
+  }
+
+  call bamToBigwig {
+    input:
+    bam=bam,
+    bam_bai=bam_bai,
+    reference=reference,
+    reference_fai=reference_fai,
+    reference_dict=reference_dict
+  }
+}

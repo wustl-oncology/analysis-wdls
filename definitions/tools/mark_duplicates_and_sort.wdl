@@ -8,7 +8,7 @@ task markDuplicatesAndSort {
   }
   String metrics_file_name = sub(output_name, "\.bam$", ".mark_dups_metrics.txt")
 
-  Int space_needed_gb = 10 + round(3*size(bam, "GB"))
+  Int space_needed_gb = 10 + round(6*size(bam, "GB"))
   runtime {
     docker: "mgibio/mark_duplicates-cwl:1.0.1"
     memory: "40GB"
@@ -34,6 +34,15 @@ task markDuplicatesAndSort {
 }
 
 workflow wf {
-  input { File bam }
-  call markDuplicatesAndSort { input: bam=bam }
+  input {
+    File bam
+    String? input_sort_order
+    String? output_name
+  }
+  call markDuplicatesAndSort {
+    input:
+    bam=bam,
+    input_sort_order=input_sort_order,
+    output_name=output_name
+  }
 }
