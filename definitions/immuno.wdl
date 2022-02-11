@@ -479,7 +479,7 @@ workflow immuno {
     File? tumor_only_variants_tbi = somatic.tumor_only_variants_tbi
 
     File somalier_concordance_metrics = somatic.somalier_concordance_metrics
-    File somalier_conrodance_statistics = somatic.somalier_conrodance_statistics
+    File somalier_concordance_statistics = somatic.somalier_concordance_statistics
 
     # ---------- Germline Outputs --------------------------------------
 

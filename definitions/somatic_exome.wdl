@@ -353,6 +353,6 @@ workflow somaticExome {
     File? tumor_only_variants_tbi = manta.tumor_only_variants_tbi
 
     File somalier_concordance_metrics = concordance.somalier_pairs
-    File somalier_conrodance_statistics = concordance.somalier_samples
+    File somalier_concordance_statistics = concordance.somalier_samples
   }
 }
