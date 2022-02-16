@@ -240,6 +240,7 @@ task hlaConsensus {
   >>>
 
   output {
+    File consensus_alleles_file = "hla_calls/consensus_calls.txt"
     # NOTE(john): newline file made only because of WDL issues, can't split string have to separate lines
     Array[String] consensus_alleles = read_lines("hla_calls/consensus_calls_newline.txt")
     Array[File] hla_call_files = glob("hla_calls/*")

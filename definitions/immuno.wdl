@@ -12,6 +12,7 @@ import "tools/hla_consensus.wdl" as hc
 import "tools/intersect_known_variants.wdl" as ikv
 import "types.wdl"
 
+
 workflow immuno {
   input {
 
@@ -165,7 +166,7 @@ workflow immuno {
     Int? pvacseq_threads
   }
 
-  call r.rnaseq {
+  call r.rnaseq as rna {
     input:
     reference=reference,
     reference_fai=reference_fai,
@@ -196,7 +197,7 @@ workflow immuno {
     ribosomal_intervals=ribosomal_intervals
   }
 
-  call se.somaticExome as somatic {
+  call se.somaticExome {
     input:
     reference=reference,
     reference_fai=reference_fai,
@@ -258,7 +259,7 @@ workflow immuno {
     validated_variants_tbi=validated_variants_tbi
   }
 
-  call geht.germlineExomeHlaTyping as germline {
+  call geht.germlineExomeHlaTyping as germlineExome {
     input:
     reference=reference,
     reference_fai=reference_fai,
@@ -298,20 +299,20 @@ workflow immuno {
 
   call pv.phaseVcf {
     input:
-    somatic_vcf=somatic.final_filtered_vcf,
-    somatic_vcf_tbi=somatic.final_filtered_vcf_tbi,
-    germline_vcf=germline.final_vcf,
+    somatic_vcf=somaticExome.final_filtered_vcf,
+    somatic_vcf_tbi=somaticExome.final_filtered_vcf_tbi,
+    germline_vcf=germlineExome.final_vcf,
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
-    bam=somatic.tumor_cram,
-    bam_bai=somatic.tumor_cram_crai,
+    bam=somaticExome.tumor_cram,
+    bam_bai=somaticExome.tumor_cram_crai,
     normal_sample_name=normal_sample_name,
     tumor_sample_name=tumor_sample_name
   }
 
   call eha.extractHlaAlleles as extractAlleles {
-    input: allele_file=germline.optitype_tsv
+    input: file=germlineExome.optitype_tsv
   }
 
   call hc.hlaConsensus {
@@ -323,8 +324,8 @@ workflow immuno {
 
   call ikv.intersectKnownVariants as intersectPassingVariants {
     input:
-    vcf=somatic.final_filtered_vcf,
-    vcf_tbi=somatic.final_filtered_vcf_tbi
+    vcf=somaticExome.final_filtered_vcf,
+    vcf_tbi=somaticExome.final_filtered_vcf_tbi
   }
 
   call p.pvacseq {
@@ -333,15 +334,15 @@ workflow immuno {
     detect_variants_vcf_tbi=intersectPassingVariants.validated_and_pipeline_vcf_tbi,
     sample_name=tumor_sample_name,
     normal_sample_name=normal_sample_name,
-    rnaseq_bam=rnaseq.final_bam,
-    rnaseq_bam_bai=rnaseq.final_bam_bai,
+    rnaseq_bam=rna.final_bam,
+    rnaseq_bam_bai=rna.final_bam_bai,
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
     readcount_minimum_base_quality=readcount_minimum_base_quality,
     readcount_minimum_mapping_quality=readcount_minimum_mapping_quality,
-    gene_expression_file=rnaseq.gene_abundance,
-    transcript_expression_file=rnaseq.transcript_abundance_tsv,
+    gene_expression_file=rna.gene_abundance,
+    transcript_expression_file=rna.transcript_abundance_tsv,
     alleles=hlaConsensus.consensus_alleles,
     prediction_algorithms=prediction_algorithms,
     epitope_lengths_class_i=epitope_lengths_class_i,
@@ -376,146 +377,154 @@ workflow immuno {
 
   output {
     # ---------- RNAseq Outputs ----------------------------------------
-
-    File final_bigwig = rnaseq.bamcoverage_bigwig
-    File final_bam = rnaseq.final_bam
-    File final_bam_bai = rnaseq.final_bam_bai
-    File stringtie_transcript_gtf = rnaseq.stringtie_transcript_gtf
-    File stringtie_gene_expression_tsv = rnaseq.stringtie_gene_expression_tsv
-    File transcript_abundance_tsv = rnaseq.transcript_abundance_tsv
-    File transcript_abundance_h5 = rnaseq.transcript_abundance_h5
-    File gene_abundance = rnaseq.gene_abundance
-    File metrics = rnaseq.metrics
-    File? chart = rnaseq.chart
+    Array[File] rnaseq = [
+      rna.bamcoverage_bigwig,
+      rna.final_bam,
+      rna.final_bam_bai,
+      rna.stringtie_transcript_gtf,
+      rna.stringtie_gene_expression_tsv,
+      rna.transcript_abundance_tsv,
+      rna.transcript_abundance_h5,
+      rna.gene_abundance
+    ]
 
     # -------- Somatic Outputs -----------------------------------------
 
-    File tumor_cram = somatic.tumor_cram
-    File tumor_mark_duplicates_metrics = somatic.tumor_mark_duplicates_metrics
-    File tumor_insert_size_metrics = somatic.tumor_insert_size_metrics
-    File tumor_alignment_summary_metrics = somatic.tumor_alignment_summary_metrics
-    File tumor_hs_metrics = somatic.tumor_hs_metrics
-    Array[File] tumor_per_target_coverage_metrics = somatic.tumor_per_target_coverage_metrics
-    Array[File] tumor_per_target_hs_metrics = somatic.tumor_per_target_hs_metrics
-    Array[File] tumor_per_base_coverage_metrics = somatic.tumor_per_base_coverage_metrics
-    Array[File] tumor_per_base_hs_metrics = somatic.tumor_per_base_hs_metrics
-    Array[File] tumor_summary_hs_metrics = somatic.tumor_summary_hs_metrics
-    File tumor_flagstats = somatic.tumor_flagstats
-    File tumor_verify_bam_id_metrics = somatic.tumor_verify_bam_id_metrics
-    File tumor_verify_bam_id_depth = somatic.tumor_verify_bam_id_depth
+    Object qc = object {
+      tumor_rna: [rna.metrics, rna.chart],
+      tumor_dna: flatten([
+        [ somaticExome.tumor_mark_duplicates_metrics,
+          somaticExome.tumor_insert_size_metrics,
+          somaticExome.tumor_alignment_summary_metrics,
+          somaticExome.tumor_hs_metrics,
+          somaticExome.tumor_flagstats,
+          somaticExome.tumor_verify_bam_id_metrics,
+          somaticExome.tumor_verify_bam_id_depth ],
+        somaticExome.tumor_per_target_coverage_metrics,
+        somaticExome.tumor_per_target_hs_metrics,
+        somaticExome.tumor_per_base_coverage_metrics,
+        somaticExome.tumor_per_base_hs_metrics,
+        somaticExome.tumor_summary_hs_metrics
+      ]),
+      normal_dna: flatten([
+        [ somaticExome.normal_mark_duplicates_metrics,
+          somaticExome.normal_insert_size_metrics,
+          somaticExome.normal_alignment_summary_metrics,
+          somaticExome.normal_hs_metrics,
+          somaticExome.normal_flagstats,
+          somaticExome.normal_verify_bam_id_metrics,
+          somaticExome.normal_verify_bam_id_depth ],
+        somaticExome.normal_per_target_coverage_metrics,
+        somaticExome.normal_per_target_hs_metrics,
+        somaticExome.normal_per_base_coverage_metrics,
+        somaticExome.normal_per_base_hs_metrics,
+        somaticExome.normal_summary_hs_metrics
+      ]),
+      concordance: [
+        somaticExome.somalier_concordance_metrics,
+        somaticExome.somalier_concordance_statistics
+      ]
+    }
 
-    File normal_cram = somatic.normal_cram
-    File normal_mark_duplicates_metrics = somatic.normal_mark_duplicates_metrics
-    File normal_insert_size_metrics = somatic.normal_insert_size_metrics
-    File normal_alignment_summary_metrics = somatic.normal_alignment_summary_metrics
-    File normal_hs_metrics = somatic.normal_hs_metrics
-    Array[File] normal_per_target_coverage_metrics = somatic.normal_per_target_coverage_metrics
-    Array[File] normal_per_target_hs_metrics = somatic.normal_per_target_hs_metrics
-    Array[File] normal_per_base_coverage_metrics = somatic.normal_per_base_coverage_metrics
-    Array[File] normal_per_base_hs_metrics = somatic.normal_per_base_hs_metrics
-    Array[File] normal_summary_hs_metrics = somatic.normal_summary_hs_metrics
-    File normal_flagstats = somatic.normal_flagstats
-    File normal_verify_bam_id_metrics = somatic.normal_verify_bam_id_metrics
-    File normal_verify_bam_id_depth = somatic.normal_verify_bam_id_depth
+    File tumor_cram = somaticExome.tumor_cram
+    File tumor_cram_crai = somaticExome.tumor_cram_crai
+    File normal_cram = somaticExome.normal_cram
+    File normal_cram_crai = somaticExome.normal_cram_crai
 
-    File mutect_unfiltered_vcf = somatic.mutect_unfiltered_vcf
-    File mutect_unfiltered_vcf_tbi = somatic.mutect_unfiltered_vcf_tbi
-    File mutect_filtered_vcf = somatic.mutect_filtered_vcf
-    File mutect_filtered_vcf_tbi = somatic.mutect_filtered_vcf_tbi
-
-    File strelka_unfiltered_vcf = somatic.strelka_unfiltered_vcf
-    File strelka_unfiltered_vcf_tbi = somatic.strelka_unfiltered_vcf_tbi
-    File strelka_filtered_vcf = somatic.strelka_filtered_vcf
-    File strelka_filtered_vcf_tbi = somatic.strelka_filtered_vcf_tbi
-
-    File varscan_unfiltered_vcf = somatic.varscan_unfiltered_vcf
-    File varscan_unfiltered_vcf_tbi = somatic.varscan_unfiltered_vcf_tbi
-    File varscan_filtered_vcf = somatic.varscan_filtered_vcf
-    File varscan_filtered_vcf_tbi = somatic.varscan_filtered_vcf_tbi
-
-    File pindel_unfiltered_vcf = somatic.pindel_unfiltered_vcf
-    File pindel_unfiltered_vcf_tbi = somatic.pindel_unfiltered_vcf_tbi
-    File pindel_filtered_vcf = somatic.pindel_filtered_vcf
-    File pindel_filtered_vcf_tbi = somatic.pindel_filtered_vcf_tbi
-
-    File docm_filtered_vcf = somatic.docm_filtered_vcf
-    File docm_filtered_vcf_tbi = somatic.docm_filtered_vcf_tbi
-
-    File somatic_final_vcf = somatic.final_vcf
-    File somatic_final_vcf_tbi = somatic.final_vcf_tbi
-    File final_filtered_vcf = somatic.final_filtered_vcf
-    File final_filtered_vcf_tbi = somatic.final_filtered_vcf_tbi
-
-    File final_tsv = somatic.final_tsv
-    File somatic_vep_summary = somatic.vep_summary
-    File tumor_snv_bam_readcount_tsv = somatic.tumor_snv_bam_readcount_tsv
-    File tumor_indel_bam_readcount_tsv = somatic.tumor_indel_bam_readcount_tsv
-    File normal_snv_bam_readcount_tsv = somatic.normal_snv_bam_readcount_tsv
-    File normal_indel_bam_readcount_tsv = somatic.normal_indel_bam_readcount_tsv
-
-    File? intervals_antitarget = somatic.intervals_antitarget
-    File? intervals_target = somatic.intervals_target
-    File? normal_antitarget_coverage = somatic.normal_antitarget_coverage
-    File? normal_target_coverage = somatic.normal_target_coverage
-    File? reference_coverage = somatic.reference_coverage
-
-    File? cn_diagram = somatic.cn_diagram
-    File? cn_scatter_plot = somatic.cn_scatter_plot
-
-    File tumor_antitarget_coverage = somatic.tumor_antitarget_coverage
-    File tumor_target_coverage = somatic.tumor_target_coverage
-    File tumor_bin_level_ratios = somatic.tumor_bin_level_ratios
-    File tumor_segmented_ratios = somatic.tumor_segmented_ratios
-
-    File? diploid_variants = somatic.diploid_variants
-    File? diploid_variants_tbi = somatic.diploid_variants_tbi
-    File? somatic_variants = somatic.somatic_variants
-    File? somatic_variants_tbi = somatic.somatic_variants_tbi
-    File all_candidates = somatic.all_candidates
-    File all_candidates_tbi = somatic.all_candidates_tbi
-    File small_candidates = somatic.small_candidates
-    File small_candidates_tbi = somatic.small_candidates_tbi
-    File? tumor_only_variants = somatic.tumor_only_variants
-    File? tumor_only_variants_tbi = somatic.tumor_only_variants_tbi
-
-    File somalier_concordance_metrics = somatic.somalier_concordance_metrics
-    File somalier_concordance_statistics = somatic.somalier_concordance_statistics
+    Object somatic = object {
+      variants: object {
+        mutect: [
+          somaticExome.mutect_unfiltered_vcf,
+          somaticExome.mutect_unfiltered_vcf_tbi,
+          somaticExome.mutect_filtered_vcf,
+          somaticExome.mutect_filtered_vcf_tbi
+        ],
+        strelka: [
+          somaticExome.strelka_unfiltered_vcf,
+          somaticExome.strelka_unfiltered_vcf_tbi,
+          somaticExome.strelka_filtered_vcf,
+          somaticExome.strelka_filtered_vcf_tbi
+        ],
+        varscan: [
+          somaticExome.varscan_unfiltered_vcf,
+          somaticExome.varscan_unfiltered_vcf_tbi,
+          somaticExome.varscan_filtered_vcf,
+          somaticExome.varscan_filtered_vcf_tbi,
+        ],
+        pindel: [
+          somaticExome.pindel_unfiltered_vcf,
+          somaticExome.pindel_unfiltered_vcf_tbi,
+          somaticExome.pindel_filtered_vcf,
+          somaticExome.pindel_filtered_vcf_tbi
+        ],
+        docm: [
+          somaticExome.docm_filtered_vcf,
+          somaticExome.docm_filtered_vcf_tbi
+        ],
+      },
+      final: [
+        somaticExome.final_vcf,
+        somaticExome.final_vcf_tbi,
+        somaticExome.final_filtered_vcf,
+        somaticExome.final_filtered_vcf_tbi,
+        somaticExome.final_tsv
+      ],
+      cnv: object {cnvkit: [
+        somaticExome.intervals_antitarget,
+        somaticExome.intervals_target,
+        somaticExome.normal_antitarget_coverage,
+        somaticExome.normal_target_coverage,
+        somaticExome.reference_coverage,
+        somaticExome.cn_diagram,
+        somaticExome.cn_scatter_plot,
+        somaticExome.tumor_antitarget_coverage,
+        somaticExome.tumor_target_coverage,
+        somaticExome.tumor_bin_level_ratios,
+        somaticExome.tumor_segmented_ratios
+      ]},
+      sv: object {manta: [
+        somaticExome.diploid_variants,
+        somaticExome.diploid_variants_tbi,
+        somaticExome.somatic_variants,
+        somaticExome.somatic_variants_tbi,
+        somaticExome.all_candidates,
+        somaticExome.all_candidates_tbi,
+        somaticExome.small_candidates,
+        somaticExome.small_candidates_tbi,
+        somaticExome.tumor_only_variants,
+        somaticExome.tumor_only_variants_tbi
+      ]}
+    }
 
     # ---------- Germline Outputs --------------------------------------
 
-    File cram = germline.cram
-    File mark_duplicates_metrics = germline.mark_duplicates_metrics
-    File insert_size_metrics = germline.insert_size_metrics
-    File insert_size_histogram = germline.insert_size_histogram
-    File alignment_summary_metrics = germline.alignment_summary_metrics
-    File hs_metrics = germline.hs_metrics
-    Array[File] per_target_coverage_metrics = germline.per_target_coverage_metrics
-    Array[File] per_target_hs_metrics = germline.per_target_hs_metrics
-    Array[File] per_base_coverage_metrics = germline.per_base_coverage_metrics
-    Array[File] per_base_hs_metrics = germline.per_base_hs_metrics
-    Array[File] summary_hs_metrics = germline.summary_hs_metrics
-    File flagstats = germline.flagstats
-    File verify_bam_id_metrics = germline.verify_bam_id_metrics
-    File verify_bam_id_depth = germline.verify_bam_id_depth
-    File germline_raw_vcf = germline.raw_vcf
-    File germline_raw_vcf_tbi = germline.raw_vcf_tbi
-    File germline_final_vcf = germline.final_vcf
-    File germline_final_vcf_tbi = germline.final_vcf_tbi
-    File germline_filtered_vcf = germline.filtered_vcf
-    File germline_filtered_vcf_tbi = germline.filtered_vcf_tbi
-    File germline_vep_summary = germline.vep_summary
-    File optitype_tsv = germline.optitype_tsv
-    File optitype_plot = germline.optitype_plot
+    Object germline = object {
+      variants: [
+        germlineExome.final_vcf,
+        germlineExome.final_vcf_tbi,
+        germlineExome.filtered_vcf,
+        germlineExome.filtered_vcf_tbi,
+        germlineExome.vep_summary
+      ]
+    }
+
+    Array[File] hla_typing = flatten([
+      [germlineExome.optitype_tsv,
+       germlineExome.optitype_plot,
+       extractAlleles.allele_file,
+       hlaConsensus.consensus_alleles_file],
+      hlaConsensus.hla_call_files
+    ])
 
     # --------- Other Outputs ------------------------------------------
 
-    File phased_vcf = phaseVcf.phased_vcf
-    File phased_vcf_tbi = phaseVcf.phased_vcf_tbi
-    Array[String] allele_string = extractAlleles.allele_string
-    Array[String] consensus_alleles = hlaConsensus.consensus_alleles
-    Array[File] hla_call_files = hlaConsensus.hla_call_files
+    Array[File] pvactools = flatten([
+      [phaseVcf.phased_vcf,
+       phaseVcf.phased_vcf_tbi],
+      pvacseq.pvacseq_predictions
+    ])
+
     File annotated_vcf = pvacseq.annotated_vcf
     File annotated_tsv = pvacseq.annotated_tsv
-    Array[File] pvacseq_predictions = pvacseq.pvacseq_predictions
   }
 }
