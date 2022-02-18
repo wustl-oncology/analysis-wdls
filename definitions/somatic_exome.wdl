@@ -280,6 +280,7 @@ workflow somaticExome {
     File tumor_verify_bam_id_depth = tumorAlignmentAndQc.verify_bam_id_depth
 
     File normal_cram = normalIndexCram.indexed_cram
+    File normal_cram_crai = normalIndexCram.indexed_cram_crai
     File normal_mark_duplicates_metrics = normalAlignmentAndQc.mark_duplicates_metrics
     File normal_insert_size_metrics = normalAlignmentAndQc.insert_size_metrics
     File normal_alignment_summary_metrics = normalAlignmentAndQc.alignment_summary_metrics
