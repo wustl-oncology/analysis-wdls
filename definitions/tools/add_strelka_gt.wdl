@@ -46,8 +46,26 @@ task addStrelkaGt {
                     $ids{$base} = $id;
                     $id++;
                 }
-                $n_gt = $n_gt_info eq q(ref) ? q(0/0) : parse_gt($n_gt_str, \%ids);
-                $t_gt = parse_gt($t_gt_str, \%ids);
+
+                my $parsed_n_gt = parse_gt($n_gt_str, \%ids);
+                if ($n_gt_info eq "ref") {
+                    $n_gt = "0/0";
+                } elsif (defined($parsed_n_gt)) {
+                    $n_gt = $parsed_n_gt;
+                } else {
+                    my $id_keys = join(" ", sort keys(%ids));
+                    print STDERR "parse_gt for n_gt=\"$n_gt_str\" and ids=\"$id_keys\" resulted in undefined\n";
+                    next;
+                }
+
+                my $parsed_t_gt = parse_gt($t_gt_str, \%ids);
+                if (defined($parsed_t_gt)) {
+                    $t_gt = $parsed_t_gt;
+                } else {
+                    my $id_keys = join(" ", sort keys(%ids));
+                    print STDERR "parse_gt for t_gt=\"$t_gt_str\" and ids=\"$id_keys\" resulted in undefined\n";
+                    next;
+                }
             }
             else {#INDEL
                 my ($n_gt_info, $t_gt_info) = $info =~ /;NT=(\S+?);.*SGT.*\->(\S+?);/;
@@ -72,6 +90,14 @@ task addStrelkaGt {
     sub parse_gt {
         my ($gt_str, $ids) = @_;
         my @gt_ids = map{$ids->{$_}}(split //, $gt_str);
+        # Cannot parse if either side is undefined
+        my $i;
+        foreach $i (@gt_ids) {
+            if (!defined($i)) {
+                return undef;
+            }
+        }
+
         return join q(/), sort @gt_ids;
     }
     #SNV example
