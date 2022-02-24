@@ -51,7 +51,7 @@ task vep {
     -o ~{annotated_path} \
     -i ~{vcf} \
     ~{if defined(synonyms_file) then "--synonyms ~{synonyms_file}" else ""} \
-    --coding_only ~{coding_only} \
+    ~{if coding_only then "--coding_only" else ""} \
     --~{pick} \
     --dir ~{cache_dir} \
     --fasta ~{reference} \
