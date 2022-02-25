@@ -2,7 +2,8 @@ version 1.0
 
 import "../types.wdl"
 
-task vep {
+# Do not use this task directly, use the vep workflow below.
+task vepTask {
   input {
     File vcf
     File cache_dir_zip
@@ -14,7 +15,10 @@ task vep {
     String ensembl_species
     Array[String] plugins
     Boolean coding_only = false
-    Array[VepCustomAnnotation] custom_annotations = []  # !UnverifiedStruct
+    Array[String] custom_args
+    # Require files are necessary to force a localization. The call itself uses them
+    # via the custom_args field, which is a string and won't localize its parts.
+    Array[File] required_files
     Boolean everything = true
     # one of [pick, flag_pick, pick-allele, per_gene, pick_allele_gene, flag_pick_allele, flag_pick_allele_gene]
     String pick = "flag_pick"
@@ -35,7 +39,7 @@ task vep {
 
   String annotated_path = basename(basename(vcf, ".gz"), ".vcf") + "_annotated.vcf"
   String cache_dir = basename(cache_dir_zip, ".zip")
-  # TODO(john): custom annotations
+
   command <<<
     mkdir ~{cache_dir} && unzip -qq ~{cache_dir_zip} -d ~{cache_dir}
 
@@ -55,6 +59,7 @@ task vep {
     --~{pick} \
     --dir ~{cache_dir} \
     --fasta ~{reference} \
+    ~{sep=" " custom_args} \
     ~{sep=" " prefix("--plugin ", plugins)}  \
     ~{if everything then "--everything" else ""} \
     --assembly ~{ensembl_assembly} \
@@ -68,7 +73,33 @@ task vep {
   }
 }
 
-workflow wf {
+
+# I do not like that this has to be a VM but WDL spec 1.0 has forced my hand
+# In the future if WDL gets better support for Array[struct], make this call
+# happen in WDL instead of a task
+task parseVepCustomAnnotationIntoArg {
+  input { VepCustomAnnotation obj }
+  runtime { docker: "python:3.10" }
+  command <<<
+    python <<CODE
+    check_existing = "~{true="--check_existing" false="" obj.annotation.check_existing}"
+    custom = ",".join([
+        "~{obj.annotation.file}",
+        "~{obj.annotation.name}",
+        "~{obj.annotation.data_format}",
+        "~{obj.method}",
+        "~{true=1 false=0 obj.force_report_coordinates}",
+        "~{sep="," obj.annotation.vcf_fields}"
+    ])
+
+    print(f"{check_existing} --custom {custom}")
+    CODE
+  >>>
+  output { String custom_arg = read_lines(stdout())[0] }
+}
+
+
+workflow vep {
   input {
     File vcf
     File cache_dir_zip
@@ -87,7 +118,14 @@ workflow wf {
     String pick = "flag_pick"
   }
 
-  call vep {
+  scatter(vca in custom_annotations) {
+    # Why is it so hard to just do `Array[File]? append File`
+    Array[File] required_files = flatten([select_first([vca.annotation.secondary_files, []]), [vca.annotation.file]])
+
+    call parseVepCustomAnnotationIntoArg { input: obj=vca }
+  }
+
+  call vepTask {
     input:
     vcf=vcf,
     cache_dir_zip=cache_dir_zip,
@@ -99,9 +137,15 @@ workflow wf {
     ensembl_version=ensembl_version,
     ensembl_species=ensembl_species,
     synonyms_file=synonyms_file,
-    custom_annotations=custom_annotations,
+    required_files=flatten(required_files),
+    custom_args=parseVepCustomAnnotationIntoArg.custom_arg,
     coding_only=coding_only,
     everything=everything,
     pick=pick
+  }
+
+  output {
+    File annotated_vcf = vepTask.annotated_vcf
+    File vep_summary = vepTask.vep_summary
   }
 }
