@@ -10,7 +10,7 @@ import "tools/merge_bams.wdl" as mb
 import "tools/samtools_sort.wdl" as ss
 import "tools/stringtie.wdl" as st
 import "tools/transcript_to_gene.wdl" as ttg
-import "types.wdl"
+import "types.wdl"  # !UnusedImport
 
 workflow rnaseq {
   input {

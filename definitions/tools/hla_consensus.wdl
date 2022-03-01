@@ -247,4 +247,17 @@ task hlaConsensus {
   }
 }
 
-workflow wf { call hlaConsensus { input: } }
+workflow wf {
+  input {
+    Array[String] optitype_hla_alleles
+    Array[String]? clinical_mhc_classI_alleles
+    Array[String]? clinical_mhc_classII_alleles
+  }
+
+  call hlaConsensus {
+    input:
+    optitype_hla_alleles=optitype_hla_alleles,
+    clinical_mhc_classI_alleles=clinical_mhc_classI_alleles,
+    clinical_mhc_classII_alleles=clinical_mhc_classII_alleles
+  }
+}

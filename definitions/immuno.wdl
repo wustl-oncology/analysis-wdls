@@ -10,7 +10,7 @@ import "subworkflows/pvacseq.wdl" as p
 import "tools/extract_hla_alleles.wdl" as eha
 import "tools/hla_consensus.wdl" as hc
 import "tools/intersect_known_variants.wdl" as ikv
-import "types.wdl"
+import "types.wdl"  # !UnusedImport
 
 
 workflow immuno {
@@ -149,8 +149,6 @@ workflow immuno {
     Int? fasta_size
     Int? downstream_sequence_length
     Boolean? exclude_nas
-    File? phased_proximal_variants_vcf
-    File? phased_proximal_variants_vcf_tbi
     Int? maximum_transcript_support_level  # enum [1 2 3 4 5]
     Int? normal_cov
     Int? tdna_cov
@@ -220,6 +218,7 @@ workflow immuno {
     per_base_intervals=per_base_intervals,
     per_target_intervals=per_target_intervals,
     summary_intervals=summary_intervals,
+    gnomad_field_name=gnomad_field_name,
     omni_vcf=omni_vcf,
     omni_vcf_tbi=omni_vcf_tbi,
     picard_metric_accumulation_level=picard_metric_accumulation_level,

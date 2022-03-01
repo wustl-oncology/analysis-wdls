@@ -21,7 +21,7 @@ task pvacseq {
     Float? net_chop_threshold
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
-    String? downstream_sequence_length
+    Int? downstream_sequence_length
     Boolean exclude_nas = false
     File? phased_proximal_variants_vcf
     File? phased_proximal_variants_vcf_tbi
@@ -33,7 +33,7 @@ task pvacseq {
     Float? tdna_vaf
     Float? trna_vaf
     Float? expn_val
-    String? maximum_transcript_support_level  # enum [1, 2, 3, 4, 5]
+    Int? maximum_transcript_support_level  # enum [1, 2, 3, 4, 5]
 
     Boolean allele_specific_binding_thresholds = false
     Boolean keep_tmp_files = false
@@ -124,7 +124,7 @@ workflow wf {
     Float? net_chop_threshold
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
-    String? downstream_sequence_length
+    Int? downstream_sequence_length
     Boolean exclude_nas = false
     File? phased_proximal_variants_vcf
     File? phased_proximal_variants_vcf_tbi
