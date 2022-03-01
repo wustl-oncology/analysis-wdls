@@ -12,6 +12,49 @@ import "tools/hla_consensus.wdl" as hc
 import "tools/intersect_known_variants.wdl" as ikv
 import "types.wdl"
 
+#
+# These structs are needed only because MiniWDL, used by some of our
+# scripts, has issues with Object types. We avoid this problem by
+# enforcing struct boundaries to help the parser understand what we're
+# doing.
+#
+# The reason to use these instead of primitives in outputs is
+# to encode intended output directory for each file.
+#
+
+struct Qc {
+  Array[File?] tumor_rna
+  Array[File?] tumor_dna
+  Array[File?] normal_dna
+  Array[File?] concordance
+}
+
+
+struct Variants {
+  Array[File?] mutect
+  Array[File?] strelka
+  Array[File?] pindel
+  Array[File?] varscan
+  Array[File?] docm
+}
+struct Cnv {
+  Array[File?] cnvkit
+}
+struct Sv {
+  Array[File?] manta
+}
+struct Somatic {
+  Variants variants
+  Array[File] final
+  Cnv cnv
+  Sv sv
+}
+
+
+struct Germline {
+  Array[File?] variants
+}
+
 
 workflow immuno {
   input {
@@ -390,7 +433,7 @@ workflow immuno {
 
     # -------- Somatic Outputs -----------------------------------------
 
-    Object qc = object {
+    Qc qc =  object {
       tumor_rna: [rna.metrics, rna.chart],
       tumor_dna: flatten([
         [ somaticExome.tumor_mark_duplicates_metrics,
@@ -431,7 +474,7 @@ workflow immuno {
     File normal_cram = somaticExome.normal_cram
     File normal_cram_crai = somaticExome.normal_cram_crai
 
-    Object somatic = object {
+    Somatic somatic = object {
       variants: object {
         mutect: [
           somaticExome.mutect_unfiltered_vcf,
@@ -498,7 +541,7 @@ workflow immuno {
 
     # ---------- Germline Outputs --------------------------------------
 
-    Object germline = object {
+    Germline germline = object {
       variants: [
         germlineExome.final_vcf,
         germlineExome.final_vcf_tbi,
