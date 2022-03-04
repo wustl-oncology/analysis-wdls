@@ -18,7 +18,7 @@ task vepTask {
     Array[String] custom_args
     # Require files are necessary to force a localization. The call itself uses them
     # via the custom_args field, which is a string and won't localize its parts.
-    Array[File] required_files
+    Array[File] required_files # !UnusedDeclaration
     Boolean everything = true
     # one of [pick, flag_pick, pick-allele, per_gene, pick_allele_gene, flag_pick_allele, flag_pick_allele_gene]
     String pick = "flag_pick"

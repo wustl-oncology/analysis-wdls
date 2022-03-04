@@ -33,4 +33,17 @@ task kallisto {
   }
 }
 
-workflow wf { call kallisto { input: } }
+workflow wf {
+  input {
+    File kallisto_index
+    Array[Array[File]] fastqs
+    String strand = "unstranded"  # [first, second, unstranded]
+  }
+
+  call kallisto {
+    input:
+    kallisto_index=kallisto_index,
+    fastqs=fastqs,
+    strand=strand
+  }
+}

@@ -23,4 +23,7 @@ task extractHlaAlleles {
   }
 }
 
-workflow wf { call extractHlaAlleles { input: } }
+workflow wf {
+  input { File file }
+  call extractHlaAlleles { input: file=file }
+}

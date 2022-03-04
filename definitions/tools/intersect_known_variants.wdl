@@ -42,4 +42,19 @@ task intersectKnownVariants {
   }
 }
 
-workflow wf { call intersectKnownVariants { input: } }
+workflow wf {
+  input {
+    File vcf
+    File vcf_tbi
+    File? validated_variants
+    File? validated_variants_tbi
+  }
+
+  call intersectKnownVariants {
+    input:
+    vcf=vcf,
+    vcf_tbi=vcf_tbi,
+    validated_variants=validated_variants,
+    validated_variants_tbi=validated_variants_tbi
+  }
+}

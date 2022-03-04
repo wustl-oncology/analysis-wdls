@@ -34,4 +34,19 @@ task stringtie {
   }
 }
 
-workflow wf { call stringtie { input: } }
+workflow wf {
+  input {
+    String? strand
+    File reference_annotation
+    String sample_name
+    File bam
+  }
+
+  call stringtie {
+    input:
+    strand=strand,
+    reference_annotation=reference_annotation,
+    sample_name=sample_name,
+    bam=bam
+  }
+}

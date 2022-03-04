@@ -24,4 +24,15 @@ task samtoolsSort {
   }
 }
 
-workflow wf { call samtoolsSort { input: } }
+workflow wf {
+  input {
+    String? output_filename
+    File input_bam
+  }
+
+  call samtoolsSort {
+    input:
+    input_bam=input_bam,
+    output_filename=output_filename
+  }
+}
