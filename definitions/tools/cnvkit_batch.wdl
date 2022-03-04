@@ -33,7 +33,7 @@ task cnvkitBatch {
       REF="--reference ~{reference_cnn}"
     fi
     /usr/bin/python /usr/local/bin/cnvkit.py batch \
-    ~{tumor_bam} "$REF" \
+    ~{tumor_bam} $REF \
     ~{if defined(bait_intervals) then "--targets ~{bait_intervals}" else ""} \
     ~{if defined(access) then "--access ~{access}" else ""} \
     --method ~{method} \
