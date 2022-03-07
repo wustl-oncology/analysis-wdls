@@ -19,7 +19,7 @@ task sequenceAlignAndTag {
   Float reference_size = size([reference, reference_amb, reference_ann, reference_bwt, reference_pac, reference_sa], "GB")
   Int space_needed_gb = 10 + ceil(5*data_size + reference_size)
   # CPU |  Memory / RAM
-  Int cores = 32
+  Int cores = 12
   Int instance_memory_gb = 20 + ceil(reference_size * cores)
   Int jvm_memory_gb = 4
   runtime {
