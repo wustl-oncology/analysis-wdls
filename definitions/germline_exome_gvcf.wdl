@@ -104,9 +104,9 @@ workflow germlineExomeGvcf {
     File insert_size_histogram = alignmentAndQc.insert_size_histogram
     File alignment_summary_metrics = alignmentAndQc.alignment_summary_metrics
     File hs_metrics = alignmentAndQc.hs_metrics
-    Array[File] per_targetCoverage_metrics = alignmentAndQc.per_target_coverage_metrics
+    Array[File] per_target_coverage_metrics = alignmentAndQc.per_target_coverage_metrics
     Array[File] per_target_hs_metrics = alignmentAndQc.per_target_hs_metrics
-    Array[File] per_baseCoverage_metrics = alignmentAndQc.per_base_coverage_metrics
+    Array[File] per_base_coverage_metrics = alignmentAndQc.per_base_coverage_metrics
     Array[File] per_base_hs_metrics = alignmentAndQc.per_base_hs_metrics
     Array[File] summary_hs_metrics = alignmentAndQc.summary_hs_metrics
     File flagstats = alignmentAndQc.flagstats
