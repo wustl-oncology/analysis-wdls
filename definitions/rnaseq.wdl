@@ -1,6 +1,6 @@
 version 1.0
 
-import "subworkflows/bam_to_trimmed_fastq_and_hisat_alignments.wdl" as bttfaha
+import "subworkflows/sequence_to_trimmed_fastq_and_hisat_alignments.wdl" as sttfaha
 import "tools/bam_to_bigwig.wdl" as btb
 import "tools/generate_qc_metrics.wdl" as gqm
 import "tools/index_bam.wdl" as ib
@@ -48,7 +48,7 @@ workflow rnaseq {
   }
 
   scatter(idx in range(length(rna_sequence))) {
-    call bttfaha.bamToTrimmedFastqAndHisatAlignments {
+    call sttfaha.sequenceToTrimmedFastqAndHisatAlignments {
       input:
       unaligned=rna_sequence[idx],
       read_group_id=read_group_id[idx],
@@ -75,7 +75,7 @@ workflow rnaseq {
     input:
     kallisto_index=kallisto_index,
     strand=strand,
-    fastqs=bamToTrimmedFastqAndHisatAlignments.fastqs
+    fastqs=sequenceToTrimmedFastqAndHisatAlignments.fastqs
   }
 
   call ttg.transcriptToGene {
@@ -86,7 +86,7 @@ workflow rnaseq {
 
   # TODO(john): remove extra sort, as an optimization
   call mb.mergeBams as merge {
-    input: bams=bamToTrimmedFastqAndHisatAlignments.aligned_bam
+    input: bams=sequenceToTrimmedFastqAndHisatAlignments.aligned_bam
   }
 
   call ss.samtoolsSort as positionSort {
