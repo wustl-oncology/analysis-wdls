@@ -17,28 +17,47 @@ task mergeBams {
   }
 
   String outname = name + ".bam"
-  command <<< #!/bin/bash
-    set -o pipefail
-    set -o errexit
-    set -o nounset
+  command <<<
+    perl <<'CODE'
+    #!/usr/bin/perl
+    use strict;
+    use warnings;
 
-    NUM_BAMS=~{length(bams)}
+    use Getopt::Std;
+    use File::Copy;
+
+    my $nthreads = ~{cores};
+    my $outfilename = "~{outname}";
+    my $sorted = ~{true=1 false=0 sorted};
+
+    my @bams = ("~{sep="\", \"" bams}");
+    die 'missing input bams' unless scalar(@bams);
+
     #if there is only one bam, just copy it and index it
-    if [[ $NUM_BAMS -eq 1 ]]; then
-        cp "~{bams[0]}" "~{outname}";
-    else
-        if [[ "~{sorted}" == "true" ]];then
-            /usr/bin/sambamba merge -t "~{cores}" "~{outname}" ~{sep=" " bams}
-        else #unsorted bams, use picard
-            java -jar -Xmx6g /opt/picard/picard.jar MergeSamFiles \
-                OUTPUT="~{outname}" ASSUME_SORTED=true USE_THREADING=true \
-                SORT_ORDER=unsorted VALIDATION_STRINGENCY=LENIENT \
-                ~{sep=" " prefix("INPUT=", bams)}
-        fi
-    fi
-    if [[ ~{sorted} == true ]];then
-        /usr/bin/sambamba index "~{outname}"
-    fi
+    if (scalar(@bams) == 1) {
+        copy($bams[0], $outfilename) or die 'failed to copy file:' . $!;
+    } else {
+        if ($sorted) {
+            my $rv = system((qw(/usr/bin/sambamba merge -t)), $nthreads, $outfilename, @bams);
+            $rv == 0 or die 'failed to merge with sambamba';
+        } else { #unsorted bams, use picard
+            my @args = (
+                'OUTPUT=' . $outfilename,
+                'ASSUME_SORTED=true',
+                'USE_THREADING=true',
+                'SORT_ORDER=unsorted',
+                'VALIDATION_STRINGENCY=LENIENT',
+                map { 'INPUT=' . $_ } @bams
+            );
+            my $rv = system((qw(java -jar -Xmx6g /opt/picard/picard.jar MergeSamFiles)), @args);
+            $rv == 0 or die 'failed to merge with picard';
+        }
+    }
+    if ($sorted) {
+       my $rv = system((qw(/usr/bin/sambamba index)), $outfilename);
+       $rv == 0 or die 'failed to index';
+    }
+    CODE
   >>>
 
   output {
