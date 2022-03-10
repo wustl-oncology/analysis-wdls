@@ -51,12 +51,8 @@ workflow sequenceToBqsr {
     name=final_name
   }
 
-  call ns.nameSort {
-    input: bam=mergeBams.merged_bam
-  }
-
   call mdas.markDuplicatesAndSort {
-    input: bam=nameSort.name_sorted_bam
+    input: bam=mergeBams.merged_bam
   }
 
   call b.bqsr {
