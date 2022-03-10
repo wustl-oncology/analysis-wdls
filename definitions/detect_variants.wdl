@@ -107,7 +107,7 @@ workflow detectVariants {
     exome_mode=strelka_exome_mode,
     cpu_reserved=strelka_cpu_reserved,
     normal_sample_name=normal_sample_name,
-    tumor_sample_name=normal_sample_name
+    tumor_sample_name=tumor_sample_name
   }
 
   call vpapp.varscanPreAndPostProcessing as varscan {
