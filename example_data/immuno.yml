@@ -2,6 +2,7 @@
 immuno.reference: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/somatic_inputs/hla_and_brca_genes.fa
 immuno.reference_fai: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/somatic_inputs/hla_and_brca_genes.fa.fai
 immuno.reference_dict: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/somatic_inputs/hla_and_brca_genes.dict
+immuno.reference_alt: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/somatic_inputs/hla_and_brca_genes.fa.alt
 immuno.reference_amb: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/somatic_inputs/hla_and_brca_genes.fa.amb
 immuno.reference_ann: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/somatic_inputs/hla_and_brca_genes.fa.ann
 immuno.reference_bwt: gs://griffith-lab-cromwell/input_data/maruska/2021-10-11/somatic_inputs/hla_and_brca_genes.fa.bwt

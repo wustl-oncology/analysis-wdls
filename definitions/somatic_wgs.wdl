@@ -15,6 +15,7 @@ workflow somaticWgs {
     File reference
     File reference_fai
     File reference_dict
+    File reference_alt
     File reference_amb
     File reference_ann
     File reference_bwt
@@ -90,6 +91,7 @@ workflow somaticWgs {
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
+    reference_alt=reference_alt,
     reference_amb=reference_amb,
     reference_ann=reference_ann,
     reference_bwt=reference_bwt,
@@ -117,6 +119,7 @@ workflow somaticWgs {
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
+    reference_alt=reference_alt,
     reference_amb=reference_amb,
     reference_ann=reference_ann,
     reference_bwt=reference_bwt,
