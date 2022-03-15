@@ -22,7 +22,7 @@ task sequenceAlignAndTag {
   #24 bwa cores + 1 for samblaster + 2 for samtools view
   Int cores = 27 
   # mem values tested on a 60x WGS bam with up to 30 cores. Lower values would 
-  # be fine for exome if we ever want to optimize
+  # be fine for exome if we ever want to optimize to that extent
   # Mem does not seem to be as dependent on # of cores as I expected
   Int instance_memory_gb = 76 
   Int jvm_memory_gb = 4

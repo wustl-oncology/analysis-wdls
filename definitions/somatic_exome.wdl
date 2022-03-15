@@ -1,8 +1,10 @@
 version 1.0
 
-import "alignment_exome.wdl" as ae
 import "detect_variants.wdl" as dv
 import "types.wdl"  # !UnusedImport
+
+import "subworkflows/sequence_to_bqsr.wdl" as s2b
+import "subworkflows/qc_exome.wdl" as qe
 
 import "tools/bam_to_cram.wdl" as btc
 import "tools/cnvkit_batch.wdl" as cb
@@ -98,7 +100,7 @@ workflow somaticExome {
     Int? cnvkit_target_average_size
   }
 
-  call ae.alignmentExome as tumorAlignmentAndQc {
+  call s2b.sequenceToBqsr as tumorAlignment {
     input:
     reference=reference,
     reference_fai=reference_fai,
@@ -108,25 +110,33 @@ workflow somaticExome {
     reference_bwt=reference_bwt,
     reference_pac=reference_pac,
     reference_sa=reference_sa,
+    unaligned=tumor_sequence,
     trimming=trimming,
     bqsr_known_sites=bqsr_known_sites,
     bqsr_known_sites_tbi=bqsr_known_sites_tbi,
     bqsr_intervals=bqsr_intervals,
-    bait_intervals=bait_intervals,
-    target_intervals=target_intervals,
-    per_base_intervals=per_base_intervals,
-    per_target_intervals=per_target_intervals,
-    summary_intervals=summary_intervals,
-    omni_vcf=omni_vcf,
-    omni_vcf_tbi=omni_vcf_tbi,
-    picard_metric_accumulation_level=picard_metric_accumulation_level,
-    qc_minimum_mapping_quality=qc_minimum_mapping_quality,
-    qc_minimum_base_quality=qc_minimum_base_quality,
-    sequence=tumor_sequence,
     final_name=tumor_name
   }
+  call qe.qcExome as tumorQc {
+    input:
+    bam=tumorAlignment.final_bam,
+    bam_bai=tumorAlignment.final_bam_bai,
+    reference=reference,
+    reference_fai=reference_fai,
+    reference_dict=reference_dict,
+    bait_intervals=bait_intervals,
+    target_intervals=target_intervals,
+    per_base_intervals=per_base_intervals,
+    per_target_intervals=per_target_intervals,
+    summary_intervals=summary_intervals,
+    omni_vcf=omni_vcf,
+    omni_vcf_tbi=omni_vcf_tbi,
+    picard_metric_accumulation_level=picard_metric_accumulation_level,
+    minimum_mapping_quality=qc_minimum_mapping_quality,
+    minimum_base_quality=qc_minimum_base_quality
+  }
 
-  call ae.alignmentExome as normalAlignmentAndQc {
+  call s2b.sequenceToBqsr as normalAlignment {
     input:
     reference=reference,
     reference_fai=reference_fai,
@@ -136,10 +146,21 @@ workflow somaticExome {
     reference_bwt=reference_bwt,
     reference_pac=reference_pac,
     reference_sa=reference_sa,
+    unaligned=normal_sequence,
     trimming=trimming,
     bqsr_known_sites=bqsr_known_sites,
     bqsr_known_sites_tbi=bqsr_known_sites_tbi,
     bqsr_intervals=bqsr_intervals,
+    final_name=normal_name
+  }
+
+  call qe.qcExome as normalQc {
+    input:
+    bam=normalAlignment.final_bam,
+    bam_bai=normalAlignment.final_bam_bai,
+    reference=reference,
+    reference_fai=reference_fai,
+    reference_dict=reference_dict,
     bait_intervals=bait_intervals,
     target_intervals=target_intervals,
     per_base_intervals=per_base_intervals,
@@ -148,10 +169,8 @@ workflow somaticExome {
     omni_vcf=omni_vcf,
     omni_vcf_tbi=omni_vcf_tbi,
     picard_metric_accumulation_level=picard_metric_accumulation_level,
-    qc_minimum_mapping_quality=qc_minimum_mapping_quality,
-    qc_minimum_base_quality=qc_minimum_base_quality,
-    sequence=normal_sequence,
-    final_name=normal_name
+    minimum_mapping_quality=qc_minimum_mapping_quality,
+    minimum_base_quality=qc_minimum_base_quality
   }
 
   call c.concordance {
@@ -159,10 +178,10 @@ workflow somaticExome {
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
-    bam_1=tumorAlignmentAndQc.bam,
-    bam_1_bai=tumorAlignmentAndQc.bam_bai,
-    bam_2=normalAlignmentAndQc.bam,
-    bam_2_bai=normalAlignmentAndQc.bam_bai,
+    bam_1=tumorAlignment.final_bam,
+    bam_1_bai=tumorAlignment.final_bam_bai,
+    bam_2=normalAlignment.final_bam,
+    bam_2_bai=normalAlignment.final_bam_bai,
     vcf=somalier_vcf
   }
 
@@ -174,10 +193,10 @@ workflow somaticExome {
 
   call dv.detectVariants {
     input:
-    tumor_bam=tumorAlignmentAndQc.bam,
-    tumor_bam_bai=tumorAlignmentAndQc.bam_bai,
-    normal_bam=normalAlignmentAndQc.bam,
-    normal_bam_bai=normalAlignmentAndQc.bam_bai,
+    tumor_bam=tumorAlignment.final_bam,
+    tumor_bam_bai=tumorAlignment.final_bam_bai,
+    normal_bam=normalAlignment.final_bam,
+    normal_bam_bai=normalAlignment.final_bam_bai,
     roi_intervals=padTargetIntervals.expanded_interval_list,
     reference=reference,
     reference_fai=reference_fai,
@@ -217,8 +236,8 @@ workflow somaticExome {
 
   call cb.cnvkitBatch as cnvkit {
     input:
-    tumor_bam=tumorAlignmentAndQc.bam,
-    normal_bam=normalAlignmentAndQc.bam,
+    tumor_bam=tumorAlignment.final_bam,
+    normal_bam=normalAlignment.final_bam,
     reference_fasta=reference,
     bait_intervals=bait_intervals,
     target_average_size=cnvkit_target_average_size
@@ -226,10 +245,10 @@ workflow somaticExome {
 
   call ms.mantaSomatic as manta {
     input:
-    tumor_bam=tumorAlignmentAndQc.bam,
-    tumor_bam_bai=tumorAlignmentAndQc.bam_bai,
-    normal_bam=normalAlignmentAndQc.bam,
-    normal_bam_bai=normalAlignmentAndQc.bam_bai,
+    tumor_bam=tumorAlignment.final_bam,
+    tumor_bam_bai=tumorAlignment.final_bam_bai,
+    normal_bam=normalAlignment.final_bam,
+    normal_bam_bai=normalAlignment.final_bam_bai,
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
@@ -241,7 +260,7 @@ workflow somaticExome {
 
   call btc.bamToCram as tumorBamToCram {
     input:
-    bam=tumorAlignmentAndQc.bam,
+    bam=tumorAlignment.final_bam,
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict
@@ -253,7 +272,7 @@ workflow somaticExome {
 
   call btc.bamToCram as normalBamToCram {
     input:
-    bam=normalAlignmentAndQc.bam,
+    bam=normalAlignment.final_bam,
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict
@@ -266,33 +285,33 @@ workflow somaticExome {
   output {
     File tumor_cram = tumorIndexCram.indexed_cram
     File tumor_cram_crai = tumorIndexCram.indexed_cram_crai
-    File tumor_mark_duplicates_metrics = tumorAlignmentAndQc.mark_duplicates_metrics
-    File tumor_insert_size_metrics = tumorAlignmentAndQc.insert_size_metrics
-    File tumor_alignment_summary_metrics = tumorAlignmentAndQc.alignment_summary_metrics
-    File tumor_hs_metrics = tumorAlignmentAndQc.hs_metrics
-    Array[File] tumor_per_target_coverage_metrics = tumorAlignmentAndQc.per_target_coverage_metrics
-    Array[File] tumor_per_target_hs_metrics = tumorAlignmentAndQc.per_target_hs_metrics
-    Array[File] tumor_per_base_coverage_metrics = tumorAlignmentAndQc.per_base_coverage_metrics
-    Array[File] tumor_per_base_hs_metrics = tumorAlignmentAndQc.per_base_hs_metrics
-    Array[File] tumor_summary_hs_metrics = tumorAlignmentAndQc.summary_hs_metrics
-    File tumor_flagstats = tumorAlignmentAndQc.flagstats
-    File tumor_verify_bam_id_metrics = tumorAlignmentAndQc.verify_bam_id_metrics
-    File tumor_verify_bam_id_depth = tumorAlignmentAndQc.verify_bam_id_depth
+    File tumor_mark_duplicates_metrics = tumorAlignment.mark_duplicates_metrics_file
+    File tumor_insert_size_metrics = tumorQc.insert_size_metrics
+    File tumor_alignment_summary_metrics = tumorQc.alignment_summary_metrics
+    File tumor_hs_metrics = tumorQc.hs_metrics
+    Array[File] tumor_per_target_coverage_metrics = tumorQc.per_target_coverage_metrics
+    Array[File] tumor_per_target_hs_metrics = tumorQc.per_target_hs_metrics
+    Array[File] tumor_per_base_coverage_metrics = tumorQc.per_base_coverage_metrics
+    Array[File] tumor_per_base_hs_metrics = tumorQc.per_base_hs_metrics
+    Array[File] tumor_summary_hs_metrics = tumorQc.summary_hs_metrics
+    File tumor_flagstats = tumorQc.flagstats
+    File tumor_verify_bam_id_metrics = tumorQc.verify_bam_id_metrics
+    File tumor_verify_bam_id_depth = tumorQc.verify_bam_id_depth
 
     File normal_cram = normalIndexCram.indexed_cram
     File normal_cram_crai = normalIndexCram.indexed_cram_crai
-    File normal_mark_duplicates_metrics = normalAlignmentAndQc.mark_duplicates_metrics
-    File normal_insert_size_metrics = normalAlignmentAndQc.insert_size_metrics
-    File normal_alignment_summary_metrics = normalAlignmentAndQc.alignment_summary_metrics
-    File normal_hs_metrics = normalAlignmentAndQc.hs_metrics
-    Array[File] normal_per_target_coverage_metrics = normalAlignmentAndQc.per_target_coverage_metrics
-    Array[File] normal_per_target_hs_metrics = normalAlignmentAndQc.per_target_hs_metrics
-    Array[File] normal_per_base_coverage_metrics = normalAlignmentAndQc.per_base_coverage_metrics
-    Array[File] normal_per_base_hs_metrics = normalAlignmentAndQc.per_base_hs_metrics
-    Array[File] normal_summary_hs_metrics = normalAlignmentAndQc.summary_hs_metrics
-    File normal_flagstats = normalAlignmentAndQc.flagstats
-    File normal_verify_bam_id_metrics = normalAlignmentAndQc.verify_bam_id_metrics
-    File normal_verify_bam_id_depth = normalAlignmentAndQc.verify_bam_id_depth
+    File normal_mark_duplicates_metrics = normalAlignment.mark_duplicates_metrics_file
+    File normal_insert_size_metrics = normalQc.insert_size_metrics
+    File normal_alignment_summary_metrics = normalQc.alignment_summary_metrics
+    File normal_hs_metrics = normalQc.hs_metrics
+    Array[File] normal_per_target_coverage_metrics = normalQc.per_target_coverage_metrics
+    Array[File] normal_per_target_hs_metrics = normalQc.per_target_hs_metrics
+    Array[File] normal_per_base_coverage_metrics = normalQc.per_base_coverage_metrics
+    Array[File] normal_per_base_hs_metrics = normalQc.per_base_hs_metrics
+    Array[File] normal_summary_hs_metrics = normalQc.summary_hs_metrics
+    File normal_flagstats = normalQc.flagstats
+    File normal_verify_bam_id_metrics = normalQc.verify_bam_id_metrics
+    File normal_verify_bam_id_depth = normalQc.verify_bam_id_depth
 
     File mutect_unfiltered_vcf = detectVariants.mutect_unfiltered_vcf
     File mutect_unfiltered_vcf_tbi = detectVariants.mutect_unfiltered_vcf_tbi
