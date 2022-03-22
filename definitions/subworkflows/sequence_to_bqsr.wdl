@@ -22,6 +22,7 @@ workflow sequenceToBqsr {
     File reference
     File reference_fai
     File reference_dict
+    File reference_alt
     File reference_amb
     File reference_ann
     File reference_bwt
@@ -37,6 +38,7 @@ workflow sequenceToBqsr {
       unaligned=seq_data,
       trimming=trimming,
       reference=reference,
+      reference_alt=reference_alt,
       reference_amb=reference_amb,
       reference_ann=reference_ann,
       reference_bwt=reference_bwt,

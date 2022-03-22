@@ -64,7 +64,7 @@ workflow detectVariants {
     Int? readcount_minimum_base_quality
     Int? readcount_minimum_mapping_quality
 
-    String gnomad_field_name = "gnomAD_AF"  # only change with gnomad_filter annotation
+    String gnomad_field_name = "gnomADe_AF"  # only change with gnomad_filter annotation
     Float filter_gnomADe_maximum_population_allele_frequency = 0.001
     Float filter_mapq0_threshold = 0.15
     Float filter_somatic_llr_threshold = 5

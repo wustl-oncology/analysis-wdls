@@ -7,6 +7,7 @@ task sequenceAlignAndTag {
     SequenceData unaligned
     TrimmingOptions? trimming
     File reference
+    File reference_alt
     File reference_amb
     File reference_ann
     File reference_bwt
@@ -16,8 +17,8 @@ task sequenceAlignAndTag {
 
   # Disk space
   Float data_size = size([unaligned.sequence.bam, unaligned.sequence.fastq1, unaligned.sequence.fastq2], "GB")
-  Float reference_size = size([reference, reference_amb, reference_ann, reference_bwt, reference_pac, reference_0123], "GB")
-  Int space_needed_gb = 10 + ceil(3*data_size + reference_size)
+  Float reference_size = size([reference, reference_alt, reference_amb, reference_ann, reference_bwt, reference_pac, reference_0123], "GB")
+  Int space_needed_gb = 10 + ceil(5*data_size + reference_size)
   # CPU |  Memory / RAM
   #24 bwa cores + 1 for samblaster + 2 for samtools view
   Int cores = 27 
@@ -90,6 +91,7 @@ workflow wf {
     SequenceData unaligned
     TrimmingOptions? trimming
     File reference
+    File reference_alt
     File reference_amb
     File reference_ann
     File reference_bwt
@@ -101,6 +103,7 @@ workflow wf {
     unaligned=unaligned,
     trimming=trimming,
     reference=reference,
+    reference_alt=reference_alt,
     reference_amb=reference_amb,
     reference_ann=reference_ann,
     reference_bwt=reference_bwt,

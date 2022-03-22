@@ -51,7 +51,7 @@ workflow detectVariantsWgs {
     String vep_pick  # enum ["pick", "flag_pick", "pick_allele", "per_gene", "pick_allele_gene", "flag_pick_allele", "flag_pick_allele_gene"]
     Array[String] vep_plugins = ["Frameshift", "Wildtype"]
 
-    String gnomad_field_name = "gnomAD_AF"  # only change with gnomad_filter_annotation
+    String gnomad_field_name = "gnomADe_AF"  # only change with gnomad_filter_annotation
     Float filter_gnomADe_maximum_population_allele_frequency = 0.001
     Float filter_mapq0_threshold = 0.15
     Int filter_minimum_depth = 1

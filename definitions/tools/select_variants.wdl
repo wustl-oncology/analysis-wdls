@@ -20,7 +20,7 @@ task selectVariants {
 
   Int space_needed_gb = 10 + round(size([vcf, vcf_tbi], "GB")*3 + size([reference, reference_fai, reference_dict, interval_list], "GB"))
   runtime {
-    docker: "broadinstitute/gatk:4.2.0.0"
+    docker: "broadinstitute/gatk:4.1.8.1"
     memory: "6GB"
     bootDiskSizeGb: 25
     disks: "local-disk ~{space_needed_gb} SSD"

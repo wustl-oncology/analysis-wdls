@@ -28,7 +28,7 @@ workflow tumorOnlyDetectVariants {
     File bam
     File bam_bai
 
-    String gnomad_field_name = "gnomAD_AF"  # only change with gnomad_filter_annotation
+    String gnomad_field_name = "gnomADe_AF"  # only change with gnomad_filter_annotation
     File roi_intervals
 
     Int varscan_strand_filter = 0

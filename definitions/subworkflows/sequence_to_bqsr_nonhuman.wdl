@@ -12,6 +12,7 @@ workflow sequenceToBqsrNonhuman {
   input {
     Array[SequenceData] unaligned
     File reference
+    File reference_alt
     File reference_amb
     File reference_ann
     File reference_bwt
@@ -26,6 +27,7 @@ workflow sequenceToBqsrNonhuman {
       input:
       unaligned=sequence,
       reference=reference,
+      reference_alt=reference_alt,
       reference_amb=reference_amb,
       reference_ann=reference_ann,
       reference_bwt=reference_bwt,
