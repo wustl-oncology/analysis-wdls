@@ -27,5 +27,5 @@ jobs:
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'griffithlab@users.noreply.github.com'
           git add workflows.zip
-          git commit -m ""
+          git commit -m "Add workflows.zip"
           git push
