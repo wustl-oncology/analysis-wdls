@@ -19,7 +19,7 @@ task mutect {
   Float bam_size = size([tumor_bam, tumor_bam_bai, normal_bam, normal_bam_bai], "GB")
   Int space_needed_gb = 10 + ceil(reference_size + 2*bam_size + size(interval_list, "GB"))
   runtime {
-    docker: "broadinstitute/gatk:4.2.0.0"
+    docker: "broadinstitute/gatk:4.1.8.1"
     memory: "32GB"
     bootDiskSizeGb: space_needed_gb
     disks: "local-disk ~{space_needed_gb} HDD"
