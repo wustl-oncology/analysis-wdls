@@ -22,7 +22,7 @@ task cnvkitBatch {
     bootDiskSizeGb: 10
     memory: "4GB"
     cpu: 1
-    docker: "etal/cnvkit:0.9.5"
+    docker: "etal/cnvkit:0.9.8"
     disks: "local-disk ~{size_needed_gb} SSD"
   }
 
