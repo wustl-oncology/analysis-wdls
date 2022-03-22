@@ -1,6 +1,6 @@
 version 1.0
 
-import "../types.wdl"
+import "../types.wdl"  # !UnusedImport
 
 import "../tools/collect_insert_size_metrics.wdl" as cism
 import "../tools/collect_alignment_summary_metrics.wdl" as casm

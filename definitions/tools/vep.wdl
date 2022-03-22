@@ -1,6 +1,6 @@
 version 1.0
 
-import "../types.wdl"
+import "../types.wdl"  # !UnusedImport
 
 # Do not use this task directly, use the vep workflow below.
 task vepTask {

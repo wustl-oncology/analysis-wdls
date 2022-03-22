@@ -1,6 +1,6 @@
 version 1.0
 
-import "../types.wdl"
+import "../types.wdl"  # !UnusedImport
 
 import "../tools/sequence_align_and_tag.wdl" as saat
 import "../tools/merge_bams.wdl" as mb

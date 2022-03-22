@@ -12,7 +12,7 @@ jobs:
       - name: Install dependencies
         run: pip3 install miniwdl
       - name: Test with MiniWDL
-        run: miniwdl check definitions/*.wdl --suppress ShellCheckCommand
+        run: miniwdl check definitions/*.wdl --suppress CommandShellCheck
       - name: Zip WDLs
         run: |
           cd definitions/

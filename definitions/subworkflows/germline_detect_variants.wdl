@@ -1,6 +1,6 @@
 version 1.0
 
-import "../types.wdl"
+import "../types.wdl"  # !UnusedImport
 
 import "../subworkflows/gatk_haplotypecaller_iterator.wdl" as ghi
 import "../subworkflows/germline_filter_vcf.wdl" as gfv
