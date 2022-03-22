@@ -36,7 +36,7 @@ workflow germlineDetectVariants {
     Array[String]? variants_to_table_genotype_fields
     Array[String]? vep_to_table_fields
     String final_tsv_prefix = "variants"
-    String gnomad_field_name = "gnomAD_AF"  # only change with gnomad_filter annotation
+    String gnomad_field_name = "gnomADe_AF"  # only change with gnomad_filter annotation
     Float filter_gnomAD_maximum_population_allele_frequency = 0.05
   }
 
