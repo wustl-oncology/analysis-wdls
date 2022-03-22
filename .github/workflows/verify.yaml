@@ -13,13 +13,17 @@ jobs:
         run: pip3 install miniwdl
       - name: Test with MiniWDL
         run: miniwdl check definitions/*.wdl --suppress CommandShellCheck
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
       - name: Zip WDLs
         run: |
           cd definitions/
           zip -r ../workflows.zip . 1> /dev/null
           cd ..
-      - name: Upload zipped WDLs
-        uses: actions/upload-artifact@v3
-        with:
-          name: workflows.zip
-          path: workflows.zip
+      - name: Commit zipped WDLs
+        run: |
+          git add workflows.zip
+          git commit -m ""
+          git push
