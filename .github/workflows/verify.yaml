@@ -24,6 +24,8 @@ jobs:
           cd ..
       - name: Commit zipped WDLs
         run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'griffithlab@users.noreply.github.com'
           git add workflows.zip
           git commit -m ""
           git push
