@@ -14,7 +14,7 @@ workflow alignmentExomeNonhuman {
     File reference_ann
     File reference_bwt
     File reference_pac
-    File reference_sa
+    File reference_0123
     Array[SequenceData] sequence
     TrimmingOptions? trimming
     String picard_metric_accumulation_level
@@ -37,7 +37,7 @@ workflow alignmentExomeNonhuman {
     reference_ann=reference_ann,
     reference_bwt=reference_bwt,
     reference_pac=reference_pac,
-    reference_sa=reference_sa,
+    reference_0123=reference_0123,
     unaligned=sequence,
     trimming=trimming,
     final_name=final_name

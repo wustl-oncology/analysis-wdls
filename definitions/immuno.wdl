@@ -100,7 +100,7 @@ workflow immuno {
     File reference_ann
     File reference_bwt
     File reference_pac
-    File reference_sa
+    File reference_0123
 
     String tumor_name = "tumor"
     String tumor_sample_name
@@ -250,7 +250,7 @@ workflow immuno {
     reference_ann=reference_ann,
     reference_bwt=reference_bwt,
     reference_pac=reference_pac,
-    reference_sa=reference_sa,
+    reference_0123=reference_0123,
     tumor_sequence=tumor_sequence,
     tumor_name=tumor_name,
     normal_sequence=normal_sequence,
@@ -314,7 +314,7 @@ workflow immuno {
     reference_ann=reference_ann,
     reference_bwt=reference_bwt,
     reference_pac=reference_pac,
-    reference_sa=reference_sa,
+    reference_0123=reference_0123,
     sequence=normal_sequence,
     bqsr_known_sites=bqsr_known_sites,
     bqsr_known_sites_tbi=bqsr_known_sites_tbi,
