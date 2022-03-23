@@ -1,6 +1,6 @@
 version 1.0
 
-import "../types.wdl"
+import "../types.wdl"  # !UnusedImport
 
 import "../subworkflows/hs_metrics.wdl" as hm
 import "../tools/bam_to_bigwig.wdl" as btb

@@ -49,6 +49,7 @@ workflow tumorOnlyWgs {
     String sample_name
 
     File docm_vcf
+    File docm_vcf_tbi
 
     Int? readcount_minimum_mapping_quality
     Int? readcount_minimum_base_quality

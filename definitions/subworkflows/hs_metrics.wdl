@@ -1,6 +1,6 @@
 version 1.0
 
-import "../types.wdl"
+import "../types.wdl"  # !UnusedImport
 
 import "../tools/collect_hs_metrics.wdl" as hs
 

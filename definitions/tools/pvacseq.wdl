@@ -47,7 +47,7 @@ task pvacseq {
   runtime {
     memory: "16GB"
     cpu: n_threads
-    docker: "griffithlab/pvactools:2.0.1"
+    docker: "griffithlab/pvactools:2.0.5"
     disks: "local-disk ~{space_needed_gb} SSD"
   }
 

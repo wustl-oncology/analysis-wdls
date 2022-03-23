@@ -59,7 +59,7 @@ workflow somaticExome {
 
     Int varscan_strand_filter = 0
     Int varscan_min_coverage = 8
-    Float varscan_min_var_freq = 0.1
+    Float varscan_min_var_freq = 0.05
     Float varscan_p_value = 0.99
     Float? varscan_max_normal_freq
 

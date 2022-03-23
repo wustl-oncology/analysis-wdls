@@ -99,7 +99,8 @@ workflow rnaseq {
 
   call mdas.markDuplicatesAndSort as markDup {
     input:
-    bam=indexBam.indexed_bam
+    bam=indexBam.indexed_bam,
+    input_sort_order="coordinate"
   }
 
   call st.stringtie {

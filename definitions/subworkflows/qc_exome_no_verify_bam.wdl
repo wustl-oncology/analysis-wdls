@@ -1,6 +1,6 @@
 version 1.0
 
-import "../types.wdl"
+import "../types.wdl"  # !UnusedImport
 
 import "../subworkflows/hs_metrics.wdl" as hm
 import "../tools/collect_alignment_summary_metrics.wdl" as casm
