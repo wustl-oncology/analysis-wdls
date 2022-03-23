@@ -1,6 +1,7 @@
 version 1.0
 
 import "../subworkflows/hs_metrics.wdl" as hm
+import "../tools/bam_to_bigwig.wdl" as btb
 import "../tools/collect_alignment_summary_metrics.wdl" as casm
 import "../tools/collect_gc_bias_metrics.wdl" as cgbm
 import "../tools/collect_insert_size_metrics.wdl" as cism
@@ -102,6 +103,15 @@ workflow qcWgs {
     minimum_base_quality=minimum_base_quality
   }
 
+  call btb.bamToBigwig as cgpbigwigBamcoverage {
+    input:
+    bam=bam,
+    bam_bai=bam_bai,
+    reference=reference,
+    reference_fai=reference_fai,
+    reference_dict=reference_dict,
+  }
+
 
   output {
     File insert_size_metrics = collectInsertSizeMetrics.insert_size_metrics
@@ -119,5 +129,6 @@ workflow qcWgs {
     Array[File] per_target_coverage_metrics = collectHsMetrics.per_target_coverage_metrics
     Array[File] per_target_hs_metrics = collectHsMetrics.per_target_hs_metrics
     Array[File] summary_hs_metrics = collectHsMetrics.summary_hs_metrics
+    File bamcoverage_bigwig = cgpbigwigBamcoverage.outfile
   }
 }
