@@ -101,7 +101,8 @@ workflow rnaseqStarFusion {
 
   call mdas.markDuplicatesAndSort as markDup {
     input:
-    bam=sortBam.sorted_bam
+    bam=sortBam.sorted_bam,
+    input_sort_order="coordinate"
   }
 
   call ib.indexBam {
