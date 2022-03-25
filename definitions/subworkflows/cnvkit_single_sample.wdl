@@ -8,6 +8,7 @@ workflow cnvkitSingleSample {
     File reference
     File reference_fai
     File tumor_bam
+    File tumor_bam_bai
     String method  # enum ["hybrid" "amplicon" "wgs"]
     Boolean? diagram
     Boolean? scatter_plot
@@ -21,6 +22,7 @@ workflow cnvkitSingleSample {
   call cb.cnvkitBatch as cnvkitMain {
     input:
     tumor_bam=tumor_bam,
+    tumor_bam_bai=tumor_bam_bai,
     method=method,
     diagram=diagram,
     scatter_plot=scatter_plot,
