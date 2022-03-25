@@ -3,9 +3,11 @@ version 1.0
 task cnvkitBatch {
   input {
     File tumor_bam
+    File tumor_bam_bai
     File? bait_intervals
     File? access
     File? normal_bam
+    File? normal_bam_bai
     File? reference_fasta  # fasta or CNN must exist
     File? reference_cnn    # fasta or CNN must exist
     String method = "hybrid"  # enum [hybrid, amplicon, wgs]

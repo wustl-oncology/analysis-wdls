@@ -54,6 +54,7 @@ workflow singleSampleSvCallers {
     method=cnvkit_method,
     reference_cnn=cnvkit_reference_cnn,
     tumor_bam=bam,
+    tumor_bam_bai=bam_bai,
     scatter_plot=cnvkit_scatter_plot,
     male_reference=cnvkit_male_reference,
     cnvkit_vcf_name=cnvkit_vcf_name,
