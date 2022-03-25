@@ -240,9 +240,9 @@ workflow somaticExome {
   call cb.cnvkitBatch as cnvkit {
     input:
     tumor_bam=tumorAlignment.final_bam,
-    tumor_bam=tumorAlignment.final_bam_bai,
+    tumor_bam_bai=tumorAlignment.final_bam_bai,
     normal_bam=normalAlignment.final_bam,
-    normal_bam=normalAlignment.final_bam_bai,
+    normal_bam_bai=normalAlignment.final_bam_bai,
     reference_fasta=reference,
     bait_intervals=bait_intervals,
     target_average_size=cnvkit_target_average_size
