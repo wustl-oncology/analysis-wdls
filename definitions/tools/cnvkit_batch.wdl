@@ -29,12 +29,7 @@ task cnvkitBatch {
   }
 
   command <<<
-    # call `touch` to update last-modified-time. Download order
-    # sometimes makes index have an earlier time and cause errors.
-
-    touch ~{tumor_bam_bai}
     if ~{defined(normal_bam)}; then
-      touch ~{normal_bam_bai}
       REF="--normal ~{normal_bam} --fasta ~{reference_fasta}"
     else
       REF="--reference ~{reference_cnn}"
