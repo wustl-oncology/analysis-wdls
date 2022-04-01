@@ -21,14 +21,21 @@ task cnvkitBatch {
 
   Int size_needed_gb = 10 + round(size([tumor_bam, bait_intervals, access, normal_bam, reference_fasta, reference_cnn], "GB") * 2)
   runtime {
-    bootDiskSizeGb: 10
     memory: "4GB"
     cpu: 1
-    docker: "etal/cnvkit:0.9.8"
+    # We use a forked cnvkit so we can get access to root privileges
+    # which let us write files at /cromwell_root/
+    docker: "jackmaruska/cnvkit:0.9.7"
     disks: "local-disk ~{size_needed_gb} SSD"
   }
 
   command <<<
+    # touch each bai to ensure they have a timestamp after the bam
+    # Avoids a reindex which has thrown exceptions
+    # this is why we need root privileges
+    touch ~{tumor_bam_bai}
+    touch ~{normal_bam_bai}
+
     if ~{defined(normal_bam)}; then
       REF="--normal ~{normal_bam} --fasta ~{reference_fasta}"
     else
@@ -67,9 +74,11 @@ task cnvkitBatch {
 workflow wf {
   input {
     File tumor_bam
+    File tumor_bam_bai
     File? bait_intervals
     File? access
     File? normal_bam
+    File? normal_bam_bai
     File? reference_fasta  # fasta or CNN must exist
     File? reference_cnn    # fasta or CNN must exist
     String method = "hybrid"  # enum [hybrid, amplicon, wgs]
@@ -83,9 +92,11 @@ workflow wf {
   call cnvkitBatch {
     input:
     tumor_bam=tumor_bam,
+    tumor_bam_bai=tumor_bam_bai,
     bait_intervals=bait_intervals,
     access=access,
     normal_bam=normal_bam,
+    normal_bam_bai=normal_bam_bai,
     reference_fasta=reference_fasta,
     reference_cnn=reference_cnn,
     method=method,
