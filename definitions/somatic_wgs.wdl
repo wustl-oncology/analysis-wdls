@@ -20,7 +20,7 @@ workflow somaticWgs {
     File reference_ann
     File reference_bwt
     File reference_pac
-    File reference_sa
+    File reference_0123
 
     String tumor_name = "tumor"
     Array[SequenceData] tumor_sequence
@@ -96,7 +96,7 @@ workflow somaticWgs {
     reference_ann=reference_ann,
     reference_bwt=reference_bwt,
     reference_pac=reference_pac,
-    reference_sa=reference_sa,
+    reference_0123=reference_0123,
     trimming=trimming,
     omni_vcf=omni_vcf,
     omni_vcf_tbi=omni_vcf_tbi,
@@ -124,7 +124,7 @@ workflow somaticWgs {
     reference_ann=reference_ann,
     reference_bwt=reference_bwt,
     reference_pac=reference_pac,
-    reference_sa=reference_sa,
+    reference_0123=reference_0123,
     trimming=trimming,
     omni_vcf=omni_vcf,
     omni_vcf_tbi=omni_vcf_tbi,
