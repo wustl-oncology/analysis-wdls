@@ -10,6 +10,11 @@ a format that Dockstore supports and leverage that tool.
 
 # Differences from CWL
 
+Last confirmed mirror with the analysis-workflows CWL repo was commit
+fbeea265295ae596d5a3ba563e766be0c4fc26e8, PR#1056, Mar24 2022. Commits
+from that point on may deviate unless compared. Update these values if
+that is done.
+
 ## Directory types must be a zip file, or Array[File]
 
 There is not yet a supported Directory type in WDL. Instances of this
