@@ -126,8 +126,7 @@ workflow rnaseqStarFusionWithXenosplit {
 
   call mdas.markDuplicatesAndSort as markDup {
     input:
-    bam=sortBam.sorted_bam,
-    input_sort_order="coordinate"
+    bam=sortBam.sorted_bam
   }
 
   call ib.indexBam {

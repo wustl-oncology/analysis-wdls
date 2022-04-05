@@ -1,6 +1,6 @@
 version 1.0
 
-import "../types.wdl"
+import "../types.wdl"  # !UnusedImport
 
 import "../tools/sequence_align_and_tag.wdl" as saat
 import "../tools/merge_bams.wdl" as mb
@@ -12,11 +12,12 @@ workflow sequenceToBqsrNonhuman {
   input {
     Array[SequenceData] unaligned
     File reference
+    File reference_alt
     File reference_amb
     File reference_ann
     File reference_bwt
     File reference_pac
-    File reference_sa
+    File reference_0123
     TrimmingOptions? trimming
     String final_name = "final.bam"
   }
@@ -26,11 +27,12 @@ workflow sequenceToBqsrNonhuman {
       input:
       unaligned=sequence,
       reference=reference,
+      reference_alt=reference_alt,
       reference_amb=reference_amb,
       reference_ann=reference_ann,
       reference_bwt=reference_bwt,
       reference_pac=reference_pac,
-      reference_sa=reference_sa,
+      reference_0123=reference_0123,
       trimming=trimming
     }
   }

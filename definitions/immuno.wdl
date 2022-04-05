@@ -1,5 +1,6 @@
 version 1.0
 
+
 # pipelines
 import "germline_exome_hla_typing.wdl" as geht
 import "rnaseq.wdl" as r
@@ -94,11 +95,12 @@ workflow immuno {
     File reference
     File reference_fai
     File reference_dict
+    File reference_alt
     File reference_amb
     File reference_ann
     File reference_bwt
     File reference_pac
-    File reference_sa
+    File reference_0123
 
     String tumor_name = "tumor"
     String tumor_sample_name
@@ -131,7 +133,7 @@ workflow immuno {
 
     Int varscan_strand_filter = 0
     Int varscan_min_coverage = 8
-    Float varscan_min_var_freq = 0.1
+    Float varscan_min_var_freq = 0.05
     Float varscan_p_value = 0.99
     Float? varscan_max_normal_freq
 
@@ -243,11 +245,12 @@ workflow immuno {
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
+    reference_alt=reference_alt,
     reference_amb=reference_amb,
     reference_ann=reference_ann,
     reference_bwt=reference_bwt,
     reference_pac=reference_pac,
-    reference_sa=reference_sa,
+    reference_0123=reference_0123,
     tumor_sequence=tumor_sequence,
     tumor_name=tumor_name,
     normal_sequence=normal_sequence,
@@ -306,11 +309,12 @@ workflow immuno {
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
+    reference_alt=reference_alt,
     reference_amb=reference_amb,
     reference_ann=reference_ann,
     reference_bwt=reference_bwt,
     reference_pac=reference_pac,
-    reference_sa=reference_sa,
+    reference_0123=reference_0123,
     sequence=normal_sequence,
     bqsr_known_sites=bqsr_known_sites,
     bqsr_known_sites_tbi=bqsr_known_sites_tbi,

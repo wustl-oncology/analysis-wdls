@@ -1,33 +1,36 @@
 version 1.0
 
-import "../types.wdl"
+import "../types.wdl"  # !UnusedImport
 
 task sequenceAlignAndTag {
   input {
     SequenceData unaligned
     TrimmingOptions? trimming
     File reference
+    File reference_alt
     File reference_amb
     File reference_ann
     File reference_bwt
     File reference_pac
-    File reference_sa
+    File reference_0123
   }
 
   # Disk space
   Float data_size = size([unaligned.sequence.bam, unaligned.sequence.fastq1, unaligned.sequence.fastq2], "GB")
-  Float reference_size = size([reference, reference_amb, reference_ann, reference_bwt, reference_pac, reference_sa], "GB")
+  Float reference_size = size([reference, reference_alt, reference_amb, reference_ann, reference_bwt, reference_pac, reference_0123], "GB")
   Int space_needed_gb = 10 + ceil(5*data_size + reference_size)
   # CPU |  Memory / RAM
-  Int cores = 12
-  Int instance_memory_gb = 20 + ceil(reference_size * cores)
+  #24 bwa cores + 1 for samblaster + 2 for samtools view
+  Int cores = 27 
+  # mem values tested on a 60x WGS bam with up to 30 cores. Lower values would 
+  # be fine for exome if we ever want to optimize to that extent
+  # Mem does not seem to be as dependent on # of cores as I expected
+  Int instance_memory_gb = 76 
   Int jvm_memory_gb = 4
   runtime {
-    docker: "mgibio/alignment_helper-cwl:1.1.0"
+    docker: "mgibio/alignment_helper-cwl:2.2.1"
     memory: "~{instance_memory_gb}GB"
     cpu: cores
-    # 1 + just for a buffer
-    # data_size*10 because bam uncompresses and streams to /dev/stdout and /dev/stdin, could have a couple flying at once
     bootDiskSizeGb: space_needed_gb
     disks: "local-disk ~{space_needed_gb} SSD"
   }
@@ -51,16 +54,16 @@ task sequenceAlignAndTag {
     TRIMMING_ADAPTER_MIN_OVERLAP=~{if defined(trimming) then "~{select_first([trimming]).min_overlap}" else ""}
 
     function bwa_blast_view () {
-        /usr/local/bin/bwa mem -K 100000000 -t ~{cores} -Y -p -R "$READGROUP" "$REFERENCE" /dev/stdin \
+        /usr/local/bin/bwa-mem2 mem -K 100000000 -t ~{cores-3} -Y -p -R "$READGROUP" "$REFERENCE" /dev/stdin \
             | /usr/local/bin/samblaster -a --addMateTags \
-            | /opt/samtools/bin/samtools view -b -S /dev/stdin
+            | /opt/samtools/bin/samtools view -@ 2 -b -S /dev/stdin
     }
 
     if [[ "$MODE" == "fastq" ]]; then
         if [[ "$RUN_TRIMMING" == "false" ]]; then
-            /usr/local/bin/bwa mem -K 100000000 -t ~{cores} -Y -R "$READGROUP" "$REFERENCE" $FASTQ1 $FASTQ2 \
+            /usr/local/bin/bwa-mem2 mem -K 100000000 -t ~{cores-3} -Y -R "$READGROUP" "$REFERENCE" $FASTQ1 $FASTQ2 \
                 | /usr/local/bin/samblaster -a --addMateTags \
-                | /opt/samtools/bin/samtools view -b -S /dev/stdin > "~{outname}"
+                | /opt/samtools/bin/samtools view -@ 2 -b -S /dev/stdin > "~{outname}"
         else
             /opt/flexbar/flexbar --adapters "$TRIMMING_ADAPTERS" --reads $FASTQ2 --reads2 $FASTQ2 --adapter-trim-end LTAIL --adapter-min-overlap "$TRIMMING_ADAPTER_MIN_OVERLAP" --adapter-error-rate 0.1 --max-uncalled 300 --stdout-reads \
                 | bwa_blast_view > "~{outname}"
@@ -88,21 +91,23 @@ workflow wf {
     SequenceData unaligned
     TrimmingOptions? trimming
     File reference
+    File reference_alt
     File reference_amb
     File reference_ann
     File reference_bwt
     File reference_pac
-    File reference_sa
+    File reference_0123
   }
   call sequenceAlignAndTag {
     input:
     unaligned=unaligned,
     trimming=trimming,
     reference=reference,
+    reference_alt=reference_alt,
     reference_amb=reference_amb,
     reference_ann=reference_ann,
     reference_bwt=reference_bwt,
     reference_pac=reference_pac,
-    reference_sa=reference_sa
+    reference_0123=reference_0123
   }
 }

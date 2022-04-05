@@ -21,12 +21,12 @@ task varscanSomatic {
 
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
   Float bam_size = size([tumor_bam, tumor_bam_bai, normal_bam, normal_bam_bai], "GB")
-  Int space_needed_gb = 10 + round(reference_size + bam_size*2)
+  Int space_needed_gb = 10 + ceil(reference_size + bam_size*2)
   runtime {
     memory: "12GB"
     cpu: 2
     docker: "mgibio/cle:v1.3.1"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<

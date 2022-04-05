@@ -1,6 +1,6 @@
 version 1.0
 
-import "../types.wdl"
+import "../types.wdl"  # !UnusedImport
 import "../tools/sequence_align_and_tag.wdl" as saat
 import "../tools/merge_bams.wdl" as mb
 import "../tools/name_sort.wdl" as ns
@@ -22,11 +22,12 @@ workflow sequenceToBqsr {
     File reference
     File reference_fai
     File reference_dict
+    File reference_alt
     File reference_amb
     File reference_ann
     File reference_bwt
     File reference_pac
-    File reference_sa
+    File reference_0123
 
     String final_name = "final"
   }
@@ -37,11 +38,12 @@ workflow sequenceToBqsr {
       unaligned=seq_data,
       trimming=trimming,
       reference=reference,
+      reference_alt=reference_alt,
       reference_amb=reference_amb,
       reference_ann=reference_ann,
       reference_bwt=reference_bwt,
       reference_pac=reference_pac,
-      reference_sa=reference_sa
+      reference_0123=reference_0123
     }
   }
 
@@ -51,12 +53,8 @@ workflow sequenceToBqsr {
     name=final_name
   }
 
-  call ns.nameSort {
-    input: bam=mergeBams.merged_bam
-  }
-
   call mdas.markDuplicatesAndSort {
-    input: bam=nameSort.name_sorted_bam
+    input: bam=mergeBams.merged_bam
   }
 
   call b.bqsr {
