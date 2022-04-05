@@ -33,7 +33,7 @@ task vepTask {
     memory: "64GB"
     bootDiskSizeGb: 30
     cpu: 4
-    docker: "mgibio/vep_helper-cwl:vep_101.0_v2"
+    docker: "mgibio/vep_helper-cwl:vep_105.0_v1"
     disks: "local-disk ~{space_needed_gb} SSD"
   }
 
