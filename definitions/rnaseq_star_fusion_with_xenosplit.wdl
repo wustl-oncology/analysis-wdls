@@ -38,6 +38,8 @@ workflow rnaseqStarFusionWithXenosplit {
     File refFlat
     File ribosomal_intervals
     String sample_name
+    Boolean? examine_coding_effect
+    String? fusioninspector_mode
   }
 
   scatter(in_bam in instrument_data_bams) {
@@ -57,7 +59,7 @@ workflow rnaseqStarFusionWithXenosplit {
     outsam_attrrg_line=outsam_attrrg_line,
     star_genome_dir_zip=graft_star_genome_dir_zip,
     outfile_name_prefix=graft_outfile_name_prefix,
-    gtf_file=graft_gtf_file,
+    reference_annotation=graft_gtf_file,
     fastq=bamToTrimmedFastq.fastq1,
     fastq2=bamToTrimmedFastq.fastq2
   }
@@ -67,7 +69,7 @@ workflow rnaseqStarFusionWithXenosplit {
     outsam_attrrg_line=outsam_attrrg_line,
     star_genome_dir_zip=host_star_genome_dir_zip,
     outfile_name_prefix=host_outfile_name_prefix,
-    gtf_file=host_gtf_file,
+    reference_annotation=host_gtf_file,
     fastq=bamToTrimmedFastq.fastq1,
     fastq2=bamToTrimmedFastq.fastq2
   }
@@ -93,7 +95,7 @@ workflow rnaseqStarFusionWithXenosplit {
     outsam_attrrg_line=outsam_attrrg_line,
     star_genome_dir_zip=graft_star_genome_dir_zip,
     outfile_name_prefix=graft_outfile_name_prefix,
-    gtf_file=graft_gtf_file,
+    reference_annotation=graft_gtf_file,
     fastq=[graftbamToFastq.fastq1],
     fastq2=[graftbamToFastq.fastq2]
   }
@@ -101,7 +103,11 @@ workflow rnaseqStarFusionWithXenosplit {
   call sfd.starFusionDetect {
     input:
     star_fusion_genome_dir_zip=star_fusion_genome_dir_zip,
-    junction_file=graftbamStarAlignFusion.chim_junc
+    junction_file=graftbamStarAlignFusion.chim_junc,
+    examine_coding_effect=examine_coding_effect,
+    fusioninspector_mode=fusioninspector_mode,
+    fastq=sequenceToTrimmedFastq.fastq1,
+    fastq2=sequenceToTrimmedFastq.fastq2
   }
 
   call k.kallisto {
@@ -173,5 +179,7 @@ workflow rnaseqStarFusionWithXenosplit {
     File fusion_evidence = kallisto.fusion_evidence
     File xenosplit_statistics = xenosplit.xenosplit_statistics
     File bamcoverage_bigwig = cgpbigwigBamcoverage.outfile
+    File? coding_region_effects = starFusionDetect.coding_region_effects
+    Array[File] fusioninspector_evidence = starFusionDetect.fusioninspector_evidence
   }
 }

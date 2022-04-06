@@ -26,6 +26,7 @@ workflow pvacseq {
     String expression_tool = "kallisto"
     Array[String] alleles
     Array[String] prediction_algorithms
+    String? blastp_db  # enum [refseq_select_prot, refseq_protein]
     Array[Int]? epitope_lengths_class_i
     Array[Int]? epitope_lengths_class_ii
     Int? binding_threshold
@@ -54,6 +55,7 @@ workflow pvacseq {
     Array[String] variants_to_table_fields = ["CHROM", "POS", "ID", "REF", "ALT"]
     Array[String] variants_to_table_genotype_fields = ["GT", "AD", "AF", "DP", "RAD", "RAF", "RDP", "GX", "TX"]
     Array[String] vep_to_table_fields = ["HGVSc", "HGVSp"]
+    Float? tumor_purity
   }
 
   call br.bamReadcount as tumorRnaBamReadcount {
@@ -133,7 +135,9 @@ workflow pvacseq {
     net_chop_threshold=net_chop_threshold,
     netmhc_stab=netmhc_stab,
     run_reference_proteome_similarity=run_reference_proteome_similarity,
-    n_threads=n_threads
+    blastp_db=blastp_db,
+    n_threads=n_threads,
+    tumor_purity=tumor_purity
   }
 
   call vtt.variantsToTable {

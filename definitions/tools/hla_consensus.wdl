@@ -5,6 +5,7 @@ task hlaConsensus {
     Array[String] optitype_hla_alleles
     Array[String]? clinical_mhc_classI_alleles
     Array[String]? clinical_mhc_classII_alleles
+    String hla_source_mode  # enum [consensus, clinical_only]
   }
 
   runtime {
@@ -86,7 +87,10 @@ task hlaConsensus {
     ### parse args from the command line ###
     ########################################
 
+    hla_source_mode = "~{hla_source_mode}"
     clinical_exists = ~{clinical_exists}
+    if (hla_source_mode == 'clinical_only') and not clinical_exists:
+        sys.exit("HLA consensus error: No clinical calls found, but hla_source_mode is set to clinical_only")
     optitype_calls = ["~{sep="\",\"" optitype_hla_alleles}"]
 
     if clinical_exists:
@@ -152,6 +156,7 @@ task hlaConsensus {
                 #when resolving uncertain clinical calls?
                 #Example: clinical calls 01:02 and 01:02/01:03/01:04
                 if hla_calls[gene][allele_group][spec_allele]:
+                    #NOTE: the above call has an effect- visiting creates a leaf node w/empty set
                     #add as a tuple to avoid re-splitting later
                     multi_consensus.add( (gene, allele_group, spec_allele) )
 
@@ -191,7 +196,9 @@ task hlaConsensus {
     #########################################################
 
     #A consensus file is always generated to be passed on to pvacseq. If there are
-    #no clinical calls, this file is the same as optitype_calls.txt. If there are, walk
+    #no clinical calls, this file is the same as optitype_calls.txt. If clinical calls exist
+    #and $hla_solurce_mode is set to clinical_only, this file is the same as clinical_calls.txt
+    #Otherwise, if clinical calls exist and $hla_source_mode is set to consensus, walk
     #through the tree and emit everything present as the consensus. If there is a true
     #consensus, each class I gene (corresponding to the top level keys of the tree) will have
     #at most 2 leaves (1 in the case of a homozygote, or in the rare case that both optitype
@@ -232,10 +239,18 @@ task hlaConsensus {
 
             mismatch_written = write_mismatch(mismatch_written, mismatches)
 
-        with open("hla_calls/consensus_calls.txt", "w") as c_c:
-            c_c.write( ",".join(consensus_calls) )
-        with open("hla_calls/consensus_calls_newline.txt", "w") as c_c:
-            c_c.write( "\n".join(consensus_calls) )
+        if hla_source_mode == 'consensus':
+            with open("hla_calls/consensus_calls.txt", "w") as c_c:
+                c_c.write( ",".join(consensus_calls) )
+            with open("hla_calls/consensus_calls_newline.txt", "w") as c_c:
+                c_c.write( "\n".join(consensus_calls) )
+        elif hla_source-mode == 'clinical_only':
+            flat_i = [allele for multicall in raw_clinical_i_calls for allele in multicall.split('/')]
+            consensus_calls_lines = flat_i + raw_clinical_ii_calls
+            with open("hla_calls/consensus_calls.txt", "w") as c_c:
+                c_c.write(",".join(consensus_calls_lines))
+            with open("hla_calls/consensus_calls_newline.txt", "w") as c_c:
+                c_c.write("\n".join(consensus_calls_lines))
     ' && rm -f hla_calls/consensus_calls_nextline.txt
   >>>
 

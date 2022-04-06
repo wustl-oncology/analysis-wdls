@@ -39,6 +39,10 @@ task pvacseq {
     Boolean keep_tmp_files = false
     Boolean netmhc_stab = false
     Boolean run_reference_proteome_similarity = false
+
+    # TODO(john) where does blastp_db go in the call?
+    String? blastp_db  # enum [refseq_select_prot, refseq_protein]
+    Float? tumor_purity
   }
 
   Float input_size = size([input_vcf, input_vcf_tbi], "GB")
@@ -47,7 +51,7 @@ task pvacseq {
   runtime {
     memory: "16GB"
     cpu: n_threads
-    docker: "griffithlab/pvactools:2.0.5"
+    docker: "griffithlab/pvactools:3.0.0"
     disks: "local-disk ~{space_needed_gb} SSD"
   }
 
@@ -56,7 +60,10 @@ task pvacseq {
   Array[Int] epitope_ii = select_first([epitope_lengths_class_ii, []])
   command <<<
     ln -s "$TMPDIR" /tmp/pvacseq && export TMPDIR=/tmp/pvacseq && \
-    /usr/local/bin/pvacseq run --iedb-install-directory /opt/iedb --pass-only \
+    /usr/local/bin/pvacseq run --iedb-install-directory /opt/iedb \
+    --blastp-path /opt/ncbi-blast-2.12.0+/bin/blastp \
+    --pass-only \
+    ~{if defined(tumor_purity) then "--tumor-purity " + select_first([tumor_purity]) else ""} \
     ~{if defined(epitope_lengths_class_i ) then "-e1 " else ""} ~{sep="," epitope_i} \
     ~{if defined(epitope_lengths_class_ii) then "-e2 " else ""} ~{sep="," epitope_ii} \
     ~{if defined(binding_threshold) then "-b ~{binding_threshold}" else ""} \
@@ -93,12 +100,15 @@ task pvacseq {
     File? mhc_i_all_epitopes = "pvacseq_predictions/MHC_Class_I/~{sample_name}.all_epitopes.tsv"
     File? mhc_i_aggregated_report = "pvacseq_predictions/MHC_Class_I/~{sample_name}.all_epitopes.aggregated.tsv"
     File? mhc_i_filtered_epitopes = "pvacseq_predictions/MHC_Class_I/~{sample_name}.filtered.tsv"
+    File? mhc_i_aggregated_metrics_file = "pvacseq_predictions/MHC_Class_I/" + sample_name + ".all_epitopes.aggregated.metrics.json"
     File? mhc_ii_all_epitopes = "pvacseq_predictions/MHC_Class_II/~{sample_name}.all_epitopes.tsv"
     File? mhc_ii_aggregated_report = "pvacseq_predictions/MHC_Class_II/~{sample_name}.all_epitopes.aggregated.tsv"
     File? mhc_ii_filtered_epitopes = "pvacseq_predictions/MHC_Class_II/~{sample_name}.filtered.tsv"
+    File? mhc_ii_aggregated_metrics_file = "pvacseq_predictions/MHC_Class_II/" + sample_name + ".all_epitopes.aggregated.metrics.json"
     File? combined_all_epitopes = "pvacseq_predictions/combined/~{sample_name}.all_epitopes.tsv"
     File? combined_aggregated_report = "pvacseq_predictions/combined/~{sample_name}.all_epitopes.aggregated.tsv"
     File? combined_filtered_epitopes = "pvacseq_predictions/combined/~{sample_name}.filtered.tsv"
+    File? combined_aggregated_metrics_file = "pvacseq_predictions/combined/" + sample_name + ".all_epitopes.aggregated.metrics.json"
     Array[File] pvacseq_predictions = glob("pvacseq_predictions/**/*")
   }
 }

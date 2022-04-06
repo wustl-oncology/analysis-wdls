@@ -26,7 +26,7 @@ task starAlignFusion {
     Float peoverlap_mmp = 0.1
     Int chimout_junction_format = 1
     String twopass_mode = "Basic"
-    File? gtf_file
+    File? reference_annotation
     String outfile_name_prefix = "STAR_"
     String read_files_command = "cat"
     Array[String] outsam_attributes = ["NH", "HI", "AS", "NM", "MD"]
@@ -39,7 +39,7 @@ task starAlignFusion {
   runtime {
     cpu: cores
     memory: "64GB"
-    docker: "mgibio/star:2.7.0f"
+    docker: "trinityctat/starfusion:1.10.1"
     disks: "local-disk ~{space_needed_gb} SSD"
   }
 
@@ -69,7 +69,7 @@ task starAlignFusion {
     --chimOutJunctionFormat ~{chimout_junction_format} \
     --genomeDir ~{genome_dir} \
     --twopassMode ~{twopass_mode} \
-    ~{if defined(gtf_file) then "--sjdbGTFfile ~{select_first([gtf_file])}" else ""} \
+    ~{if defined(reference_annotation) then "--sjdbGTFfile ~{select_first([reference_annotation])}" else ""} \
     --outFileNamePrefix ~{outfile_name_prefix} \
     --readFilesCommand ~{read_files_command} \
     --outSAMattributes ~{sep=" " outsam_attributes}
