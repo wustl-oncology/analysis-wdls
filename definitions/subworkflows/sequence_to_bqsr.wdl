@@ -3,7 +3,6 @@ version 1.0
 import "../types.wdl"  # !UnusedImport
 import "../tools/sequence_align_and_tag.wdl" as saat
 import "../tools/merge_bams.wdl" as mb
-import "../tools/name_sort.wdl" as ns
 import "../tools/mark_duplicates_and_sort.wdl" as mdas
 import "../tools/index_bam.wdl" as ib
 import "../tools/bqsr.wdl" as b

@@ -89,7 +89,7 @@ task hlaConsensus {
 
     hla_source_mode = "~{hla_source_mode}"
     clinical_exists = ~{clinical_exists}
-    if (hla_source_mode == 'clinical_only') and not clinical_exists:
+    if (hla_source_mode == "clinical_only") and not clinical_exists:
         sys.exit("HLA consensus error: No clinical calls found, but hla_source_mode is set to clinical_only")
     optitype_calls = ["~{sep="\",\"" optitype_hla_alleles}"]
 
@@ -239,13 +239,13 @@ task hlaConsensus {
 
             mismatch_written = write_mismatch(mismatch_written, mismatches)
 
-        if hla_source_mode == 'consensus':
+        if hla_source_mode == "consensus":
             with open("hla_calls/consensus_calls.txt", "w") as c_c:
                 c_c.write( ",".join(consensus_calls) )
             with open("hla_calls/consensus_calls_newline.txt", "w") as c_c:
                 c_c.write( "\n".join(consensus_calls) )
-        elif hla_source-mode == 'clinical_only':
-            flat_i = [allele for multicall in raw_clinical_i_calls for allele in multicall.split('/')]
+        elif hla_source-mode == "clinical_only":
+            flat_i = [allele for multicall in raw_clinical_i_calls for allele in multicall.split("/")]
             consensus_calls_lines = flat_i + raw_clinical_ii_calls
             with open("hla_calls/consensus_calls.txt", "w") as c_c:
                 c_c.write(",".join(consensus_calls_lines))

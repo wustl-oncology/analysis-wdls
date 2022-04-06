@@ -15,7 +15,7 @@ import "tools/star_fusion_detect.wdl" as sfd
 import "tools/strandedness_check.wdl" as sc
 import "tools/stringtie.wdl" as s
 import "tools/transcript_to_gene.wdl" as ttg
-import "types.wdl"
+import "types.wdl"  # !UnusedImport
 
 workflow rnaseqStarFusion {
   input {
