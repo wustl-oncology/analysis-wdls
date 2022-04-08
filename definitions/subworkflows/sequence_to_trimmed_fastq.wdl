@@ -1,6 +1,6 @@
 version 1.0
 
-import "../tools/sequence_to_fastq_rna.wdl" as stfr
+import "../tools/sequence_to_fastq.wdl" as stf
 import "../tools/trim_fastq.wdl" as tf
 import "../types.wdl"  # !UnusedImport
 
@@ -15,7 +15,7 @@ workflow sequenceToTrimmedFastq {
     Boolean? unzip_fastqs
   }
 
-  call stfr.sequenceToFastqRna as sequenceToFastq {
+  call stf.sequenceToFastq as sequenceToFastq {
     input:
     bam=unaligned.sequence.bam,
     fastq1=unaligned.sequence.fastq1,

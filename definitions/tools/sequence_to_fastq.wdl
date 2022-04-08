@@ -2,7 +2,7 @@ version 1.0
 
 import "../types.wdl"  # !UnusedImport
 
-task sequenceToFastqRna {
+task sequenceToFastq {
   input {
     File? bam
     File? fastq1
@@ -14,7 +14,7 @@ task sequenceToFastqRna {
   runtime {
     memory: "16GB"
     bootDiskSizeGb: 25
-    docker: "mgibio/rnaseq:1.0.0"
+    docker: "broadinstitute/picard:2.23.6"
     disks: "local-disk ~{space_needed_gb} SSD"
   }
 
@@ -63,7 +63,7 @@ task sequenceToFastqRna {
     else # then
         ##run samtofastq here, dumping to the same filenames
         ## input file is $BAM
-        /usr/bin/java -Xmx4g -jar /opt/picard/picard.jar SamToFastq I="$BAM" INCLUDE_NON_PF_READS=true F=$OUTDIR/read1.fastq F2=$OUTDIR/read2.fastq VALIDATION_STRINGENCY=SILENT
+        /usr/bin/java -Xmx4g -jar /usr/picard/picard.jar SamToFastq I="$BAM" INCLUDE_NON_PF_READS=true F=$OUTDIR/read1.fastq F2=$OUTDIR/read2.fastq VALIDATION_STRINGENCY=SILENT
     fi
   >>>
 
@@ -81,7 +81,7 @@ workflow wf {
     Boolean unzip_fastqs = false
   }
 
-  call sequenceToFastqRna {
+  call sequenceToFastq {
     input:
     bam=bam,
     fastq1=fastq1,

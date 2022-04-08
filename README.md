@@ -47,6 +47,11 @@ bucket. These are both instances of the general version of the error,
 
 # Differences from CWL
 
+Last confirmed mirror with the analysis-workflows CWL repo was commit
+fbeea265295ae596d5a3ba563e766be0c4fc26e8, PR#1056, Mar24 2022. Commits
+from that point on may deviate unless compared. Update these values if
+that is done.
+
 ## Directory types must be a zip file, or Array[File]
 
 There is not yet a supported Directory type in WDL. Instances of this
@@ -118,8 +123,6 @@ the generated input file will have this handled already.
 - [ ] align
 - [ ] align\_sort\_markdup
 - [x] bam\_readcount
-- [x] bam\_to\_trimmed\_fastq
-- [x] bam\_to\_trimmed\_fastq\_and\_biscuit\_alignments
 - [x] bam\_to\_trimmed\_fastq\_and\_hisat\_alignments
 - [x] bgzip\_and\_index
 - [x] bisulfite\_qc
@@ -154,6 +157,8 @@ the generated input file will have this handled already.
 - [ ] sequence\_align\_and\_tag\_adapter
 - [x] sequence\_to\_bqsr
 - [x] sequence\_to\_bqsr\_nonhuman
+- [x] sequence\_to\_trimmed\_fastq
+- [x] sequence\_to\_trimmed\_fastq\_and\_biscuit\_alignments
 - [ ] single\_cell\_rnaseq
 - [x] single\_sample\_sv\_callers
 - [x] strelka\_and\_post\_processing
@@ -301,6 +306,7 @@ the generated input file will have this handled already.
 - [x] sequence\_align\_and\_tag
 - [ ] sequence\_to\_bam
          # this uses non-trivial embedded javascript
+- [ ] sequence\_to\_fastq
 - [x] set\_filter\_status
 - [x] single\_sample\_docm\_filter
 - [x] smoove

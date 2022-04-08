@@ -1,6 +1,6 @@
 version 1.0
 
-import "subworkflows/bam_to_trimmed_fastq.wdl" as bttf
+import "subworkflows/sequence_to_trimmed_fastq.wdl" as sttf
 import "tools/bam_to_bigwig.wdl" as btb
 import "tools/generate_qc_metrics.wdl" as gqm
 import "tools/index_bam.wdl" as ib
@@ -12,13 +12,14 @@ import "tools/star_fusion_detect.wdl" as sfd
 import "tools/stringtie.wdl" as s
 import "tools/transcript_to_gene.wdl" as ttg
 import "tools/xenosplit.wdl" as x
+import "types.wdl"
 
 workflow rnaseqStarFusionWithXenosplit {
   input {
     File reference
     File reference_fai
     File reference_dict
-    Array[File] instrument_data_bams
+    Array[SequenceData] unaligned
     Array[String] outsam_attrrg_line
     File graft_star_genome_dir_zip
     String? graft_outfile_name_prefix
@@ -38,17 +39,19 @@ workflow rnaseqStarFusionWithXenosplit {
     File refFlat
     File ribosomal_intervals
     String sample_name
+    Boolean unzip_fastqs = true
   }
 
-  scatter(in_bam in instrument_data_bams) {
-    call bttf.bamToTrimmedFastq {
+  scatter(sequence in unaligned) {
+    call sttf.sequenceToTrimmedFastq {
       input:
-      bam=in_bam,
+      unaligned=sequence,
       adapters=trimming_adapters,
       adapter_trim_end=trimming_adapter_trim_end,
       adapter_min_overlap=trimming_adapter_min_overlap,
       max_uncalled=trimming_max_uncalled,
-      min_readlength=trimming_min_readlength
+      min_readlength=trimming_min_readlength,
+      unzip_fastqs=unzip_fastqs
     }
   }
 
@@ -58,8 +61,8 @@ workflow rnaseqStarFusionWithXenosplit {
     star_genome_dir_zip=graft_star_genome_dir_zip,
     outfile_name_prefix=graft_outfile_name_prefix,
     gtf_file=graft_gtf_file,
-    fastq=bamToTrimmedFastq.fastq1,
-    fastq2=bamToTrimmedFastq.fastq2
+    fastq=sequenceToTrimmedFastq.fastq1,
+    fastq2=sequenceToTrimmedFastq.fastq2
   }
 
   call saf.starAlignFusion as hostStarAlignFusion {
@@ -68,8 +71,8 @@ workflow rnaseqStarFusionWithXenosplit {
     star_genome_dir_zip=host_star_genome_dir_zip,
     outfile_name_prefix=host_outfile_name_prefix,
     gtf_file=host_gtf_file,
-    fastq=bamToTrimmedFastq.fastq1,
-    fastq2=bamToTrimmedFastq.fastq2
+    fastq=sequenceToTrimmedFastq.fastq1,
+    fastq2=sequenceToTrimmedFastq.fastq2
   }
 
   call x.xenosplit {
@@ -78,9 +81,9 @@ workflow rnaseqStarFusionWithXenosplit {
     hostbam=hostStarAlignFusion.aligned_bam
   }
 
-  call bttf.bamToTrimmedFastq as graftbamToFastq {
+  call sttf.sequenceToTrimmedFastq as graftbamToFastq {
     input:
-    bam=xenosplit.graft_bam,
+    unaligned={"sequence": {"bam": xenosplit.graft_bam}},
     adapters=trimming_adapters,
     adapter_trim_end=trimming_adapter_trim_end,
     adapter_min_overlap=trimming_adapter_min_overlap,
