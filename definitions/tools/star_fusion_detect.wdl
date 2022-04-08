@@ -8,7 +8,7 @@ task starFusionDetect {
     String star_path = "/usr/local/bin/STAR"
     # TODO: is this presence or =true ?
     Boolean examine_coding_effect = false
-    String fusioninspector_mode  # enum [inspect, validate]
+    String? fusioninspector_mode  # enum [inspect, validate]
     Array[File] fastq
     Array[File] fastq2
   }
@@ -30,7 +30,7 @@ task starFusionDetect {
         --genome_lib_dir ~{genome_lib_dir} \
         -J ~{junction_file} --output_dir ~{fusion_output_dir} --STAR_PATH ~{star_path} \
         ~{true="--examine_coding_effect" false="" examine_coding_effect} \
-        --FusionInspector ~{fusioninspector_mode} \
+        ~{if defined(fusioninspector_mode) then "--FusionInspector " + fusioninspector_mode else ""} \
         --left_fq ~{sep="," fastq} --right_fq ~{sep="," fastq2}
   >>>
 
@@ -38,7 +38,8 @@ task starFusionDetect {
     File fusion_predictions = fusion_output_dir + "/star-fusion.fusion_predictions.tsv"
     File fusion_abridged = fusion_output_dir + "/star-fusion.fusion_predictions.abridged.tsv"
     File? coding_region_effects = fusion_output_dir + "/star-fusion.fusion_predictions.abridged.coding_effect.tsv"
-    Array[File] fusioninspector_evidence = glob(fusion_output_dir + "/FusionInspector-" + fusioninspector_mode + "/finspector.*")
+    # if no mode specified, this will just not find any files
+    Array[File] fusioninspector_evidence = glob(fusion_output_dir + "/FusionInspector-" + select_first([fusioninspector_mode, ""]) + "/finspector.*")
   }
 }
 
