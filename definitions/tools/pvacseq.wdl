@@ -62,6 +62,7 @@ task pvacseq {
     ln -s "$TMPDIR" /tmp/pvacseq && export TMPDIR=/tmp/pvacseq && \
     /usr/local/bin/pvacseq run --iedb-install-directory /opt/iedb \
     --blastp-path /opt/ncbi-blast-2.12.0+/bin/blastp \
+    ~{if defined(blastp_db) then "--blastp-db " + select_first([blastp_db]) else ""} \
     --pass-only \
     ~{if defined(tumor_purity) then "--tumor-purity " + select_first([tumor_purity]) else ""} \
     ~{if defined(epitope_lengths_class_i ) then "-e1 " else ""} ~{sep="," epitope_i} \
