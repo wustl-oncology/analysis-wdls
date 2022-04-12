@@ -1,6 +1,7 @@
 version 1.0
 
 import "subworkflows/sequence_to_trimmed_fastq.wdl" as sttf
+import "tools/agfusion.wdl" as a
 import "tools/bam_to_bigwig.wdl" as btb
 import "tools/bam_to_cram.wdl" as btc
 import "tools/generate_qc_metrics.wdl" as gqm
@@ -14,7 +15,7 @@ import "tools/star_fusion_detect.wdl" as sfd
 import "tools/strandedness_check.wdl" as sc
 import "tools/stringtie.wdl" as s
 import "tools/transcript_to_gene.wdl" as ttg
-import "types.wdl"
+import "types.wdl"  # !UnusedImport
 
 workflow rnaseqStarFusion {
   input {
@@ -30,7 +31,7 @@ workflow rnaseqStarFusion {
     File star_genome_dir_zip
     File star_fusion_genome_dir_zip
     File cdna_fasta
-    File gtf_file
+    File reference_annotation
 
     File trimming_adapters
     String trimming_adapter_trim_end
@@ -43,6 +44,11 @@ workflow rnaseqStarFusion {
     File refFlat
     File ribosomal_intervals
     Boolean unzip_fastqs = true
+
+    Boolean? examine_coding_effect
+    String fusioninspector_mode  # enum [inspect validate]
+    File agfusion_database
+    Boolean? agfusion_annotate_noncanonical
   }
 
   scatter(sequence in unaligned) {
@@ -59,7 +65,7 @@ workflow rnaseqStarFusion {
 
     call sc.strandednessCheck {
       input:
-      gtf_file=gtf_file,
+      reference_annotation=reference_annotation,
       kallisto_index=kallisto_index,
       cdna_fasta=cdna_fasta,
       reads1=sequenceToTrimmedFastq.fastq1,
@@ -71,7 +77,7 @@ workflow rnaseqStarFusion {
     input:
     outsam_attrrg_line=outsam_attrrg_line,
     star_genome_dir_zip=star_genome_dir_zip,
-    gtf_file=gtf_file,
+    reference_annotation=reference_annotation,
     fastq=sequenceToTrimmedFastq.fastq1,
     fastq2=sequenceToTrimmedFastq.fastq2
   }
@@ -79,7 +85,11 @@ workflow rnaseqStarFusion {
   call sfd.starFusionDetect {
     input:
     star_fusion_genome_dir_zip=star_fusion_genome_dir_zip,
-    junction_file=starAlignFusion.chim_junc
+    junction_file=starAlignFusion.chim_junc,
+    examine_coding_effect=examine_coding_effect,
+    fusioninspector_mode=fusioninspector_mode,
+    fastq=sequenceToTrimmedFastq.fastq1,
+    fastq2=sequenceToTrimmedFastq.fastq2
   }
 
   call k.kallisto {
@@ -111,7 +121,7 @@ workflow rnaseqStarFusion {
   call s.stringtie {
     input:
     bam=markDup.sorted_bam,
-    reference_annotation=gtf_file,
+    reference_annotation=reference_annotation,
     sample_name=sample_name,
     strand=strand
   }
@@ -145,6 +155,13 @@ workflow rnaseqStarFusion {
     reference_dict=reference_dict
   }
 
+  call a.agfusion {
+    input:
+    fusion_predictions=starFusionDetect.fusion_predictions,
+    agfusion_database=agfusion_database,
+    annotate_noncanonical=agfusion_annotate_noncanonical
+  }
+
   output {
     File cram = indexCram.indexed_cram
     File cram_crai = indexCram.indexed_cram_crai
@@ -163,5 +180,11 @@ workflow rnaseqStarFusion {
     File fusion_evidence = kallisto.fusion_evidence
     Array[File] strand_info = strandednessCheck.strandedness_check
     File bamcoverage_bigwig = cgpbigwigBamCoverage.outfile
+    File final_bam = indexBam.indexed_bam
+    File final_bam_bai = indexBam.indexed_bam_bai
+    File final_bai = indexBam.indexed_bai
+    Array[File] annotated_fusion_predictions = agfusion.annotated_fusion_predictions
+    File? coding_region_effects = starFusionDetect.coding_region_effects
+    Array[File] fusioninspector_evidence = starFusionDetect.fusioninspector_evidence
   }
 }

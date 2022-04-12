@@ -48,7 +48,7 @@ bucket. These are both instances of the general version of the error,
 # Differences from CWL
 
 Last confirmed mirror with the analysis-workflows CWL repo was commit
-fbeea265295ae596d5a3ba563e766be0c4fc26e8, PR#1056, Mar24 2022. Commits
+788bdc99c1d5b6ee7c431c3c011eb30d385c1370, PR#1063, Apr6 2022. Commits
 from that point on may deviate unless compared. Update these values if
 that is done.
 
@@ -180,6 +180,7 @@ the generated input file will have this handled already.
 - [x] add\_string\_at\_line
 - [x] add\_string\_at\_line\_bgzipped
 - [x] add\_vep\_fields\_to\_table
+- [x] agfusion
 - [ ] align\_and\_tag
 - [x] annotsv
 - [x] annotsv\_filter
