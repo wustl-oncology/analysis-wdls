@@ -19,9 +19,13 @@ task agfusion {
     -f ~{fusion_predictions} -db ~{agfusion_database} \
     ~{true="--noncanonical" false="" annotate_noncanonical} \
     -o ~{output_dir}
+
+    cd ~{output_dir} || exit 1
+    zip -r "../agfusion_results.zip" . 1> /dev/null
+    cd .. || exit 1
   >>>
 
   output {
-    Array[File] annotated_fusion_predictions = glob(output_dir + "/*")
+    File annotated_fusion_predictions_zip = "agfusionresults.zip"
   }
 }

@@ -40,7 +40,6 @@ task pvacseq {
     Boolean netmhc_stab = false
     Boolean run_reference_proteome_similarity = false
 
-    # TODO(john) where does blastp_db go in the call?
     String? blastp_db  # enum [refseq_select_prot, refseq_protein]
     Float? tumor_purity
   }

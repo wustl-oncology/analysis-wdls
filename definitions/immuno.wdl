@@ -3,7 +3,7 @@ version 1.0
 
 # pipelines
 import "germline_exome_hla_typing.wdl" as geht
-import "rnaseq.wdl" as r
+import "rnaseq_star_fusion.wdl" as rsf
 import "somatic_exome.wdl" as se
 # others
 import "subworkflows/phase_vcf.wdl" as pv
@@ -11,6 +11,7 @@ import "subworkflows/pvacseq.wdl" as p
 import "tools/extract_hla_alleles.wdl" as eha
 import "tools/hla_consensus.wdl" as hc
 import "tools/intersect_known_variants.wdl" as ikv
+import "tools/pvacfuse.wdl" as pf
 import "types.wdl"  # !UnusedImport
 
 #
@@ -62,20 +63,8 @@ workflow immuno {
 
     # --------- RNAseq Inputs ------------------------------------------
 
-    File reference_index
-    File reference_index_1ht2
-    File reference_index_2ht2
-    File reference_index_3ht2
-    File reference_index_4ht2
-    File reference_index_5ht2
-    File reference_index_6ht2
-    File reference_index_7ht2
-    File reference_index_8ht2
-
     File reference_annotation
     Array[SequenceData] rna_sequence
-    Array[String] rna_readgroups
-    Array[Array[String]] read_group_fields
     String sample_name
 
     File trimming_adapters
@@ -88,7 +77,14 @@ workflow immuno {
     File gene_transcript_lookup_table
     String? strand  # [first, second, unstranded]
     File refFlat
-    File? ribosomal_intervals
+    File ribosomal_intervals
+    File star_aligner_genome_dir_zip
+    File star_fusion_genome_dir_zip
+    Boolean examine_coding_effect = true
+    String? fusioninspector_mode  # enum [inspect validate]
+    File cdna_fasta
+    File agfusion_database
+    Boolean agfusion_annotate_noncanonical = true
 
     # --------- Somatic Exome Inputs -----------------------------------
 
@@ -206,27 +202,19 @@ workflow immuno {
     Float? net_chop_threshold
     Boolean? netmhc_stab
     Boolean? run_reference_proteome_similarity
+    String? blastp_db  # enum [refseq_select_prot refseq_protein]
     Int? pvacseq_threads
+    Int? iedb_retries
+    Boolean? pvacfuse_keep_tmp_files
   }
 
-  call r.rnaseq as rna {
+  call rsf.rnaseqStarFusion as rna {
     input:
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
-    reference_index=reference_index,
-    reference_index_1ht2=reference_index_1ht2,
-    reference_index_2ht2=reference_index_2ht2,
-    reference_index_3ht2=reference_index_3ht2,
-    reference_index_4ht2=reference_index_4ht2,
-    reference_index_5ht2=reference_index_5ht2,
-    reference_index_6ht2=reference_index_6ht2,
-    reference_index_7ht2=reference_index_7ht2,
-    reference_index_8ht2=reference_index_8ht2,
     reference_annotation=reference_annotation,
-    rna_sequence=rna_sequence,
-    read_group_id=rna_readgroups,
-    read_group_fields=read_group_fields,
+    unaligned=rna_sequence,
     sample_name=sample_name,
     trimming_adapters=trimming_adapters,
     trimming_adapter_trim_end=trimming_adapter_trim_end,
@@ -237,7 +225,14 @@ workflow immuno {
     gene_transcript_lookup_table=gene_transcript_lookup_table,
     strand=strand,
     refFlat=refFlat,
-    ribosomal_intervals=ribosomal_intervals
+    ribosomal_intervals=ribosomal_intervals,
+    star_genome_dir_zip=star_aligner_genome_dir_zip,
+    star_fusion_genome_dir_zip=star_fusion_genome_dir_zip,
+    examine_coding_effect=examine_coding_effect,
+    fusioninspector_mode=fusioninspector_mode,
+    cdna_fasta=cdna_fasta,
+    agfusion_database=agfusion_database,
+    agfusion_annotate_noncanonical=agfusion_annotate_noncanonical
   }
 
   call se.somaticExome {
@@ -421,6 +416,31 @@ workflow immuno {
     vep_to_table_fields=vep_to_table_fields
   }
 
+  call pf.pvacfuse {
+    input:
+    input_fusions_zip=rna.annotated_fusion_predictions_zip,
+    sample_name=tumor_sample_name,
+    alleles=hlaConsensus.consensus_alleles,
+    prediction_algorithms=prediction_algorithms,
+    epitope_lengths_class_i=epitope_lengths_class_i,
+    epitope_lengths_class_ii=epitope_lengths_class_ii,
+    binding_threshold=binding_threshold,
+    percentile_threshold=percentile_threshold,
+    iedb_retries=iedb_retries,
+    keep_tmp_files=pvacfuse_keep_tmp_files,
+    net_chop_method=net_chop_method,
+    netmhc_stab=netmhc_stab,
+    top_score_metric=top_score_metric,
+    net_chop_threshold=net_chop_threshold,
+    run_reference_proteome_similarity=run_reference_proteome_similarity,
+    blastp_db=blastp_db,
+    additional_report_columns=additional_report_columns,
+    fasta_size=fasta_size,
+    downstream_sequence_length=downstream_sequence_length,
+    exclude_nas=exclude_nas,
+    n_threads=pvacseq_threads
+  }
+
   output {
     # ---------- RNAseq Outputs ----------------------------------------
     Array[File] rnaseq = [
@@ -572,5 +592,7 @@ workflow immuno {
 
     File annotated_vcf = pvacseq.annotated_vcf
     File annotated_tsv = pvacseq.annotated_tsv
+
+    Array[File] pvacfuse_predictions = pvacfuse.pvacfuse_predictions
   }
 }

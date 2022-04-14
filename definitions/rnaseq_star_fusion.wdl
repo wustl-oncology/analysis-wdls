@@ -27,7 +27,6 @@ workflow rnaseqStarFusion {
     String? strand  # enum [first, second, unstranded]
     String sample_name
 
-    Array[String] outsam_attrrg_line
     File star_genome_dir_zip
     File star_fusion_genome_dir_zip
     File cdna_fasta
@@ -46,7 +45,7 @@ workflow rnaseqStarFusion {
     Boolean unzip_fastqs = true
 
     Boolean? examine_coding_effect
-    String fusioninspector_mode  # enum [inspect validate]
+    String? fusioninspector_mode  # enum [inspect validate]
     File agfusion_database
     Boolean? agfusion_annotate_noncanonical
   }
@@ -71,11 +70,13 @@ workflow rnaseqStarFusion {
       reads1=sequenceToTrimmedFastq.fastq1,
       reads2=sequenceToTrimmedFastq.fastq2
     }
+
+    String? attrrg_line = sequence.readgroup
   }
 
   call saf.starAlignFusion {
     input:
-    outsam_attrrg_line=outsam_attrrg_line,
+    outsam_attrrg_line=select_all(attrrg_line),
     star_genome_dir_zip=star_genome_dir_zip,
     reference_annotation=reference_annotation,
     fastq=sequenceToTrimmedFastq.fastq1,
@@ -183,7 +184,7 @@ workflow rnaseqStarFusion {
     File final_bam = indexBam.indexed_bam
     File final_bam_bai = indexBam.indexed_bam_bai
     File final_bai = indexBam.indexed_bai
-    Array[File] annotated_fusion_predictions = agfusion.annotated_fusion_predictions
+    File annotated_fusion_predictions_zip = agfusion.annotated_fusion_predictions_zip
     File? coding_region_effects = starFusionDetect.coding_region_effects
     Array[File] fusioninspector_evidence = starFusionDetect.fusioninspector_evidence
   }
