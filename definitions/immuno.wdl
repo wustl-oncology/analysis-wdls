@@ -177,6 +177,7 @@ workflow immuno {
     Array[String]? clinical_mhc_classII_alleles
 
     # --------- PVACseq Inputs -----------------------------------------
+    String hla_source_mode
     Int? readcount_minimum_base_quality
     Int? readcount_minimum_mapping_quality
     Array[String] prediction_algorithms
@@ -358,6 +359,7 @@ workflow immuno {
 
   call hc.hlaConsensus {
     input:
+    hla_source_mode=hla_source_mode,
     optitype_hla_alleles=extractAlleles.allele_string,
     clinical_mhc_classI_alleles=clinical_mhc_classI_alleles,
     clinical_mhc_classII_alleles=clinical_mhc_classII_alleles
