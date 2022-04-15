@@ -10,7 +10,8 @@ task sequenceToFastq {
     Boolean unzip_fastqs = false
   }
 
-  Int space_needed_gb = 10 + ceil(2*size([bam, fastq1, fastq2], "GB"))
+  Int compression_multiplier = if unzip_fastqs then 10 else 1
+  Int space_needed_gb = 10 + ceil(2*compression_multiplier*size([bam, fastq1, fastq2], "GB"))
   runtime {
     memory: "16GB"
     bootDiskSizeGb: 25
