@@ -11,15 +11,17 @@ workflow wf {
     File bam
     File bam_bai
     File bqsr_table
+    Array[File] known_sites
+    Array[File] known_sites_tbi
     String output_name = "final"
     Int preemptible_tries = 3
   }
 
-
- # Create list of sequences for scattering
+  Float bam_size = size([bam, bam_bai], "GB")
+  # Create list of sequences for scattering
   call CreateSequenceGroupingTSV {
     input:
-      ref_dict = ref_dict,
+      reference_dict = reference_dict,
       preemptible_tries = preemptible_tries
   }
 
@@ -34,7 +36,7 @@ workflow wf {
         bam_bai = bam_bai,
         known_sites = known_sites,
         known_sites_tbi = known_sites_tbi,
-        sequence_group_interval = interval,
+        intervals = interval,
         preemptible_tries = preemptible_tries
     }
   }
@@ -42,7 +44,7 @@ workflow wf {
   # Merge the bqsr model reports from the scatter
   call GatherBqsrReports {
     input:
-      input_bqsr_reports = bqsr.bqsr_table
+      input_bqsr_reports = bqsr.bqsr_table,
       preemptible_tries = preemptible_tries
   }
 
@@ -55,22 +57,18 @@ workflow wf {
         bam=bam,
         bam_bai=bam_bai,
         bqsr_table=GatherBqsrReports.bqsr_table,
-        output_name=output_name
-        sequence_group_interval = subgroup,
+        output_name=output_name,
+        intervals = interval,
         preemptible_tries = preemptible_tries
     }
   }
 
   call GatherBamFiles {
     input:
-      input_bams = applyBQSR.recalibrated_bam,
-      output_name = base_file_name,
-      docker_image = gatk_docker,
-      gatk_path = gatk_path,
-      disk_size = agg_large_disk,
+      input_bams = applyBqsr.bqsr_bam,
+      output_name = output_name,
+      bam_size = bam_size,
       preemptible_tries = preemptible_tries,
-      compression_level = compression_level
-      preemptible_tries = preemptible_tries
   }
 
   output {
@@ -133,7 +131,7 @@ task CreateSequenceGroupingTSV {
   >>>
   runtime {
     preemptible: preemptible_tries
-    docker: python:2.7
+    docker: "python:2.7"
     memory: "2 GiB"
   }
   output {
@@ -154,11 +152,9 @@ task bqsr {
     Array[File] known_sites_tbi
     Array[String] intervals
     Int preemptible_tries
-
   }
-
-  Float known_sites_size = size(known_sites, "GB") + size(known_sites_tbi, "GB")
   Float bam_size = size([bam, bam_bai], "GB")
+  Float known_sites_size = size(known_sites, "GB") + size(known_sites_tbi, "GB")
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
   Int space_needed_gb = 10 + round(known_sites_size  + bam_size + reference_size)
   runtime {
@@ -179,6 +175,7 @@ task bqsr {
 
   output {
     File bqsr_table = outfile
+    Float input_bam_size = bam_size
   }
 }
 
@@ -189,8 +186,7 @@ task GatherBqsrReports {
    Int preemptible_tries
   }
   command {
-    ~{gatk_path} --java-options -Xms~3G \
-      GatherBQSRReports \
+    /gatk/gatk --java-options -Xmx4g GatherBQSRReports \
       -I ~{sep=' -I ' input_bqsr_reports} \
       -O bqsr_report.txt
   }
@@ -219,7 +215,7 @@ task applyBqsr {
     Int preemptible_tries
   }
 
-  Int space_needed_gb = 10 + round(size([bqsr_table, reference, reference_fai, reference_dict], "GB") + size([bam, bam_bai], "GB") * 5)
+  Int space_needed_gb = 10 + round(size([bqsr_table, reference, reference_fai, reference_dict], "GB") + size([bam, bam_bai], "GB") * 2)
   runtime {
     docker: "broadinstitute/gatk:4.1.8.1"
     memory: "18GB"
@@ -247,15 +243,21 @@ task GatherBamFiles {
   input {
     Array[File] input_bams
     String output_bam_basename
-    Int preemptible_tries
     Float mem_size_gb = 3
     String output_name = "final"
+    Float bam_size
+    Int preemptible_tries
   }
   Int command_mem_gb = ceil(mem_size_gb) - 1
-
+  Int space_needed_gb = 10 + round(bam_size * 2.5)
+  runtime {
+    preemptible: preemptible_tries
+    docker: "broadinstitute/gatk:4.1.8.1"
+    memory: "3 GiB"
+    disks: "local-disk ~{space_needed_gb} HDD"
+  }
   command {
-    ~{gatk_path} --java-options "-Xms~{command_mem_gb}G" \
-      GatherBamFiles \
+     /gatk/gatk --java-options "-Xms~3G" GatherBamFiles
       --INPUT ~{sep=' --INPUT ' input_bams} \
       --OUTPUT ~{output_name}.bam \
       --CREATE_INDEX true \
@@ -264,19 +266,10 @@ task GatherBamFiles {
     # some tools require file.bai, some file.bam.bai - generate both
     cp ~{output_name}.bai ~{output_name}.bam.bai
   }
-  runtime {
-    preemptible: preemptible_tries
-    docker: docker_image
-    memory: "~{mem_size_gb} GiB"
-    disks: "local-disk " + disk_size + " HDD"
-  }
   output {
     File output_bam = "~{output_name}.bam"
     File output_bam_bai = "~{output_name}.bam.bai"
     File output_bai = "~{output_name}.bai"
-    # if we want md5s in the future, this is the place
     # File output_bam_md5 = "~{output_name}.bam.md5"
   }
 }
-
-k
