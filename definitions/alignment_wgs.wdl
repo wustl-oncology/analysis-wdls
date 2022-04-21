@@ -27,7 +27,6 @@ workflow alignmentWgs {
     Array[File] bqsr_known_sites
     Array[File] bqsr_known_sites_tbi
 
-    Array[String]? bqsr_intervals
     Int? minimum_mapping_quality
     Int? minimum_base_quality
     Array[LabelledFile] per_base_intervals
@@ -51,7 +50,6 @@ workflow alignmentWgs {
     trimming=trimming,
     bqsr_known_sites=bqsr_known_sites,
     bqsr_known_sites_tbi=bqsr_known_sites_tbi,
-    bqsr_intervals=bqsr_intervals,
     final_name=sample_name
   }
 

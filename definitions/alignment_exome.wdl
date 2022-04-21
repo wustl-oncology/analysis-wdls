@@ -19,7 +19,6 @@ workflow alignmentExome {
     TrimmingOptions? trimming
     Array[File] bqsr_known_sites
     Array[File] bqsr_known_sites_tbi
-    Array[String]? bqsr_intervals
     String? final_name
     File bait_intervals
     File target_intervals
@@ -48,7 +47,6 @@ workflow alignmentExome {
     trimming=trimming,
     bqsr_known_sites=bqsr_known_sites,
     bqsr_known_sites_tbi=bqsr_known_sites_tbi,
-    bqsr_intervals=bqsr_intervals,
     final_name=final_name
   }
 

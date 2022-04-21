@@ -41,7 +41,6 @@ workflow germlineWgs {
     Boolean? annotate_coding_only
     Array[File] bqsr_known_sites
     Array[File] bqsr_known_sites_tbi
-    Array[String]? bqsr_intervals
     Int? minimum_mapping_quality
     Int? minimum_base_quality
     Array[LabelledFile] per_base_intervals
@@ -98,7 +97,6 @@ workflow germlineWgs {
     picard_metric_accumulation_level=picard_metric_accumulation_level,
     bqsr_known_sites=bqsr_known_sites,
     bqsr_known_sites_tbi=bqsr_known_sites_tbi,
-    bqsr_intervals=bqsr_intervals,
     minimum_mapping_quality=minimum_mapping_quality,
     minimum_base_quality=minimum_base_quality,
     per_base_intervals=per_base_intervals,

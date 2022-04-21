@@ -1,7 +1,7 @@
 version 1.0
 
 import "types.wdl"
-import "subworkflows/sequence_to_bqsr_nonhuman.wdl" as stbn
+import "subworkflows/sequence_to_bam_nonhuman.wdl" as stbn
 import "subworkflows/qc_exome_no_verify_bam.wdl" as qenvb
 
 workflow alignmentExomeNonhuman {
@@ -29,7 +29,7 @@ workflow alignmentExomeNonhuman {
   }
 
 
-  call stbn.sequenceToBqsrNonhuman as alignment {
+  call stbn.sequenceToBamNonhuman as alignment {
     input:
     reference=reference,
     reference_alt=reference_alt,

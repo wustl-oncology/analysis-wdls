@@ -37,7 +37,6 @@ workflow somaticExome {
 
     Array[File] bqsr_known_sites
     Array[File] bqsr_known_sites_tbi
-    Array[String] bqsr_intervals
 
     File bait_intervals
     File target_intervals
@@ -116,7 +115,6 @@ workflow somaticExome {
     trimming=trimming,
     bqsr_known_sites=bqsr_known_sites,
     bqsr_known_sites_tbi=bqsr_known_sites_tbi,
-    bqsr_intervals=bqsr_intervals,
     final_name=tumor_name
   }
   call qe.qcExome as tumorQc {
@@ -153,7 +151,6 @@ workflow somaticExome {
     trimming=trimming,
     bqsr_known_sites=bqsr_known_sites,
     bqsr_known_sites_tbi=bqsr_known_sites_tbi,
-    bqsr_intervals=bqsr_intervals,
     final_name=normal_name
   }
 
