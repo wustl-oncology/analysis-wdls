@@ -10,7 +10,6 @@ workflow wf {
     File reference_dict
     File bam
     File bam_bai
-    File bqsr_table
     Array[File] known_sites
     Array[File] known_sites_tbi
     String output_name = "final"
@@ -106,7 +105,8 @@ task CreateSequenceGroupingTSV {
         longest_sequence = sorted(sequence_tuple_list, key=lambda x: x[1], reverse=True)[0][1]
     # We are adding this to the intervals because hg38 has contigs named with embedded colons (:) and a bug in
     # some versions of GATK strips off the last element after a colon, so we add this as a sacrificial element.
-    hg38_protection_tag = ":1+"
+    #hg38_protection_tag = ":1+"
+    hg38_protection_tag = ""
     # initialize the tsv string with the first sequence
     tsv_string = sequence_tuple_list[0][0] + hg38_protection_tag
     temp_size = sequence_tuple_list[0][1]
@@ -165,13 +165,14 @@ task bqsr {
   }
 
   String outfile = "bqsr.table"
-  command <<<
+ command { 
     /gatk/gatk --java-options -Xmx4g BaseRecalibrator \
     -O ~{outfile} \
-    -L ~{sep=" -L " intervals}
-    -R ~{reference} -I ~{bam} \
-    ~{sep=" " prefix("--known-sites ", known_sites)}
-  >>>
+    -L ~{sep=" -L " intervals} \
+    -R ~{reference} \
+    -I ~{bam} \
+    --known-sites ~{sep=" --known-sites " known_sites} 
+  }
 
   output {
     File bqsr_table = outfile
@@ -257,7 +258,7 @@ task GatherBamFiles {
     disks: "local-disk ~{space_needed_gb} HDD"
   }
   command {
-     /gatk/gatk --java-options "-Xms~3G" GatherBamFiles
+     /gatk/gatk --java-options "-Xmx2G" GatherBamFiles \
       --INPUT ~{sep=' --INPUT ' input_bams} \
       --OUTPUT ~{output_name}.bam \
       --CREATE_INDEX true \
