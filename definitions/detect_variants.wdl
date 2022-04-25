@@ -3,7 +3,6 @@ version 1.0
 import "subworkflows/docm_cle.wdl" as dc
 import "subworkflows/filter_vcf.wdl" as fv
 import "subworkflows/mutect.wdl" as m
-import "subworkflows/pindel.wdl" as p
 import "subworkflows/strelka_and_post_processing.wdl" as sapp
 import "subworkflows/varscan_pre_and_post_processing.wdl" as vpapp
 import "subworkflows/vcf_readcount.wdl" as vr
@@ -36,8 +35,6 @@ workflow detectVariants {
 
     Boolean strelka_exome_mode
     Int strelka_cpu_reserved = 8
-
-    Int pindel_insert_size = 400
 
     Int varscan_strand_filter = 0
     Int varscan_min_coverage = 8
@@ -130,22 +127,6 @@ workflow detectVariants {
     tumor_sample_name=tumor_sample_name
   }
 
-  call p.pindel {
-    input:
-    reference=reference,
-    reference_fai=reference_fai,
-    reference_dict=reference_dict,
-    tumor_bam=tumor_bam,
-    tumor_bam_bai=tumor_bam_bai,
-    normal_bam=normal_bam,
-    normal_bam_bai=normal_bam_bai,
-    interval_list=roi_intervals,
-    scatter_count=scatter_count,
-    insert_size=pindel_insert_size,
-    tumor_sample_name=tumor_sample_name,
-    normal_sample_name=normal_sample_name,
-  }
-
   call dc.docmCle as docm {
     input:
     reference=reference,
@@ -175,9 +156,6 @@ workflow detectVariants {
 
     varscan_vcf=varscan.filtered_vcf,
     varscan_vcf_tbi=varscan.filtered_vcf_tbi,
-
-    pindel_vcf=pindel.filtered_vcf,
-    pindel_vcf_tbi=pindel.filtered_vcf_tbi
   }
 
   call dav.docmAddVariants as addDocmVariants {
@@ -297,11 +275,6 @@ workflow detectVariants {
     File varscan_unfiltered_vcf_tbi = varscan.unfiltered_vcf_tbi
     File varscan_filtered_vcf = varscan.filtered_vcf
     File varscan_filtered_vcf_tbi = varscan.filtered_vcf_tbi
-
-    File pindel_unfiltered_vcf = pindel.unfiltered_vcf
-    File pindel_unfiltered_vcf_tbi = pindel.unfiltered_vcf_tbi
-    File pindel_filtered_vcf = pindel.filtered_vcf
-    File pindel_filtered_vcf_tbi = pindel.filtered_vcf_tbi
 
     File docm_filtered_vcf = docm.docm_variants_vcf
     File docm_filtered_vcf_tbi = docm.docm_variants_vcf_tbi

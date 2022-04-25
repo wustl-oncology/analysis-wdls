@@ -49,8 +49,6 @@ workflow somaticExomeNonhuman {
     Float varscan_p_value = 0.99
     Float? varscan_max_normal_freq
 
-    Int pindel_insert_size = 400
-
     File vep_cache_dir_zip
     String vep_ensembl_assembly
     String vep_ensembl_version
@@ -144,7 +142,6 @@ workflow somaticExomeNonhuman {
     varscan_min_var_freq=varscan_min_var_freq,
     varscan_p_value=varscan_p_value,
     varscan_max_normal_freq=varscan_max_normal_freq,
-    pindel_insert_size=pindel_insert_size,
     filter_somatic_llr_threshold=filter_somatic_llr_threshold,
     filter_somatic_llr_tumor_purity=filter_somatic_llr_tumor_purity,
     filter_somatic_llr_normal_contamination_rate=filter_somatic_llr_normal_contamination_rate,
@@ -223,10 +220,6 @@ workflow somaticExomeNonhuman {
     File varscan_unfiltered_vcf_tbi = detectVariants.varscan_unfiltered_vcf_tbi
     File varscan_filtered_vcf = detectVariants.varscan_filtered_vcf
     File varscan_filtered_vcf_tbi = detectVariants.varscan_filtered_vcf_tbi
-    File pindel_unfiltered_vcf = detectVariants.pindel_unfiltered_vcf
-    File pindel_unfiltered_vcf_tbi = detectVariants.pindel_unfiltered_vcf_tbi
-    File pindel_filtered_vcf = detectVariants.pindel_filtered_vcf
-    File pindel_filtered_vcf_tbi = detectVariants.pindel_filtered_vcf_tbi
     File final_vcf = detectVariants.final_vcf
     File final_vcf_tbi = detectVariants.final_vcf_tbi
     File final_filtered_vcf = detectVariants.final_filtered_vcf

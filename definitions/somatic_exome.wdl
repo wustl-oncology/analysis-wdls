@@ -62,8 +62,6 @@ workflow somaticExome {
     Float varscan_p_value = 0.99
     Float? varscan_max_normal_freq
 
-    Int pindel_insert_size = 400
-
     File docm_vcf
     File docm_vcf_tbi
 
@@ -208,7 +206,6 @@ workflow somaticExome {
     varscan_min_var_freq=varscan_min_var_freq,
     varscan_p_value=varscan_p_value,
     varscan_max_normal_freq=varscan_max_normal_freq,
-    pindel_insert_size=pindel_insert_size,
     docm_vcf=docm_vcf,
     docm_vcf_tbi=docm_vcf_tbi,
     gnomad_field_name=gnomad_field_name,
@@ -329,11 +326,6 @@ workflow somaticExome {
     File varscan_unfiltered_vcf_tbi = detectVariants.varscan_unfiltered_vcf_tbi
     File varscan_filtered_vcf = detectVariants.varscan_filtered_vcf
     File varscan_filtered_vcf_tbi = detectVariants.varscan_filtered_vcf_tbi
-
-    File pindel_unfiltered_vcf = detectVariants.pindel_unfiltered_vcf
-    File pindel_unfiltered_vcf_tbi = detectVariants.pindel_unfiltered_vcf_tbi
-    File pindel_filtered_vcf = detectVariants.pindel_filtered_vcf
-    File pindel_filtered_vcf_tbi = detectVariants.pindel_filtered_vcf_tbi
 
     File docm_filtered_vcf = detectVariants.docm_filtered_vcf
     File docm_filtered_vcf_tbi = detectVariants.docm_filtered_vcf_tbi

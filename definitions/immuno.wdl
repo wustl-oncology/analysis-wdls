@@ -35,7 +35,6 @@ struct Qc {
 struct Variants {
   Array[File?] mutect
   Array[File?] strelka
-  Array[File?] pindel
   Array[File?] varscan
   Array[File?] docm
 }
@@ -130,8 +129,6 @@ workflow immuno {
     Float varscan_min_var_freq = 0.05
     Float varscan_p_value = 0.99
     Float? varscan_max_normal_freq
-
-    Int pindel_insert_size = 400
 
     File docm_vcf
     File docm_vcf_tbi
@@ -270,7 +267,6 @@ workflow immuno {
     varscan_min_var_freq=varscan_min_var_freq,
     varscan_p_value=varscan_p_value,
     varscan_max_normal_freq=varscan_max_normal_freq,
-    pindel_insert_size=pindel_insert_size,
     docm_vcf=docm_vcf,
     docm_vcf_tbi=docm_vcf_tbi,
     filter_docm_variants=filter_docm_variants,
@@ -514,12 +510,6 @@ workflow immuno {
           somaticExome.varscan_unfiltered_vcf_tbi,
           somaticExome.varscan_filtered_vcf,
           somaticExome.varscan_filtered_vcf_tbi,
-        ],
-        pindel: [
-          somaticExome.pindel_unfiltered_vcf,
-          somaticExome.pindel_unfiltered_vcf_tbi,
-          somaticExome.pindel_filtered_vcf,
-          somaticExome.pindel_filtered_vcf_tbi
         ],
         docm: [
           somaticExome.docm_filtered_vcf,
