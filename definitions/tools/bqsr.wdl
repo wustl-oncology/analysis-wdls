@@ -47,7 +47,7 @@ workflow wf {
       preemptible_tries = preemptible_tries
   }
 
-  scatter (interval in CreateSequenceGroupingTSV.sequence_grouping) {
+  scatter (interval in CreateSequenceGroupingTSV.sequence_grouping_with_unmapped) {
     call applyBqsr {
       input:
         reference=reference,
