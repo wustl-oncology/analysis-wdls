@@ -46,7 +46,7 @@ task pvacfuse {
     agfusion_dir ~{sample_name} \
     ~{sep="," alleles} \
     ~{sep=" " prediction_algorithms} \
-    pvacfuse_predictions \  # position 5
+    pvacfuse_predictions \
     ~{if defined(epitope_lengths_class_i ) then "-e1 " else ""} ~{sep="," epitope_i} \
     ~{if defined(epitope_lengths_class_ii) then "-e2 " else ""} ~{sep="," epitope_ii} \
     ~{if defined(binding_threshold) then "-b ~{binding_threshold}" else ""} \
