@@ -39,7 +39,7 @@ task pvacfuse {
   command <<<
     mkdir agfusion_dir && unzip -qq ~{input_fusions_zip} -d agfusion_dir
 
-    ln -s "$TMPDIR" /tmp/pvacseq && export TMPDIR=/tmp/pvacseq && \
+    ln -s "$TMPDIR" /tmp/pvacfuse && export TMPDIR=/tmp/pvacfuse && \
     /usr/local/bin/pvacfuse run --iedb-install-directory /opt/iedb \
     --blastp-path /opt/ncbi-lbast-2.12.0+/bin/blastp \
     ~{if defined(blastp_db) then "--blastp-db " + select_first([blastp_db]) else ""} \
@@ -67,15 +67,15 @@ task pvacfuse {
   >>>
 
   output {
-    File? mhc_i_all_epitopes = "pvacseq_predictions/MHC_Class_I/~{sample_name}.all_epitopes.tsv"
-    File? mhc_i_aggregated_report = "pvacseq_predictions/MHC_Class_I/~{sample_name}.all_epitopes.aggregated.tsv"
-    File? mhc_i_filtered_epitopes = "pvacseq_predictions/MHC_Class_I/~{sample_name}.filtered.tsv"
-    File? mhc_ii_all_epitopes = "pvacseq_predictions/MHC_Class_II/~{sample_name}.all_epitopes.tsv"
-    File? mhc_ii_aggregated_report = "pvacseq_predictions/MHC_Class_II/~{sample_name}.all_epitopes.aggregated.tsv"
-    File? mhc_ii_filtered_epitopes = "pvacseq_predictions/MHC_Class_II/~{sample_name}.filtered.tsv"
-    File? combined_all_epitopes = "pvacseq_predictions/combined/~{sample_name}.all_epitopes.tsv"
-    File? combined_aggregated_report = "pvacseq_predictions/combined/~{sample_name}.all_epitopes.aggregated.tsv"
-    File? combined_filtered_epitopes = "pvacseq_predictions/combined/~{sample_name}.filtered.tsv"
-    Array[File] pvacfuse_predictions = glob("pvacseq_predictions/**/*")
+    File? mhc_i_all_epitopes = "pvacfuse_predictions/MHC_Class_I/~{sample_name}.all_epitopes.tsv"
+    File? mhc_i_aggregated_report = "pvacfuse_predictions/MHC_Class_I/~{sample_name}.all_epitopes.aggregated.tsv"
+    File? mhc_i_filtered_epitopes = "pvacfuse_predictions/MHC_Class_I/~{sample_name}.filtered.tsv"
+    File? mhc_ii_all_epitopes = "pvacfuse_predictions/MHC_Class_II/~{sample_name}.all_epitopes.tsv"
+    File? mhc_ii_aggregated_report = "pvacfuse_predictions/MHC_Class_II/~{sample_name}.all_epitopes.aggregated.tsv"
+    File? mhc_ii_filtered_epitopes = "pvacfuse_predictions/MHC_Class_II/~{sample_name}.filtered.tsv"
+    File? combined_all_epitopes = "pvacfuse_predictions/combined/~{sample_name}.all_epitopes.tsv"
+    File? combined_aggregated_report = "pvacfuse_predictions/combined/~{sample_name}.all_epitopes.aggregated.tsv"
+    File? combined_filtered_epitopes = "pvacfuse_predictions/combined/~{sample_name}.filtered.tsv"
+    Array[File] pvacfuse_predictions = glob("pvacfuse_predictions/**/*")
   }
 }
