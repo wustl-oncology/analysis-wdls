@@ -13,7 +13,7 @@ task annotsvFilter {
   runtime {
     memory: "4GB"
     docker: "python:3"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<

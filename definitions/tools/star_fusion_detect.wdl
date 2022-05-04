@@ -22,7 +22,7 @@ task starFusionDetect {
     memory: "64GB"
     cpu: cores
     docker: "trinityctat/starfusion:1.10.1"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
     # https://github.com/STAR-Fusion/STAR-Fusion/issues/175#issuecomment-567913451

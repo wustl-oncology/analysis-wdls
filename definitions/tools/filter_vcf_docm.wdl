@@ -12,7 +12,7 @@ task filterVcfDocm {
   runtime {
     docker: "mgibio/cle:v1.4.2"
     memory: "4GB"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String output_vcf_file = "docm_filtered_variants.vcf"

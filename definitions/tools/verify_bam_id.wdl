@@ -11,7 +11,7 @@ task verifyBamId {
   runtime {
     docker: "mgibio/verify_bam_id-cwl:1.1.3"
     memory: "4GB"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String bamroot = basename(bam, ".bam")

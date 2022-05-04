@@ -18,7 +18,7 @@ task collectGcBiasMetrics {
   runtime {
     memory: "48GB"
     docker: "broadinstitute/picard:2.23.6"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String bias_metrics = sample_name + ".GcBiasMetrics.txt"

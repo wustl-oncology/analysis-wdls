@@ -7,7 +7,7 @@ task indexBam {
   runtime {
     docker: "quay.io/biocontainers/samtools:1.11--h6270b1f_0"
     memory: "4GB"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
   command <<<
     mv ~{bam} ~{basename(bam)}

@@ -23,7 +23,7 @@ task collectHsMetrics {
   runtime{
     memory: "60GB"
     docker: "broadinstitute/picard:2.23.6"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String bamroot = basename(bam, ".bam")

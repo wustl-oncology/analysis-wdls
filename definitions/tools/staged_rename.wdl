@@ -11,7 +11,7 @@ task stagedRename {
     memory: "4GB"
     cpu: 1
     docker: "ubuntu:bionic"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<
