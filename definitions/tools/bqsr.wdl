@@ -243,9 +243,8 @@ task applyBqsr {
 task GatherBamFiles {
   input {
     Array[File] input_bams
-    String output_bam_basename
+    String output_bam_basename = "final"
     Float mem_size_gb = 3
-    String output_name = "final"
     Float bam_size
     Int preemptible_tries
   }
@@ -260,17 +259,17 @@ task GatherBamFiles {
   command {
      /gatk/gatk --java-options "-Xmx2G" GatherBamFiles \
       --INPUT ~{sep=' --INPUT ' input_bams} \
-      --OUTPUT ~{output_name}.bam \
+      --OUTPUT ~{output_bam_basename}.bam \
       --CREATE_INDEX true \
     # if we want md5s in the future, this is the place
     #  --CREATE_MD5_FILE true
     # some tools require file.bai, some file.bam.bai - generate both
-    cp ~{output_name}.bai ~{output_name}.bam.bai
+    cp ~{output_bam_basename}.bai ~{output_bam_basename}.bam.bai
   }
   output {
-    File output_bam = "~{output_name}.bam"
-    File output_bam_bai = "~{output_name}.bam.bai"
-    File output_bai = "~{output_name}.bai"
-    # File output_bam_md5 = "~{output_name}.bam.md5"
+    File output_bam = "~{output_bam_basename}.bam"
+    File output_bam_bai = "~{output_bam_basename}.bam.bai"
+    File output_bai = "~{output_bam_basename}.bai"
+    # File output_bam_md5 = "~{output_bam_basename}.bam.md5"
   }
 }
