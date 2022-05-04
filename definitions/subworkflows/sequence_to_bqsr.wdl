@@ -6,7 +6,6 @@ import "../tools/merge_bams.wdl" as mb
 import "../tools/mark_duplicates_and_sort.wdl" as mdas
 import "../tools/index_bam.wdl" as ib
 import "../tools/bqsr.wdl" as b
-import "../tools/apply_bqsr.wdl" as ab
 
 workflow sequenceToBqsr {
   input {
@@ -55,7 +54,7 @@ workflow sequenceToBqsr {
     input: bam=mergeBams.merged_bam
   }
 
-  call b.bqsr {
+  call b.doBqsr {
     input:
     reference=reference,
     reference_fai=reference_fai,
@@ -63,14 +62,14 @@ workflow sequenceToBqsr {
     bam=markDuplicatesAndSort.sorted_bam,
     bam_bai=markDuplicatesAndSort.sorted_bam_bai,
     known_sites=bqsr_known_sites,
-    known_sites_tbi=bqsr_known_sites_tbi
+    known_sites_tbi=bqsr_known_sites_tbi,
     output_name=final_name
   }
 
   output {
-    File final_bam =  bqsr.bqsr_bam
-    File final_bai =  bqsr.bqsr_bai
-    File final_bam_bai =  bqsr.bqsr_bam_bai
+    File final_bam =  doBqsr.bqsr_bam
+    File final_bai =  doBqsr.bqsr_bai
+    File final_bam_bai =  doBqsr.bqsr_bam_bai
     File mark_duplicates_metrics_file = markDuplicatesAndSort.metrics_file
   }
 }

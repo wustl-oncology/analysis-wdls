@@ -8,7 +8,7 @@ import "../tools/name_sort.wdl" as ns
 import "../tools/mark_duplicates_and_sort.wdl" as mdas
 import "../tools/index_bam.wdl" as ib
 
-workflow sequenceToBqsrNonhuman {
+workflow sequenceToBamNonhuman {
   input {
     Array[SequenceData] unaligned
     File reference

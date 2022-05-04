@@ -3,7 +3,7 @@ version 1.0
 # takes an aligned, sorted bam and returns a bam to which base quality
 # score recalibration has been applied
 
-workflow wf {
+workflow doBqsr {
   input {
     File reference
     File reference_fai
@@ -65,7 +65,7 @@ workflow wf {
   call GatherBamFiles {
     input:
       input_bams = applyBqsr.bqsr_bam,
-      output_name = output_name,
+      output_bam_basename = output_name,
       bam_size = bam_size,
       preemptible_tries = preemptible_tries,
   }
