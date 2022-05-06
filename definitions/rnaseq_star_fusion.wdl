@@ -2,7 +2,6 @@ version 1.0
 
 import "subworkflows/sequence_to_trimmed_fastq.wdl" as sttf
 import "tools/agfusion.wdl" as a
-import "tools/bam_to_bigwig.wdl" as btb
 import "tools/bam_to_cram.wdl" as btc
 import "tools/generate_qc_metrics.wdl" as gqm
 import "tools/index_bam.wdl" as ib
@@ -147,15 +146,6 @@ workflow rnaseqStarFusion {
     input: cram=bamToCram.cram
   }
 
-  call btb.bamToBigwig as cgpbigwigBamCoverage {
-    input:
-    bam=markDup.sorted_bam,
-    bam_bai=markDup.sorted_bam_bai,
-    reference=reference,
-    reference_fai=reference_fai,
-    reference_dict=reference_dict
-  }
-
   call a.agfusion {
     input:
     fusion_predictions=starFusionDetect.fusion_predictions,
@@ -180,7 +170,6 @@ workflow rnaseqStarFusion {
     File? chart = generateQcMetrics.chart
     File fusion_evidence = kallisto.fusion_evidence
     Array[File] strand_info = strandednessCheck.strandedness_check
-    File bamcoverage_bigwig = cgpbigwigBamCoverage.outfile
     File final_bam = indexBam.indexed_bam
     File final_bam_bai = indexBam.indexed_bam_bai
     File final_bai = indexBam.indexed_bai
