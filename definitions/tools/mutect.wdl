@@ -20,7 +20,7 @@ task mutect {
   Int space_needed_gb = 10 + ceil(reference_size + 2*bam_size + size(interval_list, "GB"))
   runtime {
     docker: "broadinstitute/gatk:4.2.3.0"
-    memory: "32GB"
+    memory: "2GB"
     bootDiskSizeGb: space_needed_gb
     disks: "local-disk ~{space_needed_gb} HDD"
   }
@@ -33,7 +33,7 @@ task mutect {
     NORMAL=$(samtools view -H ~{normal_bam} | perl -nE 'say $1 if /^\@RG.+\tSM:([ -~]+)/' | head -n 1)
     TUMOR=$(samtools view -H ~{tumor_bam} | perl -nE 'say $1 if /^\@RG.+\tSM:([ -~]+)/' | head -n 1)
 
-    /gatk/gatk Mutect2 --java-options "-Xmx20g" -O mutect.vcf.gz -R ~{reference} -L ~{interval_list} \
+    /gatk/gatk Mutect2 --java-options "-Xmx1500m" -O mutect.vcf.gz -R ~{reference} -L ~{interval_list} \
       -I ~{tumor_bam} --read-index ~{tumor_bam_bai} -tumor "$TUMOR" \
       -I ~{normal_bam} --read-index ~{normal_bam_bai} -normal "$NORMAL"
 
