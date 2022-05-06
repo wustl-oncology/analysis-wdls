@@ -15,7 +15,7 @@ task bamToBigwig {
   runtime {
     memory: "32GB"
     docker: "quay.io/biocontainers/cgpbigwig:1.4.0--h93d22ca_0"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String output_bw = basename(bam, ".bam") + ".bw"

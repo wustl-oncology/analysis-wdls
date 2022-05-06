@@ -34,7 +34,7 @@ task vepTask {
     bootDiskSizeGb: 30
     cpu: 4
     docker: "mgibio/vep_helper-cwl:vep_105.0_v1"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String annotated_path = basename(basename(vcf, ".gz"), ".vcf") + "_annotated.vcf"

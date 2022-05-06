@@ -11,7 +11,7 @@ task bedgraphToBigwig {
     docker: "mgibio/bisulfite:v1.4"
     memory: "32GB"
     cpu: 1
-    disks: "local ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<

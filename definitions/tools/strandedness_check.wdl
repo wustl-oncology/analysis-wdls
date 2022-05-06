@@ -15,7 +15,7 @@ task strandednessCheck {
     bootDiskSizeGb: space_needed_gb  # default
     cpu: 1
     docker: "mgibio/checkstrandedness:v1"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String outfile = basename(reads1, ".fastq") + "strandness_check.txt"

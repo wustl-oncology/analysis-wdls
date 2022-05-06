@@ -17,7 +17,7 @@ task markDuplicatesAndSort {
     # add space to shift bam around via stdin/stdout and a bit more
     bootDiskSizeGb: space_needed_gb
     # add space for input bam, output bam, and a bit more
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<

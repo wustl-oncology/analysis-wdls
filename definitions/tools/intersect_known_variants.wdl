@@ -12,7 +12,7 @@ task intersectKnownVariants {
   runtime {
     memory: "8GB"
     docker: "mgibio/bcftools-cwl:1.12"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String outfile = "pass_filtered_validated_variants.vcf.gz"

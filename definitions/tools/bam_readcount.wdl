@@ -18,7 +18,7 @@ task bamReadcount {
   runtime {
     docker: "mgibio/bam_readcount_helper-cwl:1.1.1"
     memory: "16GB"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String stdout_file = sample + "_bam_readcount.tsv"

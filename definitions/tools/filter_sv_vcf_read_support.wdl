@@ -14,7 +14,7 @@ task filterSvVcfReadSupport {
   runtime {
     memory: "4GB"
     docker: "bcftools-cwl:1.12"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<

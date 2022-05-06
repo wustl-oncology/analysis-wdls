@@ -13,7 +13,7 @@ task cnvkitVcfExport {
   runtime {
     memory: "8GB"
     docker: "etal/cnvkit:0.9.5"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<

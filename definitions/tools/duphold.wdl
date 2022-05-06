@@ -16,7 +16,7 @@ task duphold {
   runtime {
     memory: "10GB"
     docker: "mgibio/duphold-cwl:0.1.5"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<

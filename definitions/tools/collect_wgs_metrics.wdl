@@ -20,7 +20,7 @@ task collectWgsMetrics {
   runtime {
     memory: "48GB"
     docker: "broadinstitute/picard:2.23.6"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String outname = sample_name + ".WgsMetrics.txt"

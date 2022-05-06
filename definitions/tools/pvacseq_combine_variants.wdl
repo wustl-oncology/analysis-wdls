@@ -18,7 +18,7 @@ task pvacseqCombineVariants {
     memory: "9GB"
     bootDiskSizeGb: 25
     docker: "mgibio/gatk-cwl:3.6.0"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String outfile = "combined_somatic_plus_germline.vcf"

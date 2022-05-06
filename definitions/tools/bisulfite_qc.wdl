@@ -15,7 +15,7 @@ task bisulfiteQc {
     memory: "16GB"
     bootDiskSizeGb: 20
     docker: "mgibio/biscuit:0.3.8.2"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<

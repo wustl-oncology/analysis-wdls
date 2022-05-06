@@ -26,7 +26,7 @@ task cnvkitBatch {
     # We use a forked cnvkit so we can get access to root privileges
     # which let us write files at /cromwell_root/
     docker: "jackmaruska/cnvkit:0.9.7"
-    disks: "local-disk ~{size_needed_gb} SSD"
+    disks: "local-disk ~{size_needed_gb} HDD"
   }
 
   command <<<

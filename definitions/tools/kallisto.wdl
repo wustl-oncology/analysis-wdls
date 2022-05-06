@@ -13,7 +13,7 @@ task kallisto {
     memory: "32GB"
     cpu: cores
     docker: "quay.io/biocontainers/kallisto:0.46.1--h4f7b962_0"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   Map[String, String] strandness = {

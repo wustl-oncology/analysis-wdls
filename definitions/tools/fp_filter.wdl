@@ -19,7 +19,7 @@ task fpFilter {
     memory: "6GB"
     bootDiskSizeGb: 25
     docker: "mgibio/fp_filter-cwl:1.0.1"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String output_vcf = output_vcf_basename + ".vcf"

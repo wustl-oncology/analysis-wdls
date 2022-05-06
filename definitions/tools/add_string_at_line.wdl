@@ -12,7 +12,7 @@ task addStringAtLine {
   runtime {
     docker: "ubuntu:xenial"
     memory: "4GB"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<

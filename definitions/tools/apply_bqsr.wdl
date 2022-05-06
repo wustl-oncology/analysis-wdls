@@ -15,7 +15,7 @@ task applyBqsr {
   runtime {
     docker: "broadinstitute/gatk:4.1.8.1"
     memory: "18GB"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<

@@ -18,7 +18,7 @@ task variantsToTable {
     memory: "6GB"
     bootDiskSizeGb: 25
     docker: "broadinstitute/gatk:4.1.8.1"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String outfile = "variants.tsv"

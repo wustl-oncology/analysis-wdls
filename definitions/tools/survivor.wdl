@@ -17,7 +17,7 @@ task survivor {
     docker: "mgibio/survivor-cwl:1.0.6.2"
     memory: "2GB"
     cpu: 1
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<

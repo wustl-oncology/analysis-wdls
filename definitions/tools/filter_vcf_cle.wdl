@@ -10,7 +10,7 @@ task filterVcfCle {
   runtime {
     docker: "mgibio/cle:v1.3.1"
     memory: "4GB"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<
