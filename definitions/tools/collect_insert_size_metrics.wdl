@@ -14,7 +14,7 @@ task collectInsertSizeMetrics {
   runtime {
     docker: "broadinstitute/picard:2.23.6"
     memory: "48GB"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String bamroot = basename(bam, ".bam")

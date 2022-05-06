@@ -12,7 +12,7 @@ task samtoolsSort {
     memory: "4GB"
     cpu: cores
     docker: "quay.io/biocontainers/samtools:1.11--h6270b1f_0"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<

@@ -14,7 +14,7 @@ task filterVcfSomaticLlr {
   runtime {
     docker: "mgibio/somatic-llr-filter:v0.4.3"
     memory: "4GB"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String outfile = "somatic_llr_filtered.vcf"

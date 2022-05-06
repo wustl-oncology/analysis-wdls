@@ -9,7 +9,7 @@ task agfusion {
   }
 
   runtime {
-    docker: "mgibio/agfusion:1.25-patch"
+    docker: "mgibio/agfusion:1.3-ensembl-95"
     memory: "32GB"
     cpu: 4
   }
@@ -26,6 +26,6 @@ task agfusion {
   >>>
 
   output {
-    File annotated_fusion_predictions_zip = "agfusionresults.zip"
+    File annotated_fusion_predictions_zip = "agfusion_results.zip"
   }
 }

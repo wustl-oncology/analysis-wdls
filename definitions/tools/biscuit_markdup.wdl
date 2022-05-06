@@ -12,7 +12,7 @@ task biscuitMarkdup {
     cpu: cores
     memory: "24GB"
     docker: "mgibio/biscuit:0.3.8"
-    disks: "local ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
     bootDiskSizeGb: space_needed_gb
   }
 

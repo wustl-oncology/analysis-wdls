@@ -9,7 +9,7 @@ task filterVcfCodingVariant {
   runtime {
     memory: "4GB"
     docker: "mgibio/vep_helper-cwl:vep_105.0_v1"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String outfile = "annotated.coding_variant_filtered"

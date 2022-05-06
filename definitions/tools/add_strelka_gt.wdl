@@ -9,7 +9,7 @@ task addStrelkaGt {
   runtime {
     docker: "ubuntu:bionic"
     memory: "4GB"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String outfile = "add_gt.vcf"

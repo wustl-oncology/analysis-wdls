@@ -22,7 +22,7 @@ task concordance {
     memory: "8GB"
     bootDiskSizeGb: 10
     docker: "brentp/somalier:v0.1.5"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<

@@ -37,7 +37,7 @@ task hisat2Align {
     cpu: cores
     bootDiskSizeGb: space_needed_gb
     docker: "mgibio/hisat2-sambamba:0.1"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String outfile = "aligned.bam"

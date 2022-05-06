@@ -14,7 +14,7 @@ task biscuitAlign {
     memory: "32GB"
     cpu: cores
     docker: "mgibio/biscuit:0.3.8"
-    disks: "local ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
     bootDiskSizeGb: space_needed_gb
   }
 

@@ -12,7 +12,7 @@ task annotsv {
   runtime {
     memory: "8GB"
     docker: "mgibio/annotsv-cwl:2.1"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<

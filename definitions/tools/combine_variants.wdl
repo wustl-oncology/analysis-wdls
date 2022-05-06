@@ -22,7 +22,7 @@ task combineVariants {
     memory: "9GB"
     docker:  "mgibio/gatk-cwl:3.6.0"
     bootDiskSizeGb: 25
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   String outfile = "combined.vcf.gz"

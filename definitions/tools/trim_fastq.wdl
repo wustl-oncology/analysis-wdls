@@ -18,7 +18,7 @@ task trimFastq {
     bootDiskSizeGb: 25
     cpu: 4
     docker: "mgibio/bisulfite:v1.4"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<

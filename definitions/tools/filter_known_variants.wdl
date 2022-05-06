@@ -12,7 +12,7 @@ task filterKnownVariants {
   runtime {
     docker: "mgibio/bcftools-cwl:1.12"
     memory: "8GB"
-    disks:  "local-disk ~{space_needed_gb} SSD"
+    disks:  "local-disk ~{space_needed_gb} HDD"
   }
 
   String outfile = "validated_annotated_pipeline_variants.vcf.gz"

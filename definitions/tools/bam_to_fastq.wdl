@@ -10,7 +10,7 @@ task bamToFastq {
     cpu: 1
     memory: "6GB"
     bootDiskSizeGb: 25
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<
