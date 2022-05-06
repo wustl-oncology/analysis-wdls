@@ -30,7 +30,6 @@ workflow somaticWgs {
 
     Array[File] bqsr_known_sites
     Array[File] bqsr_known_sites_tbi
-    Array[String]? bqsr_intervals
 
     File target_intervals
     Array[LabelledFile] per_base_intervals
@@ -104,7 +103,6 @@ workflow somaticWgs {
     picard_metric_accumulation_level=picard_metric_accumulation_level,
     bqsr_known_sites=bqsr_known_sites,
     bqsr_known_sites_tbi=bqsr_known_sites_tbi,
-    bqsr_intervals=bqsr_intervals,
     minimum_mapping_quality=qc_minimum_mapping_quality,
     minimum_base_quality=qc_minimum_base_quality,
     per_base_intervals=per_base_intervals,
@@ -132,7 +130,6 @@ workflow somaticWgs {
     picard_metric_accumulation_level=picard_metric_accumulation_level,
     bqsr_known_sites=bqsr_known_sites,
     bqsr_known_sites_tbi=bqsr_known_sites_tbi,
-    bqsr_intervals=bqsr_intervals,
     minimum_mapping_quality=qc_minimum_mapping_quality,
     minimum_base_quality=qc_minimum_base_quality,
     per_base_intervals=per_base_intervals,

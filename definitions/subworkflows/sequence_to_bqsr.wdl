@@ -6,7 +6,6 @@ import "../tools/merge_bams.wdl" as mb
 import "../tools/mark_duplicates_and_sort.wdl" as mdas
 import "../tools/index_bam.wdl" as ib
 import "../tools/bqsr.wdl" as b
-import "../tools/apply_bqsr.wdl" as ab
 
 workflow sequenceToBqsr {
   input {
@@ -14,7 +13,6 @@ workflow sequenceToBqsr {
 
     Array[File] bqsr_known_sites
     Array[File] bqsr_known_sites_tbi
-    Array[String]? bqsr_intervals
 
     TrimmingOptions? trimming
 
@@ -56,42 +54,22 @@ workflow sequenceToBqsr {
     input: bam=mergeBams.merged_bam
   }
 
-  call b.bqsr {
+  call b.doBqsr {
     input:
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
-
     bam=markDuplicatesAndSort.sorted_bam,
     bam_bai=markDuplicatesAndSort.sorted_bam_bai,
-
-    intervals=bqsr_intervals,
-
     known_sites=bqsr_known_sites,
-    known_sites_tbi=bqsr_known_sites_tbi
-  }
-
-  call ab.applyBqsr {
-    input:
-    reference=reference,
-    reference_fai=reference_fai,
-    reference_dict=reference_dict,
-
-    bam=markDuplicatesAndSort.sorted_bam,
-    bam_bai=markDuplicatesAndSort.sorted_bam_bai,
-
-    bqsr_table=bqsr.bqsr_table,
+    known_sites_tbi=bqsr_known_sites_tbi,
     output_name=final_name
   }
 
-  call ib.indexBam {
-    input: bam = applyBqsr.bqsr_bam
-  }
-
   output {
-    File final_bam = indexBam.indexed_bam
-    File final_bam_bai = indexBam.indexed_bam_bai
-    File final_bai = indexBam.indexed_bai
+    File final_bam =  doBqsr.bqsr_bam
+    File final_bai =  doBqsr.bqsr_bai
+    File final_bam_bai =  doBqsr.bqsr_bam_bai
     File mark_duplicates_metrics_file = markDuplicatesAndSort.metrics_file
   }
 }

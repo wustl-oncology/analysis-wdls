@@ -23,7 +23,6 @@ workflow germlineExome {
     TrimmingOptions? trimming
     Array[File] bqsr_known_sites
     Array[File] bqsr_known_sites_tbi
-    Array[String]? bqsr_intervals
     File bait_intervals
     File target_intervals
     Int target_interval_padding = 100
@@ -66,7 +65,6 @@ workflow germlineExome {
     trimming=trimming,
     bqsr_known_sites=bqsr_known_sites,
     bqsr_known_sites_tbi=bqsr_known_sites_tbi,
-    bqsr_intervals=bqsr_intervals,
     bait_intervals=bait_intervals,
     target_intervals=target_intervals,
     per_base_intervals=per_base_intervals,

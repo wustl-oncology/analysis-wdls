@@ -2,7 +2,7 @@ version 1.0
 
 import "types.wdl"
 
-import "subworkflows/sequence_to_bqsr_nonhuman.wdl" as stbn
+import "subworkflows/sequence_to_bam_nonhuman.wdl" as stbn
 import "subworkflows/qc_wgs_nonhuman.wdl" as qwn
 
 workflow alignmentWgsNonhuman {
@@ -29,7 +29,7 @@ workflow alignmentWgsNonhuman {
     Int? minimum_base_quality
   }
 
-  call stbn.sequenceToBqsrNonhuman as alignment {
+  call stbn.sequenceToBamNonhuman as alignment {
     input:
     reference=reference,
     reference_alt=reference_alt,
