@@ -452,7 +452,6 @@ workflow immuno {
     # ---------- RNAseq Outputs ----------------------------------------
     Rnaseq rnaseq = object {
       alignments: [
-        rna.bamcoverage_bigwig,
         rna.final_bam,
         rna.final_bam_bai
       ],
