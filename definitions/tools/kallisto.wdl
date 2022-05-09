@@ -24,6 +24,7 @@ task kallisto {
   command <<<
     kallisto quant -t ~{cores} -b 100 --fusion -o kallisto \
     ~{strandness[strand]} -i ~{kallisto_index} ~{sep=" " flatten(fastqs)}
+
   >>>
 
   output {

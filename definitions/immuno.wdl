@@ -24,13 +24,19 @@ import "types.wdl"  # !UnusedImport
 # to encode intended output directory for each file.
 #
 
+struct Rnaseq {
+  Array[File] alignments
+  Array[File] stringtie_expression
+  Array[File] kallisto_expression
+  Array[File?] star_fusion
+}
+
 struct Qc {
   Array[File?] tumor_rna
   Array[File?] tumor_dna
   Array[File?] normal_dna
   Array[File?] concordance
 }
-
 
 struct Variants {
   Array[File?] mutect
@@ -50,7 +56,6 @@ struct Somatic {
   Cnv cnv
   Sv sv
 }
-
 
 struct Germline {
   Array[File?] variants
@@ -376,8 +381,8 @@ workflow immuno {
     reference_dict=reference_dict,
     readcount_minimum_base_quality=readcount_minimum_base_quality,
     readcount_minimum_mapping_quality=readcount_minimum_mapping_quality,
-    gene_expression_file=rna.gene_abundance,
-    transcript_expression_file=rna.transcript_abundance_tsv,
+    gene_expression_file=rna.kallisto_gene_abundance,
+    transcript_expression_file=rna.kallisto_transcript_abundance_tsv,
     alleles=hlaConsensus.consensus_alleles,
     prediction_algorithms=prediction_algorithms,
     epitope_lengths_class_i=epitope_lengths_class_i,
@@ -437,21 +442,39 @@ workflow immuno {
 
   output {
     # ---------- RNAseq Outputs ----------------------------------------
-    Array[File] rnaseq = [
-      rna.bamcoverage_bigwig,
-      rna.final_bam,
-      rna.final_bam_bai,
-      rna.stringtie_transcript_gtf,
-      rna.stringtie_gene_expression_tsv,
-      rna.transcript_abundance_tsv,
-      rna.transcript_abundance_h5,
-      rna.gene_abundance
-    ]
+    Rnaseq rnaseq = object {
+      alignments: [
+        rna.final_bam,
+        rna.final_bam_bai
+      ],
+      stringtie_expression: [
+        rna.stringtie_transcript_gtf,
+        rna.stringtie_gene_expression_tsv
+      ],
+      kallisto_expression: [
+        rna.kallisto_transcript_abundance_tsv,
+        rna.kallisto_transcript_abundance_h5,
+        rna.kallisto_gene_abundance,
+        rna.kallisto_fusion_evidence
+      ],
+      star_fusion: [
+        rna.star_fusion_out,
+        rna.star_junction_out,
+        rna.star_fusion_predict,
+        rna.star_fusion_abridge,
+        rna.star_fusion_coding_region_effects,
+        rna.annotated_fusion_predictions_zip
+      ]
+    }
 
     # -------- Somatic Outputs -----------------------------------------
 
     Qc qc =  object {
-      tumor_rna: [rna.metrics, rna.chart],
+      tumor_rna: flatten([
+        [ rna.metrics, 
+          rna.chart ],
+        rna.strand_info  
+      ]),
       tumor_dna: flatten([
         [ somaticExome.tumor_mark_duplicates_metrics,
           somaticExome.tumor_insert_size_metrics,
@@ -582,5 +605,6 @@ workflow immuno {
     File annotated_tsv = pvacseq.annotated_tsv
 
     Array[File] pvacfuse_predictions = pvacfuse.pvacfuse_predictions
+    Array[File] fusioninspector_evidence = rna.fusioninspector_evidence
   }
 }

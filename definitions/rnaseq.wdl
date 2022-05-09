@@ -132,12 +132,12 @@ workflow rnaseq {
     File final_bam_bai = markDup.sorted_bam_bai
     File stringtie_transcript_gtf = stringtie.transcript_gtf
     File stringtie_gene_expression_tsv = stringtie.gene_expression_tsv
-    File transcript_abundance_tsv = kallisto.expression_transcript_table
-    File transcript_abundance_h5 = kallisto.expression_transcript_h5
-    File gene_abundance = transcriptToGene.gene_abundance
+    File kallisto_transcript_abundance_tsv = kallisto.expression_transcript_table
+    File kallisto_transcript_abundance_h5 = kallisto.expression_transcript_h5
+    File kallisto_gene_abundance = transcriptToGene.gene_abundance
     File metrics = generateQcMetrics.metrics
     File? chart = generateQcMetrics.chart
-    File fusion_evidence = kallisto.fusion_evidence
+    File kallisto_fusion_evidence = kallisto.fusion_evidence
     File bamcoverage_bigwig = cgpbigwigBamcoverage.outfile
   }
 }
