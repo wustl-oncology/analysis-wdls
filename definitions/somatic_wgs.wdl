@@ -1,7 +1,7 @@
 version 1.0
 
 import "subworkflows/sequence_to_bqsr.wdl" as s2b
-import "subworkflows/qc_exome.wdl" as qe
+import "subworkflows/qc_wgs.wdl" as qe
 
 import "detect_variants_wgs.wdl" as dvw
 
@@ -38,7 +38,6 @@ workflow somaticWgs {
     Array[LabelledFile] per_base_intervals
     Array[LabelledFile] per_target_intervals
     Array[LabelledFile] summary_intervals
-    File qc_intervals
 
     File omni_vcf
     File omni_vcf_tbi
@@ -87,7 +86,7 @@ workflow somaticWgs {
   }
 
 
-call s2b.sequenceToBqsr as tumorAlignment {
+  call s2b.sequenceToBqsr as tumorAlignment {
     input:
     reference=reference,
     reference_fai=reference_fai,
@@ -104,17 +103,16 @@ call s2b.sequenceToBqsr as tumorAlignment {
     bqsr_known_sites_tbi=bqsr_known_sites_tbi,
     final_name=tumor_name
   }
-  call qe.qcExome as tumorQc {
+  call qe.qcWgs as tumorQc {
     input:
     bam=tumorAlignment.final_bam,
     bam_bai=tumorAlignment.final_bam_bai,
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
-    bait_intervals=bait_intervals,
-    target_intervals=target_intervals,
     per_base_intervals=per_base_intervals,
     per_target_intervals=per_target_intervals,
+    intervals=target_intervals,
     summary_intervals=summary_intervals,
     omni_vcf=omni_vcf,
     omni_vcf_tbi=omni_vcf_tbi,
@@ -123,7 +121,7 @@ call s2b.sequenceToBqsr as tumorAlignment {
     minimum_base_quality=qc_minimum_base_quality
   }
 
-    call s2b.sequenceToBqsr as normalAlignment {
+  call s2b.sequenceToBqsr as normalAlignment {
     input:
     reference=reference,
     reference_fai=reference_fai,
@@ -141,17 +139,16 @@ call s2b.sequenceToBqsr as tumorAlignment {
     final_name=normal_name
   }
 
-  call qe.qcExome as normalQc {
+  call qe.qcWgs as normalQc {
     input:
     bam=normalAlignment.final_bam,
     bam_bai=normalAlignment.final_bam_bai,
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
-    bait_intervals=bait_intervals,
-    target_intervals=target_intervals,
     per_base_intervals=per_base_intervals,
     per_target_intervals=per_target_intervals,
+    intervals=target_intervals,
     summary_intervals=summary_intervals,
     omni_vcf=omni_vcf,
     omni_vcf_tbi=omni_vcf_tbi,
@@ -165,10 +162,10 @@ call s2b.sequenceToBqsr as tumorAlignment {
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
-    bam_1=tumorAlignmentAndQc.bam,
-    bam_1_bai=tumorAlignmentAndQc.bam_bai,
-    bam_2=normalAlignmentAndQc.bam,
-    bam_2_bai=normalAlignmentAndQc.bam_bai,
+    bam_1=tumorAlignment.final_bam,
+    bam_1_bai=tumorAlignment.final_bam_bai,
+    bam_2=normalAlignment.final_bam,
+    bam_2_bai=normalAlignment.final_bam_bai,
     vcf=somalier_vcf
   }
 
@@ -177,10 +174,10 @@ call s2b.sequenceToBqsr as tumorAlignment {
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
-    tumor_bam=tumorAlignmentAndQc.bam,
-    tumor_bam_bai=tumorAlignmentAndQc.bam_bai,
-    normal_bam=normalAlignmentAndQc.bam,
-    normal_bam_bai=normalAlignmentAndQc.bam_bai,
+    tumor_bam=tumorAlignment.final_bam,
+    tumor_bam_bai=tumorAlignment.final_bam_bai,
+    normal_bam=normalAlignment.final_bam,
+    normal_bam_bai=normalAlignment.final_bam_bai,
     roi_intervals=target_intervals,
     strelka_exome_mode=false,
     strelka_cpu_reserved=strelka_cpu_reserved,
@@ -218,10 +215,10 @@ call s2b.sequenceToBqsr as tumorAlignment {
 
   call ms.mantaSomatic as manta {
     input:
-    normal_bam=normalAlignmentAndQc.bam,
-    normal_bam_bai=normalAlignmentAndQc.bam_bai,
-    tumor_bam=tumorAlignmentAndQc.bam,
-    tumor_bam_bai=tumorAlignmentAndQc.bam_bai,
+    normal_bam=normalAlignment.final_bam,
+    normal_bam_bai=normalAlignment.final_bam_bai,
+    tumor_bam=tumorAlignment.final_bam,
+    tumor_bam_bai=tumorAlignment.final_bam_bai,
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
@@ -231,7 +228,7 @@ call s2b.sequenceToBqsr as tumorAlignment {
 
   call btc.bamToCram as tumorBamToCram {
     input:
-    bam=tumorAlignmentAndQc.bam,
+    bam=tumorAlignment.final_bam,
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict
@@ -243,7 +240,7 @@ call s2b.sequenceToBqsr as tumorAlignment {
 
   call btc.bamToCram as normalBamToCram {
     input:
-    bam=normalAlignmentAndQc.bam,
+    bam=normalAlignment.final_bam,
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict
@@ -256,7 +253,7 @@ call s2b.sequenceToBqsr as tumorAlignment {
 
   output {
     File tumor_cram = tumorIndexCram.indexed_cram
-    File tumor_mark_duplicates_metrics = tumorAlignment.mark_duplicates_metrics
+    File tumor_mark_duplicates_metrics = tumorAlignment.mark_duplicates_metrics_file
     File tumor_insert_size_metrics = tumorQc.insert_size_metrics
     File tumor_alignment_summary_metrics = tumorQc.alignment_summary_metrics
     Array[File] tumor_per_target_coverage_metrics = tumorQc.per_target_coverage_metrics
@@ -274,7 +271,7 @@ call s2b.sequenceToBqsr as tumorAlignment {
     File tumor_wgs_metrics = tumorQc.wgs_metrics
 ##normal alignment and qc
     File normal_cram = normalIndexCram.indexed_cram
-    File normal_mark_duplicates_metrics = normalAlignment.mark_duplicates_metrics
+    File normal_mark_duplicates_metrics = normalAlignment.mark_duplicates_metrics_file
     File normal_insert_size_metrics = normalQc.insert_size_metrics
     File normal_alignment_summary_metrics = normalQc.alignment_summary_metrics
     Array[File] normal_per_target_coverage_metrics = normalQc.per_target_coverage_metrics
