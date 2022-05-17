@@ -16,8 +16,9 @@ task vepTask {
     Array[String] plugins
     Boolean coding_only = false
     Array[String] custom_args
-    # Require files are necessary to force a localization. The call itself uses them
-    # via the custom_args field, which is a string and won't localize its parts.
+    # Required files are necessary to force localization. The call itself uses them
+    # via the custom_args field, which is a string and won't localize its parts, but
+    # does need to be pointed to the right inputs dir after localization
     Array[File] required_files # !UnusedDeclaration
     Boolean everything = true
     # one of [pick, flag_pick, pick-allele, per_gene, pick_allele_gene, flag_pick_allele, flag_pick_allele_gene]
@@ -42,6 +43,9 @@ task vepTask {
 
   command <<<
     mkdir ~{cache_dir} && unzip -qq ~{cache_dir_zip} -d ~{cache_dir}
+    #custom vep inputs (required files) get localized and we have to define this variable
+    #pointing to their current path so that the custom string works as expected
+    custom_inputs_dir=$(dirname ~{required_files[0]})
 
     /usr/bin/perl -I /opt/lib/perl/VEP/Plugins /usr/bin/variant_effect_predictor.pl \
     --format vcf \
@@ -84,14 +88,13 @@ task parseVepCustomAnnotationIntoArg {
     python <<CODE
     check_existing = "~{true="--check_existing" false="" obj.annotation.check_existing}"
     custom = ",".join([
-        "~{obj.annotation.file}",
+        "$" + "custom_inputs_dir/~{basename(obj.annotation.file)}",
         "~{obj.annotation.name}",
         "~{obj.annotation.data_format}",
         "~{obj.method}",
         "~{true=1 false=0 obj.force_report_coordinates}",
         "~{sep="," obj.annotation.vcf_fields}"
     ])
-
     print(f"{check_existing} --custom {custom}")
     CODE
   >>>
