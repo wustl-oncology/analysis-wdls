@@ -9,7 +9,7 @@ task agfusion {
   }
 
   runtime {
-    docker: "mgibio/agfusion:1.3-ensembl-95"
+    docker: "mgibio/agfusion:1.3.1-ensembl-105"
     memory: "32GB"
     cpu: 4
   }

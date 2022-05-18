@@ -21,7 +21,7 @@ task starFusionDetect {
   runtime {
     memory: "64GB"
     cpu: cores
-    docker: "trinityctat/starfusion:1.10.1"
+    docker: "trinityctat/starfusion:pre-1.11.c"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
