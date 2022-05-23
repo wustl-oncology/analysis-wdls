@@ -83,6 +83,9 @@ workflow somaticWgs {
     String normal_sample_name
     File? validated_variants
     File? validated_variants_tbi
+
+    #approximate size of split target bins for CNVkit; if not set a suitable window size will be set by CNVkit automatically
+    Int? cnvkit_target_average_size
   }
 
 
@@ -226,6 +229,17 @@ workflow somaticWgs {
     output_contigs=manta_output_contigs
   }
 
+  call cb.cnvkitBatch as cnvkit {
+    input:
+    tumor_bam=tumorAlignment.final_bam,
+    tumor_bam_bai=tumorAlignment.final_bam_bai,
+    normal_bam=normalAlignment.final_bam,
+    normal_bam_bai=normalAlignment.final_bam_bai,
+    reference_fasta=reference,
+    target_average_size=cnvkit_target_average_size,
+    method="wgs"
+  }
+
   call btc.bamToCram as tumorBamToCram {
     input:
     bam=tumorAlignment.final_bam,
@@ -312,6 +326,7 @@ workflow somaticWgs {
     File tumor_indel_bam_readcount_tsv = detectVariants.tumor_indel_bam_readcount_tsv
     File normal_snv_bam_readcount_tsv = detectVariants.normal_snv_bam_readcount_tsv
     File normal_indel_bam_readcount_tsv = detectVariants.normal_indel_bam_readcount_tsv
+    #manta
     File? diploid_variants = manta.diploid_variants
     File? diploid_variants_tbi = manta.diploid_variants_tbi
     File? somatic_variants = manta.somatic_variants
@@ -322,6 +337,19 @@ workflow somaticWgs {
     File small_candidates_tbi = manta.small_candidates_tbi
     File? tumor_only_variants = manta.tumor_only_variants
     File? tumor_only_variants_tbi = manta.tumor_only_variants_tbi
+    #cnvkit
+    File? intervals_antitarget = cnvkit.intervals_antitarget
+    File? intervals_target = cnvkit.intervals_target
+    File? normal_antitarget_coverage = cnvkit.normal_antitarget_coverage
+    File? normal_target_coverage = cnvkit.normal_target_coverage
+    File? reference_coverage = cnvkit.reference_coverage
+    File tumor_antitarget_coverage = cnvkit.tumor_antitarget_coverage
+    File tumor_target_coverage = cnvkit.tumor_target_coverage
+    File tumor_bin_level_ratios = cnvkit.tumor_bin_level_ratios
+    File tumor_segmented_ratios = cnvkit.tumor_segmented_ratios
+    File? cn_diagram = cnvkit.cn_diagram
+    File? cn_scatter_plot = cnvkit.cn_scatter_plot
+
 ##sample concordance check
     File somalier_concordance_metrics = concordance.somalier_pairs
     File somalier_concordance_statistics = concordance.somalier_samples
