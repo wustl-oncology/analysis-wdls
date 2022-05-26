@@ -25,7 +25,7 @@ task cnvkitBatch {
     cpu: 1
     # We use a forked cnvkit so we can get access to root privileges
     # which let us write files at /cromwell_root/
-    docker: "mgibio/cnvkit:0.9.7.b1"
+    docker: "mgibio/cnvkit:0.9.9"
     disks: "local-disk ~{size_needed_gb} HDD"
   }
 
