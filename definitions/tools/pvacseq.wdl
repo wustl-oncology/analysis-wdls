@@ -58,6 +58,10 @@ task pvacseq {
   Array[Int] epitope_i = select_first([epitope_lengths_class_i, []])
   Array[Int] epitope_ii = select_first([epitope_lengths_class_ii, []])
   command <<<
+    # touch each tbi to ensure they have a timestamp after the vcf
+    touch ~{phased_proximal_variants_vcf_tbi}
+    touch ~{input_vcf_tbi}
+
     ln -s "$TMPDIR" /tmp/pvacseq && export TMPDIR=/tmp/pvacseq && \
     /usr/local/bin/pvacseq run --iedb-install-directory /opt/iedb \
     --blastp-path /opt/ncbi-blast-2.12.0+/bin/blastp \
