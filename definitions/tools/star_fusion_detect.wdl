@@ -51,7 +51,7 @@ task starFusionDetect {
     File log_final = fusion_output_dir + "/Log.final.out"
     File log = fusion_output_dir + "/Log.out"
     File log_progress = fusion_output_dir + "/Log.progress.out"
-    File splice_s_out = fusion_output_dir + "/SJ.out.tab"
+    File splice_junction_out = fusion_output_dir + "/SJ.out.tab"
     File chim_junc = fusion_output_dir + "/Chimeric.out.junction"
     # STAR also outputs gene counts file just like Kallisto
     File gene_counts = fusion_output_dir + "/ReadsPerGene.out.tab"
