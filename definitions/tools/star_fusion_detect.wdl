@@ -3,7 +3,7 @@ version 1.0
 task starFusionDetect {
   input {
     File star_fusion_genome_dir_zip
-    File junction_file
+    # File junction_file
     String fusion_output_dir = "STAR-Fusion_outdir"
     String star_path = "/usr/local/bin/STAR"
     # TODO: is this presence or =true ?
@@ -11,6 +11,7 @@ task starFusionDetect {
     String? fusioninspector_mode  # enum [inspect, validate]
     Array[File] fastq
     Array[File] fastq2
+    Array[String] outsam_attrrg_line
   }
 
   Int cores = 12
@@ -31,18 +32,32 @@ task starFusionDetect {
     mkdir ~{genome_lib_dir} && unzip -qq ~{star_fusion_genome_dir_zip} -d ~{genome_lib_dir}
     /usr/local/src/STAR-Fusion/STAR-Fusion --CPU ~{cores} \
         --genome_lib_dir ~{genome_lib_dir} \
-        -J ~{junction_file} --output_dir ~{fusion_output_dir} --STAR_PATH ~{star_path} \
+        # -J ~{junction_file} \
+        --output_dir ~{fusion_output_dir} --STAR_PATH ~{star_path} \
         ~{true="--examine_coding_effect" false="" examine_coding_effect} \
         ~{if defined(fusioninspector_mode) then "--FusionInspector " + fusioninspector_mode else ""} \
+        --STAR_outSAMattrRGline ~{sep=" , " outsam_attrrg_line} \
         --left_fq ~{sep="," fastq} --right_fq ~{sep="," fastq2}
   >>>
 
   output {
+    # star fusion outputs 
     File fusion_predictions = fusion_output_dir + "/star-fusion.fusion_predictions.tsv"
     File fusion_abridged = fusion_output_dir + "/star-fusion.fusion_predictions.abridged.tsv"
     File? coding_region_effects = fusion_output_dir + "/star-fusion.fusion_predictions.abridged.coding_effect.tsv"
+    # Fusion inspector outputs
     # if no mode specified, this will just not find any files
     Array[File] fusioninspector_evidence = glob(fusion_output_dir + "/FusionInspector-" + select_first([fusioninspector_mode, ""]) + "/finspector.*")
+    File fusioninspector_log = fusion_output_dir + "/FusionInspector.log"
+    # STAR alignment files
+    File aligned_bam = fusion_output_dir + "/Aligned.out.bam"
+    File log_final = fusion_output_dir + "/Log.final.out"
+    File log = fusion_output_dir + "/Log.out"
+    File log_progress = fusion_output_dir + "/Log.progress.out"
+    File splice_junction_out = fusion_output_dir + "/SJ.out.tab"
+    File chim_junc = fusion_output_dir + "/Chimeric.out.junction"
+    # STAR also outputs gene counts file just like Kallisto
+    File gene_counts = fusion_output_dir + "/ReadsPerGene.out.tab"
   }
 }
 
@@ -56,6 +71,7 @@ workflow wf {
     String fusioninspector_mode  # enum [inspect, validate]
     Array[File] fastq
     Array[File] fastq2
+    Array[String] outsam_attrrg_line
   }
 
   call starFusionDetect {
@@ -67,6 +83,7 @@ workflow wf {
     examine_coding_effect=examine_coding_effect,
     fusioninspector_mode=fusioninspector_mode,
     fastq=fastq,
-    fastq2=fastq2
+    fastq2=fastq2,
+    outsam_attrrg_line=outsam_attrrg_line
   }
 }

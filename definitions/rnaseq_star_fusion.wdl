@@ -73,23 +73,23 @@ workflow rnaseqStarFusion {
     String? attrrg_line = sequence.readgroup
   }
 
-  call saf.starAlignFusion {
-    input:
-    outsam_attrrg_line=select_all(attrrg_line),
-    star_genome_dir_zip=star_genome_dir_zip,
-    reference_annotation=reference_annotation,
-    fastq=sequenceToTrimmedFastq.fastq1,
-    fastq2=sequenceToTrimmedFastq.fastq2
-  }
+  # call saf.starAlignFusion {
+  #  input:
+  #  outsam_attrrg_line=select_all(attrrg_line),
+  #  star_genome_dir_zip=star_genome_dir_zip,
+  #  reference_annotation=reference_annotation,
+  #  fastq=sequenceToTrimmedFastq.fastq1,
+  #  fastq2=sequenceToTrimmedFastq.fastq2
+  # }
 
   call sfd.starFusionDetect {
     input:
     star_fusion_genome_dir_zip=star_fusion_genome_dir_zip,
-    junction_file=starAlignFusion.chim_junc,
     examine_coding_effect=examine_coding_effect,
     fusioninspector_mode=fusioninspector_mode,
     fastq=sequenceToTrimmedFastq.fastq1,
-    fastq2=sequenceToTrimmedFastq.fastq2
+    fastq2=sequenceToTrimmedFastq.fastq2,
+    outsam_attrrg_line=select_all(attrrg_line)
   }
 
   call k.kallisto {
@@ -106,7 +106,7 @@ workflow rnaseqStarFusion {
   }
 
   call ss.samtoolsSort as sortBam {
-    input: input_bam=starAlignFusion.aligned_bam
+    input: input_bam=starFusionDetect.aligned_bam
   }
 
   call mdas.markDuplicatesAndSort as markDup {
@@ -156,9 +156,9 @@ workflow rnaseqStarFusion {
   output {
     File cram = indexCram.indexed_cram
     File cram_crai = indexCram.indexed_cram_crai
-    File star_fusion_out = starAlignFusion.chim_junc
-    File star_junction_out = starAlignFusion.splice_junction_out
-    File star_fusion_log = starAlignFusion.log_final
+    File star_fusion_out = starFusionDetect.chim_junc
+    File star_junction_out = starFusionDetect.splice_junction_out
+    File star_fusion_log = starFusionDetect.log_final
     File star_fusion_predict = starFusionDetect.fusion_predictions
     File star_fusion_abridge = starFusionDetect.fusion_abridged
     File stringtie_transcript_gtf = stringtie.transcript_gtf
