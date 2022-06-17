@@ -3,7 +3,6 @@ version 1.0
 task starFusionDetect {
   input {
     File star_fusion_genome_dir_zip
-    # File junction_file
     String fusion_output_dir = "STAR-Fusion_outdir"
     String star_path = "/usr/local/bin/STAR"
     # TODO: is this presence or =true ?
@@ -17,7 +16,6 @@ task starFusionDetect {
   Int cores = 12
   Float zip_size = size(star_fusion_genome_dir_zip, "GB")
   Float fastq_size = size(flatten([fastq, fastq2]), "GB")
-  # Float junction_size = size(junction_file, "GB")
   Int space_needed_gb = 10 + round(2 * (zip_size + fastq_size))
   runtime {
     memory: "64GB"
@@ -63,7 +61,6 @@ task starFusionDetect {
 workflow wf {
   input {
     File star_fusion_genome_dir_zip
-    File junction_file
     String? fusion_output_dir
     String? star_path
     Boolean? examine_coding_effect
@@ -76,7 +73,6 @@ workflow wf {
   call starFusionDetect {
     input:
     star_fusion_genome_dir_zip=star_fusion_genome_dir_zip,
-    junction_file=junction_file,
     fusion_output_dir=fusion_output_dir,
     star_path=star_path,
     examine_coding_effect=examine_coding_effect,
