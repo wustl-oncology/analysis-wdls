@@ -32,7 +32,6 @@ task starFusionDetect {
     mkdir ~{genome_lib_dir} && unzip -qq ~{star_fusion_genome_dir_zip} -d ~{genome_lib_dir}
     /usr/local/src/STAR-Fusion/STAR-Fusion --CPU ~{cores} \
         --genome_lib_dir ~{genome_lib_dir} \
-        # -J ~{junction_file} \
         --output_dir ~{fusion_output_dir} --STAR_PATH ~{star_path} \
         ~{true="--examine_coding_effect" false="" examine_coding_effect} \
         ~{if defined(fusioninspector_mode) then "--FusionInspector " + fusioninspector_mode else ""} \
