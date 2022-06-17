@@ -25,8 +25,7 @@ workflow rnaseqStarFusion {
     Array[SequenceData] unaligned
     String? strand  # enum [first, second, unstranded]
     String sample_name
-
-    # File star_genome_dir_zip
+    
     File star_fusion_genome_dir_zip
     File cdna_fasta
     File reference_annotation
