@@ -106,11 +106,11 @@ workflow rnaseqStarFusionWithXenosplit {
   call sfd.starFusionDetect {
     input:
     star_fusion_genome_dir_zip=star_fusion_genome_dir_zip,
-    junction_file=graftbamStarAlignFusion.chim_junc,
     examine_coding_effect=examine_coding_effect,
     fusioninspector_mode=fusioninspector_mode,
     fastq=sequenceToTrimmedFastq.fastq1,
-    fastq2=sequenceToTrimmedFastq.fastq2
+    fastq2=sequenceToTrimmedFastq.fastq2,
+    outsam_attrrg_line=outsam_attrrg_line
   }
 
   call k.kallisto {
