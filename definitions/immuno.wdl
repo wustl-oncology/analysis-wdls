@@ -83,7 +83,6 @@ workflow immuno {
     String? strand  # [first, second, unstranded]
     File refFlat
     File ribosomal_intervals
-    File star_aligner_genome_dir_zip
     File star_fusion_genome_dir_zip
     Boolean examine_coding_effect = true
     String? fusioninspector_mode  # enum [inspect validate]
@@ -228,7 +227,6 @@ workflow immuno {
     strand=strand,
     refFlat=refFlat,
     ribosomal_intervals=ribosomal_intervals,
-    star_genome_dir_zip=star_aligner_genome_dir_zip,
     star_fusion_genome_dir_zip=star_fusion_genome_dir_zip,
     examine_coding_effect=examine_coding_effect,
     fusioninspector_mode=fusioninspector_mode,
