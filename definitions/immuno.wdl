@@ -13,6 +13,7 @@ import "tools/hla_consensus.wdl" as hc
 import "tools/intersect_known_variants.wdl" as ikv
 import "tools/pvacfuse.wdl" as pf
 import "types.wdl"  # !UnusedImport
+import "tools/optitype_dna.wdl" as od 
 
 #
 # These structs are needed only because MiniWDL, used by some of our
@@ -336,6 +337,15 @@ workflow immuno {
     optitype_name=optitype_name
   }
 
+  call od.optitypeDna as optitype {
+    input:
+    reference=reference,
+    reference_fai=reference_fai,
+    cram=somaticExome.tumor_cram,
+    cram_crai=somaticExome.tumor_cram_crai,
+    optitype_name=optitype_name
+  } 
+
   call pv.phaseVcf {
     input:
     somatic_vcf=somaticExome.final_filtered_vcf,
@@ -603,6 +613,7 @@ workflow immuno {
 
     File annotated_vcf = pvacseq.annotated_vcf
     File annotated_tsv = pvacseq.annotated_tsv
+    File tumor_optitype_tsv = optitype.optitype_tsv
 
     Array[File] pvacfuse_predictions = pvacfuse.pvacfuse_predictions
     Array[File] fusioninspector_evidence = rna.fusioninspector_evidence
