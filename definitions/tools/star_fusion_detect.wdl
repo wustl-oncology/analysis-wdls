@@ -33,7 +33,7 @@ task starFusionDetect {
         --output_dir ~{fusion_output_dir} --STAR_PATH ~{star_path} \
         ~{true="--examine_coding_effect" false="" examine_coding_effect} \
         ~{if defined(fusioninspector_mode) then "--FusionInspector " + fusioninspector_mode else ""} \
-        --STAR_outSAMattrRGline ~{sep=" , " outsam_attrrg_line} \
+        --STAR_outSAMattrRGline "~{sep=" , " outsam_attrrg_line}" \
         --left_fq ~{sep="," fastq} --right_fq ~{sep="," fastq2}
   >>>
 
@@ -58,27 +58,4 @@ task starFusionDetect {
   }
 }
 
-workflow wf {
-  input {
-    File star_fusion_genome_dir_zip
-    String? fusion_output_dir
-    String? star_path
-    Boolean? examine_coding_effect
-    String fusioninspector_mode  # enum [inspect, validate]
-    Array[File] fastq
-    Array[File] fastq2
-    Array[String] outsam_attrrg_line
-  }
-
-  call starFusionDetect {
-    input:
-    star_fusion_genome_dir_zip=star_fusion_genome_dir_zip,
-    fusion_output_dir=fusion_output_dir,
-    star_path=star_path,
-    examine_coding_effect=examine_coding_effect,
-    fusioninspector_mode=fusioninspector_mode,
-    fastq=fastq,
-    fastq2=fastq2,
-    outsam_attrrg_line=outsam_attrrg_line
-  }
-}
+workflow wf { call starFusionDetect { input: } }
