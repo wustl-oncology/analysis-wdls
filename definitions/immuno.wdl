@@ -595,7 +595,7 @@ workflow immuno {
       ]
     }
 
-    Array[File] hla_typing = flatten([
+    Array[File] hla_typing_normal = flatten([
       [germlineExome.optitype_tsv,
        germlineExome.optitype_plot,
        extractAlleles.allele_file,
@@ -613,8 +613,8 @@ workflow immuno {
 
     File annotated_vcf = pvacseq.annotated_vcf
     File annotated_tsv = pvacseq.annotated_tsv
-    File tumor_optitype_tsv = optitype.optitype_tsv
 
+    Array[File] hla_typing_tumor = optitype.optitype_tsv
     Array[File] pvacfuse_predictions = pvacfuse.pvacfuse_predictions
     Array[File] fusioninspector_evidence = rna.fusioninspector_evidence
   }
