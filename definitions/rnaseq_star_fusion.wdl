@@ -9,7 +9,6 @@ import "tools/index_cram.wdl" as ic
 import "tools/kallisto.wdl" as k
 import "tools/mark_duplicates_and_sort.wdl" as mdas
 import "tools/samtools_sort.wdl" as ss
-# import "tools/star_align_fusion.wdl" as saf
 import "tools/star_fusion_detect.wdl" as sfd
 import "tools/strandedness_check.wdl" as sc
 import "tools/stringtie.wdl" as s
