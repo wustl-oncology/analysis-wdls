@@ -14,7 +14,7 @@ task optitypeDna {
   Int space_needed_gb = 10 + round(5*size([cram, cram_crai, reference, reference_fai], "GB"))
   runtime {
     memory: "~{mem}GB"
-    docker: "mgibio/immuno_tools-cwl:1.0.1"
+    docker: "laljorani20/immuno-tools:latest"
     disks: "local-disk ~{space_needed_gb} HDD"
     bootDiskSizeGb: 3*space_needed_gb
   }
