@@ -20,6 +20,7 @@ task phlat {
     /bin/bash /usr/bin/run.b38.sh \
     --phlat-dir ~()               \
     --data-dir ~()                \
+    --tag ~()                     \
     --bam ~()                     \
     --index-dir ~()               \
     --rs-dir ~()                  \
