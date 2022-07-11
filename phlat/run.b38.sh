@@ -149,7 +149,7 @@ echo "extracting hla region and unmapped reads ..."
 $SAMTOOLS view -h -T $REF_FASTA $BAM chr6:29836259-33148325 >$tmpdir/reads.sam
 
 $SAMTOOLS view -H -T $REF_FASTA $BAM | grep "^@SQ" | cut -f 2 | cut -f 2- -d : | grep HLA | while read chr;do 
-echo "checking $chr:1-9999999"
+# echo "checking $chr:1-9999999"
 $SAMTOOLS view -T $REF_FASTA $BAM "$chr:1-9999999" >>$tmpdir/reads.sam
 done
 
