@@ -10,11 +10,11 @@ task optitypeDna {
   }
 
   Int threads = 8 
-  Int mem = 32
+  Int mem = 50
   Int space_needed_gb = 10 + round(5*size([cram, cram_crai, reference, reference_fai], "GB"))
   runtime {
     memory: "~{mem}GB"
-    cpu: threads
+    cpu: threads 
     docker: "laljorani20/immuno-tools:latest"
     disks: "local-disk ~{space_needed_gb} HDD"
     bootDiskSizeGb: 3*space_needed_gb
