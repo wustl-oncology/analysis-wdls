@@ -26,8 +26,6 @@ task phlat {
     --index-dir ~("")             \
     --rs-dir ~("")                \
     --b2url ~("")                 \
-    --fastq1 ~("")                \
-    --fastq2 ~("")                \
     --ref-fasta ~(reference) 
   >>>
 
