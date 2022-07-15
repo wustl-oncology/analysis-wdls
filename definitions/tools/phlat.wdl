@@ -7,9 +7,11 @@ task phlat {
     File cram_crai
     File reference
     File reference_fai
+    String name = basename(cram, ".*")
+    String index_dir = "" # optional if indexes are within run.b38.sh default dir
    }
 
-  Int space_needed_gb = 10 + round(5*size([cram, cram_crai, reference, reference_fail], "GB"))
+  Int space_needed_gb = 10 + round(5*size([cram, cram_crai, reference, reference_fai], "GB"))
   runtime {
     memory: "20GB"
     docker: "laljorani/phlat:latest"
@@ -19,14 +21,10 @@ task phlat {
 
   command <<<
     /bin/bash /usr/bin/run.b38.sh \
-    --phlat-dir ~("")             \
-    --data-dir ~("")              \
-    --tag ~("")                   \
-    --bam ~(cram)                 \
-    --index-dir ~("")             \
-    --rs-dir ~("")                \
-    --b2url ~("")                 \
-    --ref-fasta ~(reference) 
+    --tag ~(name)                 \
+    --bam ~(cram)                 \ 
+    --ref-fasta ~(reference)      \
+    --index-dir ~(index_dir)
   >>>
 
   output {
