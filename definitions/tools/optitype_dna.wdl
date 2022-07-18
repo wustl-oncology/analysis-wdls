@@ -16,7 +16,7 @@ task optitypeDna {
     memory: "~{mem}GB"
     cpu: threads 
     docker: "laljorani20/immuno-tools:latest"
-    disks: "local-disk ~{space_needed_gb} HDD"
+    disks: "local-disk ~{space_needed_gb} SSD"
     bootDiskSizeGb: 3*space_needed_gb
   }
 
