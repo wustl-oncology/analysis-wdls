@@ -14,6 +14,7 @@ import "tools/intersect_known_variants.wdl" as ikv
 import "tools/pvacfuse.wdl" as pf
 import "types.wdl"  # !UnusedImport
 import "tools/optitype_dna.wdl" as od 
+import "tools/phlat.wdl" as ph
 
 #
 # These structs are needed only because MiniWDL, used by some of our
@@ -344,6 +345,16 @@ workflow immuno {
     cram=somaticExome.tumor_cram,
     cram_crai=somaticExome.tumor_cram_crai,
     optitype_name=optitype_name
+  }
+
+  call ph.phlat {
+    input:
+    phlat_name="phlat",
+    cram=somaticExome.tumor_cram,
+    reference=reference,
+    nthreads="",
+    mem="",
+    index_dir=""
   } 
 
   call pv.phaseVcf {

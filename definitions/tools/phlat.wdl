@@ -3,11 +3,8 @@ version 1.0
 task phlat {
   input {
     String phlat_name = "phlat" 
-    # String name = basename(cram, ".*") # extra opt
     File cram
-    File cram_crai
     File reference
-    File reference_fai
     Int nthreads = 8
     Int mem = 20
     String index_dir = "" # optional if indexes are within run.b38.sh default dir
@@ -30,24 +27,26 @@ task phlat {
   >>>
 
   output {
-    File phlat_summary = phlat_name + "_result.sum"
+    File phlat_summary = "/usr/bin/phlat-release/example/results/${phlat_name}_result.sum"
   }
 }
 
 workflow wf {
   input {
-    String? phlat
+    String? phlat_name
     File cram
-    File cram_crai
     File reference
-    File reference_fai
+    Int nthreads? nthreads
+    Int mem? mem
+    String index_dir? index_dir 
   }
-  call optitypeDna {
+  call phlat {
     input:
     phlat_name=phlat_name,
     cram=cram,
-    cram_crai=cram_crai,
     reference=reference,
-    reference_fai=reference_fai,
+    nthreads=nthreads,
+    mem=mem,
+    index_dir=index_dir,
   }
 } 
