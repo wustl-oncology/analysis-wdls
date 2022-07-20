@@ -624,5 +624,6 @@ workflow immuno {
     Array[File] hla_typing_tumor = [optitype.optitype_tsv]
     Array[File] pvacfuse_predictions = pvacfuse.pvacfuse_predictions
     Array[File] fusioninspector_evidence = rna.fusioninspector_evidence
+    Array[File] PHLAT = [phlat.phlat_summary]
   }
 }
