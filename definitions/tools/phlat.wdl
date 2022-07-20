@@ -4,7 +4,9 @@ task phlat {
   input {
     String phlat_name = "phlat" 
     File cram
+    File cram_crai
     File reference
+    File reference_fai
     Int nthreads = 8
     Int mem = 20
     String index_dir = "" # optional if indexes are within run.b38.sh default dir
@@ -35,7 +37,9 @@ workflow wf {
   input {
     String? phlat_name
     File cram
+    File cram_crai
     File reference
+    File reference_fai
     Int? nthreads
     Int? mem
     String? index_dir 
@@ -44,7 +48,9 @@ workflow wf {
     input:
     phlat_name=phlat_name,
     cram=cram,
+    cram_crai=cram_crai,
     reference=reference,
+    reference_fai=reference_fai,
     nthreads=nthreads,
     mem=mem,
     index_dir=index_dir,
