@@ -14,7 +14,7 @@ task phlat {
   runtime {
     memory: "~{mem}GB"
     cpu: nthreads
-    docker: "laljorani/phlat:latest"
+    docker: "mgibio/phlat:1.1_withindex"
     disks: "local-disk ~{space_needed_gb} HDD"
     bootDiskSizeGb: 3*space_needed_gb
   }
