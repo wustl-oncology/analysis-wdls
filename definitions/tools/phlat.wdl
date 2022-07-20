@@ -36,9 +36,9 @@ workflow wf {
     String? phlat_name
     File cram
     File reference
-    Int nthreads? nthreads
-    Int mem? mem
-    String index_dir? index_dir 
+    Int? nthreads
+    Int? mem
+    String? index_dir 
   }
   call phlat {
     input:

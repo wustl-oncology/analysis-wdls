@@ -349,12 +349,8 @@ workflow immuno {
 
   call ph.phlat {
     input:
-    phlat_name="phlat",
     cram=somaticExome.tumor_cram,
     reference=reference,
-    nthreads="",
-    mem="",
-    index_dir=""
   } 
 
   call pv.phaseVcf {
