@@ -16,12 +16,12 @@ task optitypeDna {
     memory: "~{mem}GB"
     cpu: threads 
     docker: "laljorani20/immuno-tools:latest"
-    disks: "local-disk ~{space_needed_gb} SSD"
+    disks: "local-disk ~{space_needed_gb} HDD"
     bootDiskSizeGb: 3*space_needed_gb
   }
 
   command <<<
-    /bin/bash /usr/bin/optitype_script_wdl.sh /tmp . \
+    /bin/bash /usr/bin/optitype_script_wdl_improved.sh /tmp . \
     ~{optitype_name} ~{cram} ~{reference} ~{threads} ~{mem}
   >>>
 
