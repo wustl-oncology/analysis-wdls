@@ -22,9 +22,9 @@ task phlat {
   }
 
   command <<<
-    /bin/bash /usr/bin/run.b38.sh       \
-    --tag ~{phlat_name} --bam ~{cram}   \ 
-    --ref-fasta ~{reference}            \
+    /bin/bash /usr/bin/run.b38.sh \
+    --tag ~{phlat_name} --bam ~{cram} \ 
+    --ref-fasta ~{reference} \
     --rs-dir . --index-dir ~{index_dir}
   >>>
 
