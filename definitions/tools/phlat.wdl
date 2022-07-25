@@ -25,11 +25,11 @@ task phlat {
     /bin/bash /usr/bin/run.b38.sh       \
     --tag ~{phlat_name} --bam ~{cram}   \ 
     --ref-fasta ~{reference}            \
-    --index-dir ~{index_dir}
+    --rs-dir . --index-dir ~{index_dir}
   >>>
 
   output {
-    File phlat_summary = "/usr/bin/phlat-release/example/results/${phlat_name}_result.sum"
+    File phlat_summary = phlat_name + "_result.sum"
   }
 }
 
