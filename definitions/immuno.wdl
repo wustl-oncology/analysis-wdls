@@ -612,6 +612,8 @@ workflow immuno {
       hlaConsensus.hla_call_files
     ])
 
+    Array[File] phlat_hla_typing_normal = [germlineExome.phlat_summary]
+
     # --------- Other Outputs ------------------------------------------
 
     Array[File] pvactools = flatten([
@@ -626,6 +628,6 @@ workflow immuno {
     Array[File] hla_typing_tumor = [optitype.optitype_tsv]
     Array[File] pvacfuse_predictions = pvacfuse.pvacfuse_predictions
     Array[File] fusioninspector_evidence = rna.fusioninspector_evidence
-    Array[File] PHLAT = [phlat.phlat_summary]
+    Array[File] phlat_hla_typing_tumor = [phlat.phlat_summary]
   }
 }

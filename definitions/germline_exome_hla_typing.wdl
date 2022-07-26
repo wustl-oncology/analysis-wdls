@@ -3,6 +3,7 @@ version 1.0
 import "germline_exome.wdl" as ge
 import "types.wdl"  # !UnusedImport
 import "tools/optitype_dna.wdl" as od
+import "tools/phlat.wdl" as ph
 
 workflow germlineExomeHlaTyping {
   input {
@@ -88,6 +89,14 @@ workflow germlineExomeHlaTyping {
     optitype_name=optitype_name
   }
 
+  call ph.phlat {
+    input:
+    reference=reference,
+    reference_fai=reference_fai,
+    cram=germlineExome.cram,
+    cram_crai=germlineExome.cram_crai
+  }
+
   output {
     File cram = germlineExome.cram
     File mark_duplicates_metrics = germlineExome.mark_duplicates_metrics
@@ -112,5 +121,6 @@ workflow germlineExomeHlaTyping {
     File vep_summary = germlineExome.vep_summary
     File optitype_tsv = optitype.optitype_tsv
     File optitype_plot = optitype.optitype_plot
+    File phlat_summary = phlat.phlat_summary 
   }
 }
