@@ -7,7 +7,7 @@ task optitypeDna {
     File cram_crai
     File reference
     File reference_fai
-    Int nthreads = 8
+    Int threads = 8
     Int mem = 50
   }
 
@@ -22,7 +22,7 @@ task optitypeDna {
 
   command <<<
     /bin/bash /usr/bin/optitype_script_wdl_improved.sh /tmp . \
-    ~{optitype_name} ~{cram} ~{reference} ~{nthreads} ~{mem}
+    ~{optitype_name} ~{cram} ~{reference} ~{threads} ~{mem}
   >>>
 
   output {
@@ -38,7 +38,7 @@ workflow wf {
     File cram_crai
     File reference
     File reference_fai
-    Int? nthreads
+    Int? threads
     Int? mem
   }
   call optitypeDna {
@@ -48,7 +48,7 @@ workflow wf {
     cram_crai=cram_crai,
     reference=reference,
     reference_fai=reference_fai,
-    nthreads=nthreads,
+    threads=threads,
     mem=mem
   }
 }
