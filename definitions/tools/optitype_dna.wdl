@@ -7,10 +7,10 @@ task optitypeDna {
     File cram_crai
     File reference
     File reference_fai
+    Int nthreads = 8
+    Int mem = 50
   }
 
-  Int threads = 8 
-  Int mem = 50
   Int space_needed_gb = 10 + round(5*size([cram, cram_crai, reference, reference_fai], "GB"))
   runtime {
     memory: "~{mem}GB"
@@ -22,7 +22,7 @@ task optitypeDna {
 
   command <<<
     /bin/bash /usr/bin/optitype_script_wdl_improved.sh /tmp . \
-    ~{optitype_name} ~{cram} ~{reference} ~{threads} ~{mem}
+    ~{optitype_name} ~{cram} ~{reference} ~{nthreads} ~{mem}
   >>>
 
   output {
@@ -38,6 +38,8 @@ workflow wf {
     File cram_crai
     File reference
     File reference_fai
+    Int? nthreads
+    Int? mem
   }
   call optitypeDna {
     input:
@@ -46,5 +48,7 @@ workflow wf {
     cram_crai=cram_crai,
     reference=reference,
     reference_fai=reference_fai,
+    nthreads=nthreads,
+    mem=mem
   }
 }
