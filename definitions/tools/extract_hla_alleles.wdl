@@ -2,7 +2,7 @@ version 1.0
 
 task extractHlaAlleles {
   input {
-    File optitype_file
+    File file
     File phlat_file
   }
 
@@ -15,7 +15,7 @@ task extractHlaAlleles {
 
   String outname = "helper.txt"
   command <<<
-    /usr/bin/awk '{FS="\t";getline;for(n=2;n<=NF-2;n++){if($n==""){}else{printf "HLA-"$n"\n"}}}' ~{optitype_file} > ~{outname}
+    /usr/bin/awk '{FS="\t";getline;for(n=2;n<=NF-2;n++){if($n==""){}else{printf "HLA-"$n"\n"}}}' ~{file} > ~{outname}
     cat ~(phlat_file) | tail -3 | /usr/bin/awk '{FS="\t";if($2==""){}else{printf "HLA-"$2"\n"};if($3==""){}else{printf "HLA-"$3"\n"}}' >> ~{outname}
   >>>
 
@@ -27,12 +27,12 @@ task extractHlaAlleles {
 
 workflow wf {
   input {
-    File optitype_file 
+    File file 
     File phlat_file 
   }
   call extractHlaAlleles { 
     input: 
-    optitype_file=optitype_file,
+    file=file,
     phlat_file=phlat_file 
   }
 }
