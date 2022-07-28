@@ -371,7 +371,7 @@ workflow immuno {
 
   call eha.extractHlaAlleles as extractAlleles {
     input:
-    optitype_file=germlineExome.optitype_tsv, 
+    file=germlineExome.optitype_tsv, 
     phlat_file=germlineExome.phlat_summary
   }
 
