@@ -21,7 +21,7 @@ task optitypeDna {
   }
 
   command <<<
-    /bin/bash /usr/bin/optitype_script_wdl_improved.sh /tmp . \
+    /bin/bash /usr/bin/optitype_script_wdl.sh /tmp . \
     ~{optitype_name} ~{cram} ~{reference} ~{threads} ~{mem}
   >>>
 
