@@ -14,7 +14,7 @@ task extractHlaAlleles {
 
   String outname = "helper.txt"
   command <<<
-    /usr/bin/awk '{getline; printf "HLA-"$2 "\nHLA-"$3 "\nHLA-"$4 "\nHLA-"$5 "\nHLA-"$6 "\nHLA-"$7}' ~{file} > ~{outname}
+    /usr/bin/awk '{FS="\t";getline;for(n=2;n<=NF-2;n++){if($n==""){}else{printf "HLA-"$n"\n"}}}' ~{file} > ~{outname}
   >>>
 
   output {
