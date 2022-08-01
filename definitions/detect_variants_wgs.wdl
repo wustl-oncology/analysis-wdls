@@ -48,7 +48,7 @@ workflow detectVariantsWgs {
     String vep_ensembl_species
     File? synonyms_file
     Boolean? annotate_coding_only
-    String vep_pick  # enum ["pick", "flag_pick", "pick_allele", "per_gene", "pick_allele_gene", "flag_pick_allele", "flag_pick_allele_gene"]
+    String? vep_pick  # enum ["pick", "flag_pick", "pick_allele", "per_gene", "pick_allele_gene", "flag_pick_allele", "flag_pick_allele_gene"]
     Array[String] vep_plugins = ["Frameshift", "Wildtype"]
 
     String gnomad_field_name = "gnomADe_AF"  # only change with gnomad_filter_annotation
