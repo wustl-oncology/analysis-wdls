@@ -9,7 +9,7 @@ task markDuplicatesAndSort {
   Int space_needed_gb = 10 + round(5*size(bam, "GB"))
   #estimate 15M reads per Gb size of bam
   #markdup is listed as 2Gb per 100M reads
-  Int mem_needed_gb = round(((size(bam, "GB")*15)/100)*2)+20
+  Int mem_needed_gb = round(((size(bam, "GB")*15)/100)*2)+32
   runtime {
     docker: "quay.io/biocontainers/sambamba:0.8.2--h98b6b92_2"
     memory: "~{mem_needed_gb}GB"

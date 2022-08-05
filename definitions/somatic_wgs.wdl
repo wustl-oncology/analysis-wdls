@@ -1,12 +1,15 @@
 version 1.0
 
-import "alignment_wgs.wdl" as aw
+import "subworkflows/sequence_to_bqsr.wdl" as s2b
+import "subworkflows/qc_wgs.wdl" as qe
+
 import "detect_variants_wgs.wdl" as dvw
 
 import "tools/bam_to_cram.wdl" as btc
 import "tools/concordance.wdl" as c
 import "tools/index_cram.wdl" as ic
 import "tools/manta_somatic.wdl" as ms
+import "tools/cnvkit_batch.wdl" as cb
 
 import "types.wdl"
 
@@ -35,7 +38,6 @@ workflow somaticWgs {
     Array[LabelledFile] per_base_intervals
     Array[LabelledFile] per_target_intervals
     Array[LabelledFile] summary_intervals
-    File qc_intervals
 
     File omni_vcf
     File omni_vcf_tbi
@@ -68,7 +70,7 @@ workflow somaticWgs {
     String vep_ensembl_species
     File? synonyms_file
     Boolean? annotate_coding_only
-    String vep_pick  # enum ["pick", "flag_pick", "pick_allele", "per_gene", "pick_allele_gene", "flag_pick_allele", "flag_pick_allele_gene"]
+    String? vep_pick  # enum ["pick", "flag_pick", "pick_allele", "per_gene", "pick_allele_gene", "flag_pick_allele", "flag_pick_allele_gene"]
     Boolean cle_vcf_filter = false
     Array[String] variants_to_table_fields = ["CHROM", "POS", "ID", "REF", "ALT", "set", "AC", "AF"]
     Array[String] variants_to_table_genotype_fields = ["GT", "AD"]
@@ -81,12 +83,14 @@ workflow somaticWgs {
     String normal_sample_name
     File? validated_variants
     File? validated_variants_tbi
+
+    #approximate size of split target bins for CNVkit; if not set a suitable window size will be set by CNVkit automatically
+    Int? cnvkit_target_average_size
   }
 
-  call aw.alignmentWgs as tumorAlignmentAndQc {
+
+  call s2b.sequenceToBqsr as tumorAlignment {
     input:
-    sample_name=tumor_name,
-    sequence=tumor_sequence,
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
@@ -96,24 +100,32 @@ workflow somaticWgs {
     reference_bwt=reference_bwt,
     reference_pac=reference_pac,
     reference_0123=reference_0123,
+    unaligned=tumor_sequence,
     trimming=trimming,
-    omni_vcf=omni_vcf,
-    omni_vcf_tbi=omni_vcf_tbi,
-    intervals=qc_intervals,
-    picard_metric_accumulation_level=picard_metric_accumulation_level,
     bqsr_known_sites=bqsr_known_sites,
     bqsr_known_sites_tbi=bqsr_known_sites_tbi,
-    minimum_mapping_quality=qc_minimum_mapping_quality,
-    minimum_base_quality=qc_minimum_base_quality,
+    final_name=tumor_name
+  }
+  call qe.qcWgs as tumorQc {
+    input:
+    bam=tumorAlignment.final_bam,
+    bam_bai=tumorAlignment.final_bam_bai,
+    reference=reference,
+    reference_fai=reference_fai,
+    reference_dict=reference_dict,
     per_base_intervals=per_base_intervals,
     per_target_intervals=per_target_intervals,
-    summary_intervals=summary_intervals
+    intervals=target_intervals,
+    summary_intervals=summary_intervals,
+    omni_vcf=omni_vcf,
+    omni_vcf_tbi=omni_vcf_tbi,
+    picard_metric_accumulation_level=picard_metric_accumulation_level,
+    minimum_mapping_quality=qc_minimum_mapping_quality,
+    minimum_base_quality=qc_minimum_base_quality
   }
 
-  call aw.alignmentWgs as normalAlignmentAndQc {
+  call s2b.sequenceToBqsr as normalAlignment {
     input:
-    sample_name=normal_name,
-    sequence=normal_sequence,
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
@@ -123,18 +135,29 @@ workflow somaticWgs {
     reference_bwt=reference_bwt,
     reference_pac=reference_pac,
     reference_0123=reference_0123,
+    unaligned=normal_sequence,
     trimming=trimming,
-    omni_vcf=omni_vcf,
-    omni_vcf_tbi=omni_vcf_tbi,
-    intervals=qc_intervals,
-    picard_metric_accumulation_level=picard_metric_accumulation_level,
     bqsr_known_sites=bqsr_known_sites,
     bqsr_known_sites_tbi=bqsr_known_sites_tbi,
-    minimum_mapping_quality=qc_minimum_mapping_quality,
-    minimum_base_quality=qc_minimum_base_quality,
+    final_name=normal_name
+  }
+
+  call qe.qcWgs as normalQc {
+    input:
+    bam=normalAlignment.final_bam,
+    bam_bai=normalAlignment.final_bam_bai,
+    reference=reference,
+    reference_fai=reference_fai,
+    reference_dict=reference_dict,
     per_base_intervals=per_base_intervals,
     per_target_intervals=per_target_intervals,
-    summary_intervals=summary_intervals
+    intervals=target_intervals,
+    summary_intervals=summary_intervals,
+    omni_vcf=omni_vcf,
+    omni_vcf_tbi=omni_vcf_tbi,
+    picard_metric_accumulation_level=picard_metric_accumulation_level,
+    minimum_mapping_quality=qc_minimum_mapping_quality,
+    minimum_base_quality=qc_minimum_base_quality
   }
 
   call c.concordance {
@@ -142,10 +165,10 @@ workflow somaticWgs {
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
-    bam_1=tumorAlignmentAndQc.bam,
-    bam_1_bai=tumorAlignmentAndQc.bam_bai,
-    bam_2=normalAlignmentAndQc.bam,
-    bam_2_bai=normalAlignmentAndQc.bam_bai,
+    bam_1=tumorAlignment.final_bam,
+    bam_1_bai=tumorAlignment.final_bam_bai,
+    bam_2=normalAlignment.final_bam,
+    bam_2_bai=normalAlignment.final_bam_bai,
     vcf=somalier_vcf
   }
 
@@ -154,10 +177,10 @@ workflow somaticWgs {
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
-    tumor_bam=tumorAlignmentAndQc.bam,
-    tumor_bam_bai=tumorAlignmentAndQc.bam_bai,
-    normal_bam=normalAlignmentAndQc.bam,
-    normal_bam_bai=normalAlignmentAndQc.bam_bai,
+    tumor_bam=tumorAlignment.final_bam,
+    tumor_bam_bai=tumorAlignment.final_bam_bai,
+    normal_bam=normalAlignment.final_bam,
+    normal_bam_bai=normalAlignment.final_bam_bai,
     roi_intervals=target_intervals,
     strelka_exome_mode=false,
     strelka_cpu_reserved=strelka_cpu_reserved,
@@ -195,10 +218,10 @@ workflow somaticWgs {
 
   call ms.mantaSomatic as manta {
     input:
-    normal_bam=normalAlignmentAndQc.bam,
-    normal_bam_bai=normalAlignmentAndQc.bam_bai,
-    tumor_bam=tumorAlignmentAndQc.bam,
-    tumor_bam_bai=tumorAlignmentAndQc.bam_bai,
+    normal_bam=normalAlignment.final_bam,
+    normal_bam_bai=normalAlignment.final_bam_bai,
+    tumor_bam=tumorAlignment.final_bam,
+    tumor_bam_bai=tumorAlignment.final_bam_bai,
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
@@ -206,9 +229,20 @@ workflow somaticWgs {
     output_contigs=manta_output_contigs
   }
 
+  call cb.cnvkitBatch as cnvkit {
+    input:
+    tumor_bam=tumorAlignment.final_bam,
+    tumor_bam_bai=tumorAlignment.final_bam_bai,
+    normal_bam=normalAlignment.final_bam,
+    normal_bam_bai=normalAlignment.final_bam_bai,
+    reference_fasta=reference,
+    target_average_size=cnvkit_target_average_size,
+    method="wgs"
+  }
+
   call btc.bamToCram as tumorBamToCram {
     input:
-    bam=tumorAlignmentAndQc.bam,
+    bam=tumorAlignment.final_bam,
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict
@@ -220,7 +254,7 @@ workflow somaticWgs {
 
   call btc.bamToCram as normalBamToCram {
     input:
-    bam=normalAlignmentAndQc.bam,
+    bam=normalAlignment.final_bam,
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict
@@ -233,40 +267,40 @@ workflow somaticWgs {
 
   output {
     File tumor_cram = tumorIndexCram.indexed_cram
-    File tumor_mark_duplicates_metrics = tumorAlignmentAndQc.mark_duplicates_metrics
-    File tumor_insert_size_metrics = tumorAlignmentAndQc.insert_size_metrics
-    File tumor_alignment_summary_metrics = tumorAlignmentAndQc.alignment_summary_metrics
-    Array[File] tumor_per_target_coverage_metrics = tumorAlignmentAndQc.per_target_coverage_metrics
-    Array[File] tumor_per_target_hs_metrics = tumorAlignmentAndQc.per_target_hs_metrics
-    Array[File] tumor_per_base_coverage_metrics = tumorAlignmentAndQc.per_base_coverage_metrics
-    Array[File] tumor_per_base_hs_metrics = tumorAlignmentAndQc.per_base_hs_metrics
-    Array[File] tumor_summary_hs_metrics = tumorAlignmentAndQc.summary_hs_metrics
-    File tumor_flagstats = tumorAlignmentAndQc.flagstats
-    File tumor_verify_bam_id_metrics = tumorAlignmentAndQc.verify_bam_id_metrics
-    File tumor_verify_bam_id_depth = tumorAlignmentAndQc.verify_bam_id_depth
-    File tumor_insert_size_histogram = tumorAlignmentAndQc.insert_size_histogram
-    File tumor_gc_bias_metrics = tumorAlignmentAndQc.gc_bias_metrics
-    File tumor_gc_bias_metrics_chart = tumorAlignmentAndQc.gc_bias_metrics_chart
-    File tumor_gc_bias_metrics_summary = tumorAlignmentAndQc.gc_bias_metrics_summary
-    File tumor_wgs_metrics = tumorAlignmentAndQc.wgs_metrics
+    File tumor_mark_duplicates_metrics = tumorAlignment.mark_duplicates_metrics_file
+    File tumor_insert_size_metrics = tumorQc.insert_size_metrics
+    File tumor_alignment_summary_metrics = tumorQc.alignment_summary_metrics
+    Array[File] tumor_per_target_coverage_metrics = tumorQc.per_target_coverage_metrics
+    Array[File] tumor_per_target_hs_metrics = tumorQc.per_target_hs_metrics
+    Array[File] tumor_per_base_coverage_metrics = tumorQc.per_base_coverage_metrics
+    Array[File] tumor_per_base_hs_metrics = tumorQc.per_base_hs_metrics
+    Array[File] tumor_summary_hs_metrics = tumorQc.summary_hs_metrics
+    File tumor_flagstats = tumorQc.flagstats
+    File tumor_verify_bam_id_metrics = tumorQc.verify_bam_id_metrics
+    File tumor_verify_bam_id_depth = tumorQc.verify_bam_id_depth
+    File tumor_insert_size_histogram = tumorQc.insert_size_histogram
+    File tumor_gc_bias_metrics = tumorQc.gc_bias_metrics
+    File tumor_gc_bias_metrics_chart = tumorQc.gc_bias_metrics_chart
+    File tumor_gc_bias_metrics_summary = tumorQc.gc_bias_metrics_summary
+    File tumor_wgs_metrics = tumorQc.wgs_metrics
 ##normal alignment and qc
     File normal_cram = normalIndexCram.indexed_cram
-    File normal_mark_duplicates_metrics = normalAlignmentAndQc.mark_duplicates_metrics
-    File normal_insert_size_metrics = normalAlignmentAndQc.insert_size_metrics
-    File normal_alignment_summary_metrics = normalAlignmentAndQc.alignment_summary_metrics
-    Array[File] normal_per_target_coverage_metrics = normalAlignmentAndQc.per_target_coverage_metrics
-    Array[File] normal_per_target_hs_metrics = normalAlignmentAndQc.per_target_hs_metrics
-    Array[File] normal_per_base_coverage_metrics = normalAlignmentAndQc.per_base_coverage_metrics
-    Array[File] normal_per_base_hs_metrics = normalAlignmentAndQc.per_base_hs_metrics
-    Array[File] normal_summary_hs_metrics = normalAlignmentAndQc.summary_hs_metrics
-    File normal_flagstats = normalAlignmentAndQc.flagstats
-    File normal_verify_bam_id_metrics = normalAlignmentAndQc.verify_bam_id_metrics
-    File normal_verify_bam_id_depth = normalAlignmentAndQc.verify_bam_id_depth
-    File normal_insert_size_histogram = normalAlignmentAndQc.insert_size_histogram
-    File normal_gc_bias_metrics = normalAlignmentAndQc.gc_bias_metrics
-    File normal_gc_bias_metrics_chart = normalAlignmentAndQc.gc_bias_metrics_chart
-    File normal_gc_bias_metrics_summary = normalAlignmentAndQc.gc_bias_metrics_summary
-    File normal_wgs_metrics = normalAlignmentAndQc.wgs_metrics
+    File normal_mark_duplicates_metrics = normalAlignment.mark_duplicates_metrics_file
+    File normal_insert_size_metrics = normalQc.insert_size_metrics
+    File normal_alignment_summary_metrics = normalQc.alignment_summary_metrics
+    Array[File] normal_per_target_coverage_metrics = normalQc.per_target_coverage_metrics
+    Array[File] normal_per_target_hs_metrics = normalQc.per_target_hs_metrics
+    Array[File] normal_per_base_coverage_metrics = normalQc.per_base_coverage_metrics
+    Array[File] normal_per_base_hs_metrics = normalQc.per_base_hs_metrics
+    Array[File] normal_summary_hs_metrics = normalQc.summary_hs_metrics
+    File normal_flagstats = normalQc.flagstats
+    File normal_verify_bam_id_metrics = normalQc.verify_bam_id_metrics
+    File normal_verify_bam_id_depth = normalQc.verify_bam_id_depth
+    File normal_insert_size_histogram = normalQc.insert_size_histogram
+    File normal_gc_bias_metrics = normalQc.gc_bias_metrics
+    File normal_gc_bias_metrics_chart = normalQc.gc_bias_metrics_chart
+    File normal_gc_bias_metrics_summary = normalQc.gc_bias_metrics_summary
+    File normal_wgs_metrics = normalQc.wgs_metrics
 ##variant calling
     File mutect_unfiltered_vcf = detectVariants.mutect_unfiltered_vcf
     File mutect_unfiltered_vcf_tbi = detectVariants.mutect_unfiltered_vcf_tbi
@@ -292,6 +326,7 @@ workflow somaticWgs {
     File tumor_indel_bam_readcount_tsv = detectVariants.tumor_indel_bam_readcount_tsv
     File normal_snv_bam_readcount_tsv = detectVariants.normal_snv_bam_readcount_tsv
     File normal_indel_bam_readcount_tsv = detectVariants.normal_indel_bam_readcount_tsv
+    #manta
     File? diploid_variants = manta.diploid_variants
     File? diploid_variants_tbi = manta.diploid_variants_tbi
     File? somatic_variants = manta.somatic_variants
@@ -302,6 +337,19 @@ workflow somaticWgs {
     File small_candidates_tbi = manta.small_candidates_tbi
     File? tumor_only_variants = manta.tumor_only_variants
     File? tumor_only_variants_tbi = manta.tumor_only_variants_tbi
+    #cnvkit
+    File? intervals_antitarget = cnvkit.intervals_antitarget
+    File? intervals_target = cnvkit.intervals_target
+    File? normal_antitarget_coverage = cnvkit.normal_antitarget_coverage
+    File? normal_target_coverage = cnvkit.normal_target_coverage
+    File? reference_coverage = cnvkit.reference_coverage
+    File tumor_antitarget_coverage = cnvkit.tumor_antitarget_coverage
+    File tumor_target_coverage = cnvkit.tumor_target_coverage
+    File tumor_bin_level_ratios = cnvkit.tumor_bin_level_ratios
+    File tumor_segmented_ratios = cnvkit.tumor_segmented_ratios
+    File? cn_diagram = cnvkit.cn_diagram
+    File? cn_scatter_plot = cnvkit.cn_scatter_plot
+
 ##sample concordance check
     File somalier_concordance_metrics = concordance.somalier_pairs
     File somalier_concordance_statistics = concordance.somalier_samples
