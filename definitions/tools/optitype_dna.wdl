@@ -15,7 +15,7 @@ task optitypeDna {
   runtime {
     memory: "~{mem}GB"
     cpu: threads 
-    docker: "laljorani20/immuno-tools:latest"
+    docker: "mgibio/immuno_tools-cwl:1.0.2."
     disks: "local-disk ~{space_needed_gb} HDD"
     bootDiskSizeGb: 3*space_needed_gb
   }
