@@ -7,19 +7,22 @@ task optitypeDna {
     File cram_crai
     File reference
     File reference_fai
+    Int threads = 8
+    Int mem = 50
   }
 
   Int space_needed_gb = 10 + round(5*size([cram, cram_crai, reference, reference_fai], "GB"))
   runtime {
-    memory: "64GB"
-    docker: "mgibio/immuno_tools-cwl:1.0.1"
+    memory: "~{mem}GB"
+    cpu: threads 
+    docker: "mgibio/immuno_tools-cwl:1.0.2"
     disks: "local-disk ~{space_needed_gb} HDD"
     bootDiskSizeGb: 3*space_needed_gb
   }
 
   command <<<
-    /bin/bash /usr/bin/optitype_script.sh /tmp . \
-    ~{optitype_name} ~{cram} ~{reference}
+    /bin/bash /usr/bin/optitype_script_wdl.sh /tmp . \
+    ~{optitype_name} ~{cram} ~{reference} ~{threads} ~{mem}
   >>>
 
   output {
@@ -35,6 +38,8 @@ workflow wf {
     File cram_crai
     File reference
     File reference_fai
+    Int? threads
+    Int? mem
   }
   call optitypeDna {
     input:
@@ -43,5 +48,7 @@ workflow wf {
     cram_crai=cram_crai,
     reference=reference,
     reference_fai=reference_fai,
+    threads=threads,
+    mem=mem
   }
 }
