@@ -23,7 +23,7 @@ task filterVcfMapq0 {
 
   String outfile = "mapq_filtered.vcf.gz"
   command <<<
-    /bin/bash /usr/bin/mapq0_vcf_filter.sh ~{outfile} ~{vcf} ~{tumor_bam} ~{reference} ~{threshold}
+    /bin/bash /usr/bin/mapq0_vcf_filter.sh `pwd` ~{vcf} ~{tumor_bam} ~{reference} ~{threshold}
   >>>
 
   output {
