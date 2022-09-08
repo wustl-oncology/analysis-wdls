@@ -5,15 +5,12 @@ task filterVcfMapq0 {
     File vcf
     File tumor_bam
     File tumor_bam_bai
-    File reference
-    File reference_fai
-    File reference_dict
+    String sample_name
     Float threshold
   }
 
-  Float reference_size = size([reference, reference_fai, reference_dict], "GB")
   Float bam_size = size([tumor_bam, tumor_bam_bai], "GB")
-  Int space_needed_gb = 10 + round(reference_size + bam_size + 2*size(vcf, "GB"))
+  Int space_needed_gb = 10 + round(bam_size + 2*size(vcf, "GB"))
   runtime {
     docker: "mgibio/mapq0-filter:v0.5.3"
     memory: "8GB"
@@ -23,7 +20,7 @@ task filterVcfMapq0 {
 
   String outfile = "mapq_filtered.vcf.gz"
   command <<<
-    /bin/bash /usr/bin/mapq0_vcf_filter.sh `pwd` ~{vcf} ~{tumor_bam} ~{reference} ~{threshold}
+    /bin/bash /usr/bin/mapq0_vcf_filter.sh `pwd` ~{vcf} ~{tumor_bam} ~{threshold} ~{sample_name}
   >>>
 
   output {
@@ -37,9 +34,7 @@ workflow wf {
     File vcf
     File tumor_bam
     File tumor_bam_bai
-    File reference
-    File reference_fai
-    File reference_dict
+    String sample_name
     Float threshold
   }
   call filterVcfMapq0 {
@@ -47,9 +42,7 @@ workflow wf {
     vcf=vcf,
     tumor_bam=tumor_bam,
     tumor_bam_bai=tumor_bam_bai,
-    reference=reference,
-    reference_fai=reference_fai,
-    reference_dict=reference_dict,
+    sample_name=sample_name,
     threshold=threshold
   }
 }
