@@ -25,7 +25,6 @@ task filterVcfMapq0 {
 
   output {
     File mapq0_filtered_vcf = outfile
-    File mapq0_filtered_vcf_tbi = outfile + ".tbi"
   }
 }
 
