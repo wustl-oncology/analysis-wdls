@@ -29,9 +29,7 @@ workflow filterVcfNonhuman {
     vcf=vcf,
     tumor_bam=tumor_bam,
     tumor_bam_bai=tumor_bam_bai,
-    reference=reference,
-    reference_fai=reference_fai,
-    reference_dict=reference_dict,
+    sample_name=tumor_sample_name,
     threshold=filter_mapq0_threshold
   }
 
