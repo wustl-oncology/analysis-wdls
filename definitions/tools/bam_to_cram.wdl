@@ -8,6 +8,10 @@ task bamToCram {
     File bam
   }
 
+  parameter_meta {
+    bam: { localization_optional: true }
+  }
+
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
   Int size_needed_gb = 10 + round(size(bam, "GB") * 2 + reference_size)
   runtime {
@@ -18,6 +22,13 @@ task bamToCram {
 
   String outfile = basename(bam, ".bam") + ".cram"
   command <<<
+    ACCESS_TOKEN=$(wget -O - --header "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token?alt=text 2> /dev/null | grep access_token)
+    if [[ "$ACCESS_TOKEN" == "access_token"* ]]; then
+       # When the BAMs aren't localized in GCP, samtools needs this token to access them via gs:// URLs.
+       export GCS_OAUTH_TOKEN=$(echo "$ACCESS_TOKEN" | cut -d ' ' -f 2 )
+       echo "got token" ${GCS_OAUTH_TOKEN:0:5}
+    fi
+
     /usr/local/bin/samtools view -C -T ~{reference} ~{bam} > ~{outfile}
   >>>
 

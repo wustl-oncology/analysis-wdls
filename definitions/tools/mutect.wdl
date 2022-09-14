@@ -15,6 +15,13 @@ task mutect {
     File interval_list
   }
 
+  parameter_meta {
+    tumor_bam: { localization_optional: true }
+    tumor_bam_bai: { localization_optional: true }
+    normal_bam: { localization_optional: true }
+    normal_bam_bai: { localization_optional: true }
+  }
+
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
   Float bam_size = size([tumor_bam, tumor_bam_bai, normal_bam, normal_bam_bai], "GB")
   Int space_needed_gb = 10 + ceil(reference_size + 2*bam_size + size(interval_list, "GB"))
@@ -28,6 +35,12 @@ task mutect {
   String output_vcf = "mutect.filtered.vcf.gz"
   command <<<
     set -o pipefail
+
+    if [[ `curl metadata.google.internal -i 2> /dev/null | grep 'Metadata-Flavor:'` == "Metadata-Flavor: Google"* ]]; then
+       # When the BAMs aren't localized in GCP, samtools needs this token to access them via gs:// URLs.
+       export GCS_OAUTH_TOKEN=$(curl -H "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token?alt=text | grep access_token | cut -d ' ' -f 2)
+    fi
+
     set -o errexit
 
     NORMAL=$(samtools view -H ~{normal_bam} | perl -nE 'say $1 if /^\@RG.+\tSM:([ -~]+)/' | head -n 1)

@@ -18,6 +18,11 @@ task selectVariants {
     String? select_type
   }
 
+  parameter_meta {
+    vcf: { localization_optional: true }
+    vcf_tbi: { localization_optional: true }
+  }
+
   Int space_needed_gb = 10 + round(size([vcf, vcf_tbi], "GB")*3 + size([reference, reference_fai, reference_dict, interval_list], "GB"))
   runtime {
     docker: "broadinstitute/gatk:4.1.8.1"
