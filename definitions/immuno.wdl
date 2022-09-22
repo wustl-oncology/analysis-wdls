@@ -335,20 +335,21 @@ workflow immuno {
     annotate_coding_only=annotate_coding_only,
     qc_minimum_mapping_quality=qc_minimum_mapping_quality,
     qc_minimum_base_quality=qc_minimum_base_quality,
-    optitype_name=optitype_name
+    optitype_name="normal"
   }
 
   call od.optitypeDna as optitype {
-    input:
+    input: 
+    optitype_name="tumor"
     reference=reference,
     reference_fai=reference_fai,
     cram=somaticExome.tumor_cram,
     cram_crai=somaticExome.tumor_cram_crai,
-    optitype_name=optitype_name
   }
 
   call ph.phlat {
     input:
+    phlat_name="tumor"
     cram=somaticExome.tumor_cram,
     cram_crai=somaticExome.tumor_cram_crai,
     reference=reference,
@@ -609,12 +610,14 @@ workflow immuno {
     Array[File] hla_typing_normal = flatten([
       [germlineExome.optitype_tsv,
        germlineExome.optitype_plot,
+       optitype.optitype_tsv,
+       optitype.optitype_plot,
+       germlineExome.phlat_summary,
+       phlat.phlat_summary,
        extractAlleles.allele_file,
        hlaConsensus.consensus_alleles_file],
       hlaConsensus.hla_call_files
     ])
-
-    Array[File] phlat_hla_typing_normal = [germlineExome.phlat_summary]
 
     # --------- Other Outputs ------------------------------------------
 
@@ -627,9 +630,9 @@ workflow immuno {
     File annotated_vcf = pvacseq.annotated_vcf
     File annotated_tsv = pvacseq.annotated_tsv
 
-    Array[File] hla_typing_tumor = [optitype.optitype_tsv]
     Array[File] pvacfuse_predictions = pvacfuse.pvacfuse_predictions
     Array[File] fusioninspector_evidence = rna.fusioninspector_evidence
-    Array[File] phlat_hla_typing_tumor = [phlat.phlat_summary]
   }
 }
+
+

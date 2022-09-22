@@ -26,7 +26,7 @@ task phlat {
   >>>
 
   output {
-    File phlat_summary = phlat_name + "_HLA.sum"
+    File phlat_summary = "phlat_" + phlat_name + ".sum"
   }
 }
 
