@@ -347,7 +347,7 @@ workflow immuno {
 
   call od.optitypeDna as optitype {
     input: 
-    optitype_name="tumor"
+    optitype_name="tumor",
     reference=reference,
     reference_fai=reference_fai,
     cram=somaticExome.tumor_cram,
@@ -356,7 +356,7 @@ workflow immuno {
 
   call ph.phlat {
     input:
-    phlat_name="tumor"
+    phlat_name="tumor",
     cram=somaticExome.tumor_cram,
     cram_crai=somaticExome.tumor_cram_crai,
     reference=reference,

@@ -91,7 +91,7 @@ workflow germlineExomeHlaTyping {
 
   call ph.phlat {
     input:
-    phlat_name="normal"
+    phlat_name="normal",
     reference=reference,
     reference_fai=reference_fai,
     cram=germlineExome.cram,
