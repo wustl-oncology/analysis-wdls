@@ -342,12 +342,12 @@ workflow immuno {
     annotate_coding_only=annotate_coding_only,
     qc_minimum_mapping_quality=qc_minimum_mapping_quality,
     qc_minimum_base_quality=qc_minimum_base_quality,
-    optitype_name="normal"
+    optitype_name="optitype_normal"
   }
 
   call od.optitypeDna as optitype {
     input: 
-    optitype_name="tumor",
+    optitype_name="optitype_tumor",
     reference=reference,
     reference_fai=reference_fai,
     cram=somaticExome.tumor_cram,
@@ -356,7 +356,7 @@ workflow immuno {
 
   call ph.phlat {
     input:
-    phlat_name="tumor",
+    phlat_name="phlat_tumor",
     cram=somaticExome.tumor_cram,
     cram_crai=somaticExome.tumor_cram_crai,
     reference=reference,
