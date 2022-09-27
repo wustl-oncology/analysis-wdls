@@ -114,9 +114,9 @@ task pvacseq {
     File? combined_filtered_epitopes = "pvacseq_predictions/combined/~{sample_name}.filtered.tsv"
     File? combined_aggregated_metrics_file = "pvacseq_predictions/combined/" + sample_name + ".all_epitopes.aggregated.metrics.json"
     
-    Array[File] mhc_i = [mhc_i_all_epitopes, mhc_i_aggregated_report, mhc_i_filtered_epitopes, mhc_i_aggregated_metrics_file] 
-    Array[File] mhc_ii = [mhc_ii_all_epitopes, mhc_ii_aggregated_report, mhc_ii_filtered_epitopes, mhc_ii_aggregated_metrics_file]
-    Array[File] combined = [combined_all_epitopes, combined_aggregated_report, combined_filtered_epitopes, combined_aggregated_metrics_file]
+    Array[File?] mhc_i = [mhc_i_all_epitopes, mhc_i_aggregated_report, mhc_i_filtered_epitopes, mhc_i_aggregated_metrics_file] 
+    Array[File?] mhc_ii = [mhc_ii_all_epitopes, mhc_ii_aggregated_report, mhc_ii_filtered_epitopes, mhc_ii_aggregated_metrics_file]
+    Array[File?] combined = [combined_all_epitopes, combined_aggregated_report, combined_filtered_epitopes, combined_aggregated_metrics_file]
 
     # Don't think this works the way it is intended. Refer to documentation.
     # https://github.com/openwdl/wdl/blob/main/versions/1.0/SPEC.md#globs
