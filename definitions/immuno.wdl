@@ -64,9 +64,9 @@ struct Germline {
 }
 
 struct MHC {
-  Array[File] mhc_i
-  Array[File] mhc_ii
-  Array[File] combined
+  Array[File?] mhc_i
+  Array[File?] mhc_ii
+  Array[File?] combined
   Array[File]? phase_vcf
 }
 
