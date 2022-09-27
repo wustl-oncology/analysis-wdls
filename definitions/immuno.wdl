@@ -63,6 +63,13 @@ struct Germline {
   Array[File?] variants
 }
 
+struct MHC {
+  Array[File] mhc_i
+  Array[File] mhc_ii
+  Array[File] combined
+  Array[File]? phase_vcf
+}
+
 
 workflow immuno {
   input {
@@ -621,16 +628,22 @@ workflow immuno {
 
     # --------- Other Outputs ------------------------------------------
 
-    Array[File] pvactools = flatten([
-      [phaseVcf.phased_vcf,
-       phaseVcf.phased_vcf_tbi],
-      pvacseq.pvacseq_predictions
-    ])
+    MHC pvactools = object {
+      mhc_i: pvacseq.mhc_i,
+      mhc_ii: pvacseq.mhc_ii,
+      combined: pvacseq.combined,
+      phase_vcf: [phaseVcf.phased_vcf, phaseVcf.phased_vcf_tbi]
+    }
+
+    MHC pvacfuse_predictions = object {
+      mhc_i: pvacfuse.mhc_i,
+      mhc_ii: pvacfuse.mhc_ii,
+      combined: pvacfuse.combined
+    }
 
     File annotated_vcf = pvacseq.annotated_vcf
     File annotated_tsv = pvacseq.annotated_tsv
 
-    Array[File] pvacfuse_predictions = pvacfuse.pvacfuse_predictions
     Array[File] fusioninspector_evidence = rna.fusioninspector_evidence
   }
 }
