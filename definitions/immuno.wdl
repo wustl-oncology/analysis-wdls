@@ -614,7 +614,7 @@ workflow immuno {
       ]
     }
 
-    Array[File] hla_typing_normal = flatten([
+    Array[File] hla_typing = flatten([
       [germlineExome.optitype_tsv,
        germlineExome.optitype_plot,
        optitype.optitype_tsv,
