@@ -21,7 +21,7 @@ task extractHlaAlleles {
   String temp = "temp.txt"
   command <<<
     /usr/bin/awk '{FS="\t";getline;for(n=2;n<=NF-2;n++){if($n==""){}else{printf "HLA-"$n"\n"}}}' ~{file} > ~{temp}
-    tail -n +5 ~{phlat_file} | /usr/bin/awk '{FS="\t";if($2==""){}else{printf $2"\n"};if($3==""){}else{printf $3"\n"}}' >> ~{temp}
+    grep "HLA_D" ~{phlat_file} | /usr/bin/awk '{FS="\t";if($2==""){}else{printf $2"\n"};if($3==""){}else{printf $3"\n"}}' >> ~{temp}
     /usr/bin/awk -F":" '{print $1 ":" $2}' ~{temp} > ~{outname}
   >>>
 
