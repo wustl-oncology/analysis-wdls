@@ -77,12 +77,11 @@ task pvacfuse {
     File? combined_aggregated_report = "pvacfuse_predictions/combined/~{sample_name}.all_epitopes.aggregated.tsv"
     File? combined_filtered_epitopes = "pvacfuse_predictions/combined/~{sample_name}.filtered.tsv"
 
-    Array[File?] mhc_i = [mhc_i_all_epitopes, mhc_i_aggregated_report, mhc_i_filtered_epitopes]
-    Array[File?] mhc_ii = [mhc_ii_all_epitopes, mhc_ii_aggregated_report, mhc_ii_filtered_epitopes]
-    Array[File?] combined = [combined_all_epitopes, combined_aggregated_report, combined_filtered_epitopes]
-
-    # I do not think the way glob is being used here works. Refer to documentation.
+    # glob documentation
     # https://github.com/openwdl/wdl/blob/main/versions/1.0/SPEC.md#globs
-    Array[File] pvacfuse_predictions = glob("pvacfuse_predictions/**/*")
+    Array[File] mhc_i = glob("pvacfuse_predictions/MHC_Class_I/*")
+    Array[File] mhc_ii = glob("pvacfuse_predictions/MHC_Class_II/*") 
+    Array[File] combined = glob("pvacfuse_predictions/combined/*")
+
   }
 }
