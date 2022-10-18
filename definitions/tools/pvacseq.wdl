@@ -50,7 +50,7 @@ task pvacseq {
   runtime {
     memory: "16GB"
     cpu: n_threads
-    docker: "laljorani20/pvactools:latest"
+    docker: "griffithlab/pvactools:3.1.0"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
