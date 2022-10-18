@@ -14,6 +14,13 @@ task docmGatkHaplotypeCaller {
     File interval_list
   }
 
+  parameter_meta {
+    bam: { localization_optional: true }
+    bam_bai: { localization_optional: true }
+    normal_bam: { localization_optional: true }
+    normal_bam_bai: { localization_optional: true }
+  }
+
   Float copied_size = size([docm_vcf, interval_list], "GB")
   Int space_needed_gb = 10 + round(copied_size*3 + size([reference, reference_fai, reference_dict, normal_bam, normal_bam_bai, bam, bam_bai, docm_vcf_tbi], "GB"))
   runtime {

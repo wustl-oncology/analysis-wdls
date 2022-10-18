@@ -11,6 +11,11 @@ task variantsToTable {
     Array[String] genotype_fields = ["GT", "AD", "DP", "AF"]
   }
 
+  parameter_meta {
+    vcf: { localization_optional: true }
+    vcf_tbi: { localization_optional: true }
+  }
+
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
   Float vcf_size = size([vcf, vcf_tbi], "GB")
   Int space_needed_gb = 10 + round(vcf_size*2 + reference_size)

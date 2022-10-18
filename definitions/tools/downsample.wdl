@@ -11,6 +11,10 @@ task downsample {
     String? strategy  # enum [HighAccuracy, ConstantMemory, Chained]
   }
 
+  parameter_meta {
+    sam: { localization_optional: true }
+  }
+
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
   Int space_needed_gb = 10 + round(reference_size + size(sam, "GB") * 2)
   runtime {
