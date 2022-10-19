@@ -14,6 +14,7 @@ import "tools/intersect_known_variants.wdl" as ikv
 import "tools/pvacfuse.wdl" as pf
 import "types.wdl"  # !UnusedImport
 import "tools/optitype_dna.wdl" as od 
+import "tools/phlat.wdl" as ph
 
 #
 # These structs are needed only because MiniWDL, used by some of our
@@ -60,6 +61,13 @@ struct Somatic {
 
 struct Germline {
   Array[File?] variants
+}
+
+struct MHC {
+  Array[File] mhc_i
+  Array[File] mhc_ii
+  Array[File] combined
+  Array[File]? phase_vcf
 }
 
 
@@ -332,16 +340,25 @@ workflow immuno {
     annotate_coding_only=annotate_coding_only,
     qc_minimum_mapping_quality=qc_minimum_mapping_quality,
     qc_minimum_base_quality=qc_minimum_base_quality,
-    optitype_name=optitype_name
+    optitype_name="optitype_normal"
   }
 
   call od.optitypeDna as optitype {
-    input:
+    input: 
+    optitype_name="optitype_tumor",
     reference=reference,
     reference_fai=reference_fai,
     cram=somaticExome.tumor_cram,
     cram_crai=somaticExome.tumor_cram_crai,
-    optitype_name=optitype_name
+  }
+
+  call ph.phlat {
+    input:
+    phlat_name="phlat_tumor",
+    cram=somaticExome.tumor_cram,
+    cram_crai=somaticExome.tumor_cram_crai,
+    reference=reference,
+    reference_fai=reference_fai
   } 
 
   call pv.phaseVcf {
@@ -359,7 +376,9 @@ workflow immuno {
   }
 
   call eha.extractHlaAlleles as extractAlleles {
-    input: file=germlineExome.optitype_tsv
+    input:
+    file=germlineExome.optitype_tsv, 
+    phlat_file=germlineExome.phlat_summary
   }
 
   call hc.hlaConsensus {
@@ -593,9 +612,13 @@ workflow immuno {
       ]
     }
 
-    Array[File] hla_typing_normal = flatten([
+    Array[File] hla_typing = flatten([
       [germlineExome.optitype_tsv,
        germlineExome.optitype_plot,
+       optitype.optitype_tsv,
+       optitype.optitype_plot,
+       germlineExome.phlat_summary,
+       phlat.phlat_summary,
        extractAlleles.allele_file,
        hlaConsensus.consensus_alleles_file],
       hlaConsensus.hla_call_files
@@ -603,17 +626,24 @@ workflow immuno {
 
     # --------- Other Outputs ------------------------------------------
 
-    Array[File] pvactools = flatten([
-      [phaseVcf.phased_vcf,
-       phaseVcf.phased_vcf_tbi],
-      pvacseq.pvacseq_predictions
-    ])
+    MHC pvactools = object {
+      mhc_i: pvacseq.mhc_i,
+      mhc_ii: pvacseq.mhc_ii,
+      combined: pvacseq.combined,
+      phase_vcf: [phaseVcf.phased_vcf, phaseVcf.phased_vcf_tbi]
+    }
+
+    MHC pvacfuse_predictions = object {
+      mhc_i: pvacfuse.mhc_i,
+      mhc_ii: pvacfuse.mhc_ii,
+      combined: pvacfuse.combined
+    }
 
     File annotated_vcf = pvacseq.annotated_vcf
     File annotated_tsv = pvacseq.annotated_tsv
 
-    Array[File] hla_typing_tumor = [optitype.optitype_tsv]
-    Array[File] pvacfuse_predictions = pvacfuse.pvacfuse_predictions
     Array[File] fusioninspector_evidence = rna.fusioninspector_evidence
   }
 }
+
+

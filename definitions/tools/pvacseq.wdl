@@ -50,7 +50,7 @@ task pvacseq {
   runtime {
     memory: "16GB"
     cpu: n_threads
-    docker: "griffithlab/pvactools:3.0.0"
+    docker: "griffithlab/pvactools:3.1.0"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
@@ -113,7 +113,13 @@ task pvacseq {
     File? combined_aggregated_report = "pvacseq_predictions/combined/~{sample_name}.all_epitopes.aggregated.tsv"
     File? combined_filtered_epitopes = "pvacseq_predictions/combined/~{sample_name}.filtered.tsv"
     File? combined_aggregated_metrics_file = "pvacseq_predictions/combined/" + sample_name + ".all_epitopes.aggregated.metrics.json"
-    Array[File] pvacseq_predictions = glob("pvacseq_predictions/**/*")
+    
+    # glob documentations
+    # https://github.com/openwdl/wdl/blob/main/versions/1.0/SPEC.md#globs
+    Array[File] mhc_i = glob("pvacseq_predictions/MHC_Class_I/*")
+    Array[File] mhc_ii = glob("pvacseq_predictions/MHC_Class_II/*")
+    Array[File] combined = glob("pvacseq_predictions/combined/*")
+
   }
 }
 

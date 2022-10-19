@@ -162,6 +162,8 @@ workflow pvacseq {
   output {
     File annotated_vcf = addTranscriptExpressionDataToVcf.annotated_expression_vcf
     File annotated_tsv = addVepFieldsToTable.annotated_variants_tsv
-    Array[File] pvacseq_predictions = ps.pvacseq_predictions
+    Array[File] mhc_i = ps.mhc_i
+    Array[File] mhc_ii = ps.mhc_ii
+    Array[File] combined = ps.combined
   }
 }

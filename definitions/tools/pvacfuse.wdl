@@ -27,7 +27,7 @@ task pvacfuse {
 
   Int space_needed_gb = 10 + round(size([input_fusions_zip], "GB") * 3)
   runtime {
-    docker: "griffithlab/pvactools:3.0.0"
+    docker: "griffithlab/pvactools:3.1.0"
     memory: "16GB"
     cpu: n_threads
     disks: "local-disk ~{space_needed_gb} HDD"
@@ -76,6 +76,12 @@ task pvacfuse {
     File? combined_all_epitopes = "pvacfuse_predictions/combined/~{sample_name}.all_epitopes.tsv"
     File? combined_aggregated_report = "pvacfuse_predictions/combined/~{sample_name}.all_epitopes.aggregated.tsv"
     File? combined_filtered_epitopes = "pvacfuse_predictions/combined/~{sample_name}.filtered.tsv"
-    Array[File] pvacfuse_predictions = glob("pvacfuse_predictions/**/*")
+
+    # glob documentation
+    # https://github.com/openwdl/wdl/blob/main/versions/1.0/SPEC.md#globs
+    Array[File] mhc_i = glob("pvacfuse_predictions/MHC_Class_I/*")
+    Array[File] mhc_ii = glob("pvacfuse_predictions/MHC_Class_II/*") 
+    Array[File] combined = glob("pvacfuse_predictions/combined/*")
+
   }
 }
