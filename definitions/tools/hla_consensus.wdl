@@ -2,7 +2,7 @@ version 1.0
 
 task hlaConsensus {
   input {
-    Array[String] optitype_hla_alleles
+    Array[String] hla_alleles
     Array[String]? clinical_mhc_classI_alleles
     Array[String]? clinical_mhc_classII_alleles
     String hla_source_mode  # enum [consensus, clinical_only]
@@ -91,7 +91,7 @@ task hlaConsensus {
     clinical_exists = ~{clinical_exists}
     if (hla_source_mode == "clinical_only") and not clinical_exists:
         sys.exit("HLA consensus error: No clinical calls found, but hla_source_mode is set to clinical_only")
-    optitype_calls = ["~{sep="\",\"" optitype_hla_alleles}"]
+    optitype_calls = ["~{sep="\",\"" hla_alleles}"]
 
     if clinical_exists:
         #MHC Class I clinical typing results
@@ -182,7 +182,9 @@ task hlaConsensus {
 
     #Create an exact copy of optitype calls, to be bundled with other relevant
     #files for convenience/later review. Always generated,
-    with open("hla_calls/optitype_calls.txt", "w") as o_c:
+    #NOTE(Layth): this hla_consensus step actually gets passed results from
+    #Optitype for class I and PHLAT for class II. hla_calls will include both results.
+    with open("hla_calls/hla_calls.txt", "w") as o_c:
         o_c.write( ",".join(optitype_calls) )
 
     #Create an exact copy of clinical calls, if they exist, to be bundled with
@@ -264,14 +266,14 @@ task hlaConsensus {
 
 workflow wf {
   input {
-    Array[String] optitype_hla_alleles
+    Array[String] hla_alleles
     Array[String]? clinical_mhc_classI_alleles
     Array[String]? clinical_mhc_classII_alleles
   }
 
   call hlaConsensus {
     input:
-    optitype_hla_alleles=optitype_hla_alleles,
+    hla_alleles=hla_alleles,
     clinical_mhc_classI_alleles=clinical_mhc_classI_alleles,
     clinical_mhc_classII_alleles=clinical_mhc_classII_alleles
   }

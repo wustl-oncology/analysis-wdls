@@ -377,14 +377,14 @@ workflow immuno {
 
   call eha.extractHlaAlleles as extractAlleles {
     input:
-    file=germlineExome.optitype_tsv, 
+    optitype_file=germlineExome.optitype_tsv, 
     phlat_file=germlineExome.phlat_summary
   }
 
   call hc.hlaConsensus {
     input:
     hla_source_mode=hla_source_mode,
-    optitype_hla_alleles=extractAlleles.allele_string,
+    hla_alleles=extractAlleles.allele_string,
     clinical_mhc_classI_alleles=clinical_mhc_classI_alleles,
     clinical_mhc_classII_alleles=clinical_mhc_classII_alleles
   }

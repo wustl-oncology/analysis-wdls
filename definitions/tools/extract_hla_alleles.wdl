@@ -2,7 +2,7 @@ version 1.0
 
 task extractHlaAlleles {
   input {
-    File file
+    File optitype_file
     File phlat_file
   }
 
@@ -17,10 +17,10 @@ task extractHlaAlleles {
   # second, extract HLA class II from the phlat file
   # third, ensure there are only 2 fields of accuracy for alleles
  
-  String outname = "helper.txt"
+  String outname = "hla_calls_newline.txt"
   String temp = "temp.txt"
   command <<<
-    /usr/bin/awk '{FS="\t";getline;for(n=2;n<=NF-2;n++){if($n==""){}else{printf "HLA-"$n"\n"}}}' ~{file} > ~{temp}
+    /usr/bin/awk '{FS="\t";getline;for(n=2;n<=NF-2;n++){if($n==""){}else{printf "HLA-"$n"\n"}}}' ~{optitype_file} > ~{temp}
     grep "HLA_D" ~{phlat_file} | /usr/bin/awk '{FS="\t";if($2==""){}else{printf $2"\n"};if($3==""){}else{printf $3"\n"}}' >> ~{temp}
     /usr/bin/awk -F":" '{print $1 ":" $2}' ~{temp} > ~{outname}
   >>>
@@ -33,12 +33,12 @@ task extractHlaAlleles {
 
 workflow wf {
   input {
-    File file 
+    File optitype_file 
     File phlat_file 
   }
   call extractHlaAlleles { 
     input: 
-    file=file,
+    optitype_file=optitype_file,
     phlat_file=phlat_file 
   }
 }
