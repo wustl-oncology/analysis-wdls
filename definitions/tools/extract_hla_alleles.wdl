@@ -6,7 +6,7 @@ task extractHlaAlleles {
     File phlat_file
   }
 
-  Int space_needed_gb = 10 + round(size(file, "GB"))
+  Int space_needed_gb = 10 + round(size(optitype_file, "GB"))
   runtime {
     memory: "2GB"
     docker: "ubuntu:xenial"
