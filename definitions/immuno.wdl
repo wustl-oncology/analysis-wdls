@@ -639,8 +639,8 @@ workflow immuno {
       combined: pvacfuse.combined
     }
 
-    File annotated_vcf = pvacseq.annotated_vcf
-    File annotated_tsv = pvacseq.annotated_tsv
+    File pvacseq_annotated_expression_vcf_gz = pvacseq.annotated_vcf
+    File pvacseq_annotated_variants_tsv = pvacseq.annotated_tsv
 
     Array[File] fusioninspector_evidence = rna.fusioninspector_evidence
   }
