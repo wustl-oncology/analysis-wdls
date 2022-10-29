@@ -11,6 +11,7 @@ task cnvnator {
   }
 
   runtime {
+    noAddress: true
     preemptible: 1
     maxRetries: 2
     docker: "mgibio/cnvnator-cwl:0.4"

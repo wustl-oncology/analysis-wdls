@@ -6,6 +6,7 @@ task bamToFastq {
   # ran into issue at 3*, bump to 10*
   Int space_needed_gb = 10 + round(10*size(bam, "GB"))
   runtime {
+    noAddress: true
     preemptible: 1
     maxRetries: 2
     docker: "mgibio/rnaseq:1.0.0"

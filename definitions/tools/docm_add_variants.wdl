@@ -15,6 +15,7 @@ task docmAddVariants {
   Float docm_size = size([docm_vcf, docm_vcf_tbi], "GB")
   Int space_needed_gb = 10 + round(reference_size + callers_size + docm_size)*2
   runtime {
+    noAddress: true
     preemptible: 1
     maxRetries: 2
     memory: "9GB"

@@ -18,6 +18,7 @@ task collectWgsMetrics {
   Float intervals_size = size(intervals, "GB")
   Int space_needed_gb = 10 + round(bam_size + reference_size + intervals_size)
   runtime {
+    noAddress: true
     preemptible: 1
     maxRetries: 2
     memory: "48GB"

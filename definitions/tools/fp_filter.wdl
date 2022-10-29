@@ -16,6 +16,7 @@ task fpFilter {
 
   Int space_needed_gb = 10 + round(size(vcf, "GB")*2 + size([reference, reference_fai, reference_dict, bam], "GB"))
   runtime {
+    noAddress: true
     preemptible: 1
     maxRetries: 2
     memory: "6GB"

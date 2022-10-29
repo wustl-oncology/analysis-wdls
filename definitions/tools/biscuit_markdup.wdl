@@ -9,6 +9,7 @@ task biscuitMarkdup {
   Int cores = 4
   Int space_needed_gb = 10 + round(2*size(bam, "GB"))
   runtime {
+    noAddress: true
     preemptible: 1
     maxRetries: 2
     cpu: cores

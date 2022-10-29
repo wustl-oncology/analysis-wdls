@@ -26,6 +26,7 @@ task mutect {
   Float bam_size = size([tumor_bam, tumor_bam_bai, normal_bam, normal_bam_bai], "GB")
   Int space_needed_gb = 10 + ceil(reference_size + 2*bam_size + size(interval_list, "GB"))
   runtime {
+    noAddress: true
     preemptible: 1
     maxRetries: 2
     docker: "broadinstitute/gatk:4.2.3.0"
