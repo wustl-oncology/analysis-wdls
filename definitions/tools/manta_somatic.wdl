@@ -21,6 +21,8 @@ task mantaSomatic {
   Float regions_size = size([call_regions, call_regions_tbi], "GB")
   Int size_needed_gb = 10 + 2 * round(ref_size + bam_size + regions_size)
   runtime {
+    preemptible: 1
+    maxRetries: 2
     docker: "mgibio/manta_somatic-cwl:1.6.0"
     cpu: cores
     memory: "24GB"

@@ -9,6 +9,8 @@ task mergeVcf {
 
   Int space_needed_gb = 10 + round(2*(size(vcfs, "GB") + size(vcf_tbis, "GB")))
   runtime {
+    preemptible: 1
+    maxRetries: 2
     docker: "mgibio/bcftools-cwl:1.12"
     memory: "4GB"
     disks: "local-disk ~{space_needed_gb} HDD"

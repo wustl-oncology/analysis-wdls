@@ -10,6 +10,8 @@ task intersectKnownVariants {
 
   Int space_needed_gb = 10 + round(2*size([vcf, vcf_tbi, validated_variants, validated_variants_tbi], "GB"))
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "8GB"
     docker: "mgibio/bcftools-cwl:1.12"
     disks: "local-disk ~{space_needed_gb} HDD"

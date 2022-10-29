@@ -14,6 +14,8 @@ task duphold {
   Int cores = 2
   Int space_needed_gb = 10
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "10GB"
     docker: "mgibio/duphold-cwl:0.1.5"
     disks: "local-disk ~{space_needed_gb} HDD"

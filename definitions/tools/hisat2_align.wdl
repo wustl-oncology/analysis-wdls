@@ -33,6 +33,8 @@ task hisat2Align {
   ], "GB")
   Int space_needed_gb = 10 + round(5*fastq_size_gb + reference_size_gb)
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "32GB"
     cpu: cores
     bootDiskSizeGb: space_needed_gb

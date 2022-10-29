@@ -19,6 +19,8 @@ task combineVariantsWgs {
   Float strelka_size = size([strelka_vcf, strelka_vcf_tbi], "GB")
   Int space_needed_gb = 10 + round(ref_size + mutect_size + varscan_size + strelka_size)*2
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "9GB"
     docker:  "mgibio/gatk-cwl:3.6.0"
     bootDiskSizeGb: 25

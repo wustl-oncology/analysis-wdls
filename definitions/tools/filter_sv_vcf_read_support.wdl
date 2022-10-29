@@ -12,6 +12,8 @@ task filterSvVcfReadSupport {
 
   Int space_needed_gb = 10
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "4GB"
     docker: "bcftools-cwl:1.12"
     disks: "local-disk ~{space_needed_gb} HDD"

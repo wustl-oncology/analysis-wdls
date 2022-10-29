@@ -12,6 +12,8 @@ task filterVcfMapq0 {
   Float bam_size = size([tumor_bam, tumor_bam_bai], "GB")
   Int space_needed_gb = 10 + round(bam_size + 2*size(vcf, "GB"))
   runtime {
+    preemptible: 1
+    maxRetries: 2
     docker: "mgibio/mapq0-filter:v0.5.3"
     memory: "8GB"
     bootDiskSizeGb: 10

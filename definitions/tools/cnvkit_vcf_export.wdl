@@ -11,6 +11,8 @@ task cnvkitVcfExport {
 
   Int space_needed_gb = 10 + round(2*size([cns_file, cnr_file], "GB"))
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "8GB"
     docker: "mgibio/cnvkit:0.9.9"
     disks: "local-disk ~{space_needed_gb} HDD"

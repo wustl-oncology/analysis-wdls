@@ -8,6 +8,8 @@ task bedgraphToBigwig {
 
   Int space_needed_gb = 10 + round(size(methylation_bedgraph, "GB") + size(reference_sizes, "GB"))
   runtime {
+    preemptible: 1
+    maxRetries: 2
     docker: "mgibio/bisulfite:v1.4"
     memory: "32GB"
     cpu: 1
