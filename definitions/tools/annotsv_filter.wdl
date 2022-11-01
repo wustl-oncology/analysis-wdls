@@ -11,6 +11,7 @@ task annotsvFilter {
 
   Int space_needed_gb = 10 + round(2*size(annotsv_tsv, "GB"))
   runtime {
+    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2

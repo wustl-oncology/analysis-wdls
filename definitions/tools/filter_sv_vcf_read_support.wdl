@@ -12,6 +12,7 @@ task filterSvVcfReadSupport {
 
   Int space_needed_gb = 10
   runtime {
+    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2

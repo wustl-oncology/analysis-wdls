@@ -8,6 +8,7 @@ task intervalListExpand {
 
   Int space_needed_gb = 10 + round(size(interval_list, "GB")*2)
   runtime {
+    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2

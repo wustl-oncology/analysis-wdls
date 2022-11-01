@@ -24,6 +24,7 @@ task docmGatkHaplotypeCaller {
   Float copied_size = size([docm_vcf, interval_list], "GB")
   Int space_needed_gb = 10 + round(copied_size*3 + size([reference, reference_fai, reference_dict, normal_bam, normal_bam_bai, bam, bam_bai, docm_vcf_tbi], "GB"))
   runtime {
+    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2

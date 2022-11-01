@@ -12,6 +12,7 @@ task normalizeVariants {
 
   Int space_needed_gb = 10 + round(size([vcf, vcf_tbi], "GB") + size([reference, reference_fai, reference_dict], "GB"))
   runtime {
+    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2

@@ -5,6 +5,7 @@ task indexBam {
 
   Int space_needed_gb = 10 + round(size(bam, "GB")*3)
   runtime {
+    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2

@@ -11,6 +11,7 @@ task filterSvVcfDepth {
 
   Int space_needed_gb = 10 + round(2*size(input_vcf, "GB"))
   runtime {
+    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2

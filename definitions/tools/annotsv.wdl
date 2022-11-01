@@ -10,6 +10,7 @@ task annotsv {
 
   Int space_needed_gb = 10 + round(size(snps_vcf, "GB") + size(input_vcf, "GB"))
   runtime {
+    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2

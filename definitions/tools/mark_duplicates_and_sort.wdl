@@ -11,6 +11,7 @@ task markDuplicatesAndSort {
   #markdup is listed as 2Gb per 100M reads
   Int mem_needed_gb = round(((size(bam, "GB")*15)/100)*2)+32
   runtime {
+    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2

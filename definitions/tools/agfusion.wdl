@@ -9,6 +9,7 @@ task agfusion {
   }
 
   runtime {
+    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2

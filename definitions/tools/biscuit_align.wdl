@@ -11,6 +11,7 @@ task biscuitAlign {
   Int cores = 12
   Int space_needed_gb = 10 + round(2*size([reference_index, fastq1, fastq2], "GB"))
   runtime {
+    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2

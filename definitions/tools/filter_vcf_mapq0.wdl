@@ -12,6 +12,7 @@ task filterVcfMapq0 {
   Float bam_size = size([tumor_bam, tumor_bam_bai], "GB")
   Int space_needed_gb = 10 + round(bam_size + 2*size(vcf, "GB"))
   runtime {
+    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2
