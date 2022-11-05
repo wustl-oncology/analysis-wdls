@@ -15,7 +15,6 @@ task germlineCombineVariants {
   Float vcf_size = size([varscan_vcf, varscan_vcf_tbi, docm_vcf, docm_vcf_tbi], "GB")
   Int space_needed_gb = 10 + round(reference_size + 2*vcf_size)
   runtime {
-    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2

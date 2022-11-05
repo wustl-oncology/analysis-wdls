@@ -21,7 +21,6 @@ task cnvkitBatch {
 
   Int size_needed_gb = 10 + round(size([tumor_bam, bait_intervals, access, normal_bam, reference_fasta, reference_cnn], "GB") * 2)
   runtime {
-    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2

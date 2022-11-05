@@ -19,7 +19,6 @@ task combineVariants {
   Float strelka_size = size([strelka_vcf, strelka_vcf_tbi], "GB")
   Int space_needed_gb = 10 + round(ref_size + mutect_size + varscan_size + strelka_size)*2
   runtime {
-    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2

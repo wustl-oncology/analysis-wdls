@@ -10,7 +10,6 @@ task mergeBams {
   Int cores = 4
   Int space_needed_gb = 10 + round(4*size(bams, "GB"))
   runtime {
-    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2

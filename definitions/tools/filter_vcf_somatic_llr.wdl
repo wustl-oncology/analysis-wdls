@@ -12,7 +12,6 @@ task filterVcfSomaticLlr {
 
   Int space_needed_gb = 10 + round(size(vcf, "GB")*2)
   runtime {
-    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2

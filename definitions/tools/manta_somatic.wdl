@@ -21,7 +21,6 @@ task mantaSomatic {
   Float regions_size = size([call_regions, call_regions_tbi], "GB")
   Int size_needed_gb = 10 + 2 * round(ref_size + bam_size + regions_size)
   runtime {
-    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2

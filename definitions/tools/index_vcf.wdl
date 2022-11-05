@@ -7,7 +7,6 @@ task indexVcf {
 
   Int space_needed_gb = 10 + round(3*size(vcf, "GB"))
   runtime {
-    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2

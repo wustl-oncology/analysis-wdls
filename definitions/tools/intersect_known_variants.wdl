@@ -10,7 +10,6 @@ task intersectKnownVariants {
 
   Int space_needed_gb = 10 + round(2*size([vcf, vcf_tbi, validated_variants, validated_variants_tbi], "GB"))
   runtime {
-    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2

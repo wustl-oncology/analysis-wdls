@@ -130,7 +130,6 @@ task CreateSequenceGroupingTSV {
     CODE
   >>>
   runtime {
-    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2
@@ -162,7 +161,6 @@ task bqsr {
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
   Int space_needed_gb = 10 + round(known_sites_size  + bam_size + reference_size)
   runtime {
-    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2
@@ -200,7 +198,6 @@ task GatherBqsrReports {
       -O bqsr_report.txt
   }
   runtime {
-    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2
@@ -230,7 +227,6 @@ task applyBqsr {
 
   Int space_needed_gb = 10 + round(size([bqsr_table, reference, reference_fai, reference_dict], "GB") + size([bam, bam_bai], "GB") * 2)
   runtime {
-    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2
@@ -267,7 +263,6 @@ task GatherBamFiles {
   Int command_mem_gb = ceil(mem_size_gb) - 1
   Int space_needed_gb = 10 + round(bam_size * 2.5)
   runtime {
-    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2

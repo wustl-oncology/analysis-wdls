@@ -10,7 +10,6 @@ task generateQcMetrics {
 
   Int space_needed_gb = 10 + round(size([bam, refFlat, ribosomal_intervals], "GB"))
   runtime {
-    useDockerImageCache: true
     noAddress: true
     preemptible: 1
     maxRetries: 2
