@@ -10,7 +10,6 @@ task addStringAtLine {
 
   Int space_needed_gb = 10 + round(2*size(input_file, "GB"))
   runtime {
-    noAddress: true
     preemptible: 1
     maxRetries: 2
     docker: "ubuntu:xenial"

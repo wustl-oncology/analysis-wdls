@@ -12,7 +12,6 @@ task bcftoolsMerge {
 
   Int space_needed_gb = 10 + round(2 * size(vcfs, "GB"))
   runtime {
-    noAddress: true
     preemptible: 1
     maxRetries: 2
     memory: "4GB"

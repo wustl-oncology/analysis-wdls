@@ -9,7 +9,6 @@ task nameSort {
 
   Int input_size_gb = 10 + 5*round(size(bam, "GB"))
   runtime {
-    noAddress: true
     preemptible: 1
     maxRetries: 2
     docker: "mgibio/sambamba-cwl:0.6.4"

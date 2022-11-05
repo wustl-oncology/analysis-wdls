@@ -10,7 +10,6 @@ task filterVcfDocm {
 
   Int space_needed_gb = 10 + round(size(docm_raw_variants, "GB")*2 + size([normal_bam, tumor_bam], "GB"))
   runtime {
-    noAddress: true
     preemptible: 1
     maxRetries: 2
     docker: "mgibio/cle:v1.4.2"

@@ -8,7 +8,6 @@ task filterVcfCle {
 
   Int space_needed_gb = 10 + round(size(vcf, "GB")*2)
   runtime {
-    noAddress: true
     preemptible: 1
     maxRetries: 2
     docker: "mgibio/cle:v1.3.1"

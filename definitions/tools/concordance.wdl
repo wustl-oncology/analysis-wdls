@@ -18,7 +18,6 @@ task concordance {
 
   Int space_needed_gb = 10 + round(size([vcf, reference, reference_fai, reference_dict, bam_1, bam_1_bai, bam_2, bam_2_bai, bam_3, bam_3_bai], "GB"))
   runtime {
-    noAddress: true
     preemptible: 1
     maxRetries: 2
     cpu: 1

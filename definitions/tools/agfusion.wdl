@@ -9,7 +9,6 @@ task agfusion {
   }
 
   runtime {
-    noAddress: true
     preemptible: 1
     maxRetries: 2
     docker: "mgibio/agfusion:1.3.1-ensembl-105"

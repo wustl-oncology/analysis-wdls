@@ -9,7 +9,6 @@ task hlaConsensus {
   }
 
   runtime {
-    noAddress: true
     preemptible: 1
     maxRetries: 2
     docker: "python:3.7.4-slim-buster"

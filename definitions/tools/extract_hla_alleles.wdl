@@ -8,7 +8,6 @@ task extractHlaAlleles {
 
   Int space_needed_gb = 10 + round(size(file, "GB"))
   runtime {
-    noAddress: true
     preemptible: 1
     maxRetries: 2
     memory: "2GB"

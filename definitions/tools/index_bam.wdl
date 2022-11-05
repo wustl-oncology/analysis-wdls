@@ -5,7 +5,6 @@ task indexBam {
 
   Int space_needed_gb = 10 + round(size(bam, "GB")*3)
   runtime {
-    noAddress: true
     preemptible: 1
     maxRetries: 2
     docker: "quay.io/biocontainers/samtools:1.11--h6270b1f_0"

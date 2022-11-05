@@ -9,7 +9,6 @@ task filterVcfDepth {
 
   Int space_needed_gb = 10 + round(size(vcf, "GB")*2)
   runtime {
-    noAddress: true
     preemptible: 1
     maxRetries: 2
     docker: "mgibio/depth-filter:0.1.2"

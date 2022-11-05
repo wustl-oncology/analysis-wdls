@@ -24,7 +24,6 @@ task gatkHaplotypeCaller {
   Float vcf_size = size([dbsnp_vcf, dbsnp_vcf_tbi], "GB")
   Int space_needed_gb = 10 + round(reference_size + 2*bam_size + vcf_size)
   runtime {
-    noAddress: true
     preemptible: 1
     maxRetries: 2
     memory: "18GB"
