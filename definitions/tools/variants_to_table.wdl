@@ -20,6 +20,8 @@ task variantsToTable {
   Float vcf_size = size([vcf, vcf_tbi], "GB")
   Int space_needed_gb = 10 + round(vcf_size*2 + reference_size)
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "6GB"
     bootDiskSizeGb: 25
     docker: "broadinstitute/gatk:4.1.8.1"
