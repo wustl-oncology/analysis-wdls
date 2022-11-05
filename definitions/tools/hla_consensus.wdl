@@ -9,8 +9,6 @@ task hlaConsensus {
   }
 
   runtime {
-    preemptible: 1
-    maxRetries: 2
     docker: "python:3.7.4-slim-buster"
     memory: "4GB"
   }
@@ -20,7 +18,7 @@ task hlaConsensus {
     python -c '
     #This script produces 2-4 files depending on inputs and their contents
     #All are packaged together into a folder called hla_calls for convenience
-    #hla_calls.txt is always produced, and is essentially a copy of optitype & phlat output
+    #hla_calls.txt is always produced, and is essentially a copy of optitype and phlat output
     #consensus_calls.txt is also always produced; if no clinical calls are provided, this
     #file is identical to hla_calls.txt. If clinical calls are provided, they are
     #reproduced in clinical_calls.txt. If the clinical calls exactly match the hla calls*,
