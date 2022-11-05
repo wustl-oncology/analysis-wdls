@@ -13,6 +13,8 @@ task readBackedPhasing {
 
   Int space_needed_gb = 10 + round(size([bam, bam_index, reference, reference_fai, reference_dict, vcf, vcf_tbi], "GB"))
   runtime {
+    preemptible: 1
+    maxRetries: 2
     docker: "mgibio/gatk-cwl:3.6.0"
     memory: "9GB"
     bootDiskSizeGb: 25

@@ -8,6 +8,8 @@ task varscanProcessSomatic {
 
   Int space_needed_gb = 10 + round(size(variants, "GB")*2)
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "4GB"
     docker: "mgibio/cle:v1.3.1"
     disks: "local-disk ~{space_needed_gb} HDD"

@@ -9,6 +9,8 @@ task samtoolsSort {
   Int cores = 1
   Int space_needed_gb = 10 + round(3*size(input_bam, "GB"))
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "4GB"
     cpu: cores
     docker: "quay.io/biocontainers/samtools:1.11--h6270b1f_0"

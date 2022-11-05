@@ -8,6 +8,8 @@ task removeEndTags {
 
   Int space_needed_gb = 10 + round(size(vcf, "GB")*2)
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "4GB"
     docker: "mgibio/bcftools-cwl:1.12"
     disks: "local-disk ~{space_needed_gb} HDD"

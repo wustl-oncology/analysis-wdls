@@ -8,6 +8,8 @@ task vtDecompose {
 
   Int space_needed_gb = 10 + round(size([vcf, vcf_tbi], "GB")*2)
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "4GB"
     docker: "quay.io/biocontainers/vt:0.57721--hf74b74d_1"
     disks: "local-disk ~{space_needed_gb} HDD"

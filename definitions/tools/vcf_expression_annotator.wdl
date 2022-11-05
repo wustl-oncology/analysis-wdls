@@ -11,6 +11,8 @@ task vcfExpressionAnnotator {
 
   Int space_needed_gb = 10 + round(2*size([vcf, expression_file], "GB"))
   runtime {
+    preemptible: 1
+    maxRetries: 2
     docker: "griffithlab/vatools:4.1.0"
     memory: "4GB"
     disks: "local-disk ~{space_needed_gb} HDD"

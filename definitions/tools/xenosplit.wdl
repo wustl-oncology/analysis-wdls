@@ -7,6 +7,8 @@ task xenosplit {
   }
 
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "20GB"
     bootDiskSizeGb: 100
     docker: "mgibio/xenosplit:0.5"

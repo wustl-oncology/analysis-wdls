@@ -6,6 +6,8 @@ task vcfSanitize {
   }
 
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "4GB"
     cpu: 1
     docker: "mgibio/samtools-cwl:1.0.0"

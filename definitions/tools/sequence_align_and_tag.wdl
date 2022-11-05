@@ -28,6 +28,8 @@ task sequenceAlignAndTag {
   Int instance_memory_gb = 76 
   Int jvm_memory_gb = 4
   runtime {
+    preemptible: 1
+    maxRetries: 2
     docker: "mgibio/alignment_helper-cwl:2.2.1"
     memory: "~{instance_memory_gb}GB"
     cpu: cores

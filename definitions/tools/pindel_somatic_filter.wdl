@@ -10,6 +10,8 @@ task pindelSomaticFilter {
 
   Int space_needed_gb = 10 + round(size([reference, reference_fai, reference_dict, pindel_output_summary], "GB"))
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "16GB"
     docker: "mgibio/cle:v1.3.1"
     disks: "local-disk ~{space_needed_gb} HDD"

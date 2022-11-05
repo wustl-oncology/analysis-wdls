@@ -11,6 +11,8 @@ task stringtie {
   Int cores = 12
   Int space_needed_gb = 10 + round(size([bam, reference_annotation], "GB"))
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "16GB"
     cpu: cores
     docker: "quay.io/biocontainers/stringtie:2.1.4--h7e0af3c_0"
