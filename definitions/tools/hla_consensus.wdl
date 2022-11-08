@@ -2,7 +2,7 @@ version 1.0
 
 task hlaConsensus {
   input {
-    Array[String] optitype_hla_alleles
+    Array[String] hla_alleles
     Array[String]? clinical_mhc_classI_alleles
     Array[String]? clinical_mhc_classII_alleles
     String hla_source_mode  # enum [consensus, clinical_only]
@@ -18,16 +18,19 @@ task hlaConsensus {
     python -c '
     #This script produces 2-4 files depending on inputs and their contents
     #All are packaged together into a folder called hla_calls for convenience
+<<<<<<< HEAD
     #hla_calls.txt is always produced, and is essentially a copy of optitype and phlat output
+=======
+    #optitype_calls.txt is always produced, and is essentially a copy of optitypes output
+>>>>>>> parent of c1c40e0... added some comments
     #consensus_calls.txt is also always produced; if no clinical calls are provided, this
-    #file is identical to hla_calls.txt. If clinical calls are provided, they are
-    #reproduced in clinical_calls.txt. If the clinical calls exactly match the hla calls*,
+    #file is identical to optitype_calls.txt. If clinical calls are provided, they are
+    #reproduced in clinical_calls.txt. If the clinical calls exactly match the optitype calls*,
     #all 3 files described so far will contain the same information, but are not guaranteed to
     #be exactly the same (text ordering may differ, depending on the order calls are given in the input).
-    #If the clinical calls and hla calls do not match, mismatched_calls.txt is then produced;
+    #If the clinical calls and optitype calls do not match, mismatched_calls.txt is then produced;
     #each line represents a gene. See below (section "write out call files") for more mismatch details.
-    #NOTE: optitype only produces MHC class I calls, and while PHLAT produces both MHC class I and II,
-    #only class II is actually passed in
+    #NOTE: optitype only produces MHC class I calls
 
     #optitype input format (should be automatic):
     #HLA-X*01:02
@@ -92,7 +95,7 @@ task hlaConsensus {
     clinical_exists = ~{clinical_exists}
     if (hla_source_mode == "clinical_only") and not clinical_exists:
         sys.exit("HLA consensus error: No clinical calls found, but hla_source_mode is set to clinical_only")
-    optitype_calls = ["~{sep="\",\"" optitype_hla_alleles}"]
+    optitype_calls = ["~{sep="\",\"" hla_alleles}"]
 
     if clinical_exists:
         #MHC Class I clinical typing results
@@ -183,7 +186,9 @@ task hlaConsensus {
 
     #Create an exact copy of optitype calls, to be bundled with other relevant
     #files for convenience/later review. Always generated,
-    with open("hla_calls/optitype_calls.txt", "w") as o_c:
+    #NOTE(Layth): this hla_consensus step actually gets passed results from
+    #Optitype for class I and PHLAT for class II. hla_calls will include both results.
+    with open("hla_calls/hla_calls.txt", "w") as o_c:
         o_c.write( ",".join(optitype_calls) )
 
     #Create an exact copy of clinical calls, if they exist, to be bundled with
@@ -197,7 +202,7 @@ task hlaConsensus {
     #########################################################
 
     #A consensus file is always generated to be passed on to pvacseq. If there are
-    #no clinical calls, this file is the same as hla_calls.txt. If clinical calls exist
+    #no clinical calls, this file is the same as optitype_calls.txt. If clinical calls exist
     #and $hla_solurce_mode is set to clinical_only, this file is the same as clinical_calls.txt
     #Otherwise, if clinical calls exist and $hla_source_mode is set to consensus, walk
     #through the tree and emit everything present as the consensus. If there is a true
@@ -265,14 +270,14 @@ task hlaConsensus {
 
 workflow wf {
   input {
-    Array[String] optitype_hla_alleles
+    Array[String] hla_alleles
     Array[String]? clinical_mhc_classI_alleles
     Array[String]? clinical_mhc_classII_alleles
   }
 
   call hlaConsensus {
     input:
-    optitype_hla_alleles=optitype_hla_alleles,
+    hla_alleles=hla_alleles,
     clinical_mhc_classI_alleles=clinical_mhc_classI_alleles,
     clinical_mhc_classII_alleles=clinical_mhc_classII_alleles
   }
