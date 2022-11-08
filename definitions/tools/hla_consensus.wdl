@@ -18,19 +18,16 @@ task hlaConsensus {
     python -c '
     #This script produces 2-4 files depending on inputs and their contents
     #All are packaged together into a folder called hla_calls for convenience
-<<<<<<< HEAD
     #hla_calls.txt is always produced, and is essentially a copy of optitype and phlat output
-=======
-    #optitype_calls.txt is always produced, and is essentially a copy of optitypes output
->>>>>>> parent of c1c40e0... added some comments
     #consensus_calls.txt is also always produced; if no clinical calls are provided, this
-    #file is identical to optitype_calls.txt. If clinical calls are provided, they are
-    #reproduced in clinical_calls.txt. If the clinical calls exactly match the optitype calls*,
+    #file is identical to hla_calls.txt. If clinical calls are provided, they are
+    #reproduced in clinical_calls.txt. If the clinical calls exactly match the hla calls*,
     #all 3 files described so far will contain the same information, but are not guaranteed to
     #be exactly the same (text ordering may differ, depending on the order calls are given in the input).
-    #If the clinical calls and optitype calls do not match, mismatched_calls.txt is then produced;
+    #If the clinical calls and hla calls do not match, mismatched_calls.txt is then produced;
     #each line represents a gene. See below (section "write out call files") for more mismatch details.
-    #NOTE: optitype only produces MHC class I calls
+    #NOTE: optitype only produces MHC class I calls, and while PHLAT produces both MHC class I and II,
+    #only class II is actually passed in
 
     #optitype input format (should be automatic):
     #HLA-X*01:02
@@ -202,7 +199,7 @@ task hlaConsensus {
     #########################################################
 
     #A consensus file is always generated to be passed on to pvacseq. If there are
-    #no clinical calls, this file is the same as optitype_calls.txt. If clinical calls exist
+    #no clinical calls, this file is the same as hla_calls.txt. If clinical calls exist
     #and $hla_solurce_mode is set to clinical_only, this file is the same as clinical_calls.txt
     #Otherwise, if clinical calls exist and $hla_source_mode is set to consensus, walk
     #through the tree and emit everything present as the consensus. If there is a true
