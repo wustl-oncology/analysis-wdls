@@ -87,7 +87,9 @@ task parseVepCustomAnnotationIntoArg {
   input { VepCustomAnnotation obj }
   runtime {
     preemptible: 1
-    maxRetries: 2 docker: "python:3.10" }
+    maxRetries: 2 
+    docker: "python:3.10" 
+  }
   command <<<
     python <<CODE
     check_existing = "~{true="--check_existing" false="" obj.annotation.check_existing}"
