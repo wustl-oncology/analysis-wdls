@@ -9,6 +9,8 @@ task hlaConsensus {
   }
 
   runtime {
+    preemptible: 1
+    maxRetries: 2
     docker: "python:3.7.4-slim-buster"
     memory: "4GB"
   }

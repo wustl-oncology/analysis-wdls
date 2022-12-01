@@ -12,6 +12,8 @@ task normalizeVariants {
 
   Int space_needed_gb = 10 + round(size([vcf, vcf_tbi], "GB") + size([reference, reference_fai, reference_dict], "GB"))
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "9GB"
     docker: "broadinstitute/gatk:4.1.8.1"
     disks: "local-disk ~{space_needed_gb} HDD"

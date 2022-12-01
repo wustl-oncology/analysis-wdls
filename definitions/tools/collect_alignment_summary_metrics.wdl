@@ -11,7 +11,9 @@ task collectAlignmentSummaryMetrics {
   }
 
   Int space_needed_gb = 10 + round(size([bam, bam_bai, reference, reference_fai, reference_dict],"GB"))
-  runtime{
+  runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "48GB"
     docker: "broadinstitute/picard:2.23.6"
     disks: "local-disk ~{space_needed_gb} HDD"

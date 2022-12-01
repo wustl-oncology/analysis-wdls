@@ -13,6 +13,8 @@ task sequenceToFastq {
   Int compression_multiplier = if unzip_fastqs then 10 else 1
   Int space_needed_gb = 10 + ceil(2*compression_multiplier*size([bam, fastq1, fastq2], "GB"))
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "16GB"
     bootDiskSizeGb: 25
     docker: "broadinstitute/picard:2.23.6"

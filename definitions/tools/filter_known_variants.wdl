@@ -10,6 +10,8 @@ task filterKnownVariants {
 
   Int space_needed_gb = 10 + round(size([vcf, vcf_tbi, validated_variants, validated_variants_tbi], "GB")*2)
   runtime {
+    preemptible: 1
+    maxRetries: 2
     docker: "mgibio/bcftools-cwl:1.12"
     memory: "8GB"
     disks:  "local-disk ~{space_needed_gb} HDD"

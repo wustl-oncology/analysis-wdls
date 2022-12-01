@@ -24,6 +24,8 @@ task gatkHaplotypeCaller {
   Float vcf_size = size([dbsnp_vcf, dbsnp_vcf_tbi], "GB")
   Int space_needed_gb = 10 + round(reference_size + 2*bam_size + vcf_size)
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "18GB"
     docker: "broadinstitute/gatk:4.1.8.1"
     disks: "local-disk ~{space_needed_gb} HDD"

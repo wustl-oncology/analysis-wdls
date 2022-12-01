@@ -11,6 +11,8 @@ task filterSvVcfDepth {
 
   Int space_needed_gb = 10 + round(2*size(input_vcf, "GB"))
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "4GB"
     docker: "mgibiobcftools-cwl:1.12"
     disks: "local-disk ~{space_needed_gb} HDD"

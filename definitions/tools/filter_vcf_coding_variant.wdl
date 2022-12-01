@@ -7,6 +7,8 @@ task filterVcfCodingVariant {
 
   Int space_needed_gb = 10 + round(2*size(vcf, "GB"))
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "4GB"
     docker: "mgibio/vep_helper-cwl:vep_105.0_v1"
     disks: "local-disk ~{space_needed_gb} HDD"

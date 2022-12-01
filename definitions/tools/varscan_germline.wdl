@@ -18,6 +18,8 @@ task varscanGermline {
 
   Int space_needed_gb = 10
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "12GB"
     cpu: 2
     docker: "mgibio/varscan_helper-cwl:1.0.0"

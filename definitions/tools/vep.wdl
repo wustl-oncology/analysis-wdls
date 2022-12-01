@@ -31,6 +31,8 @@ task vepTask {
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
   Int space_needed_gb = 10 + round(reference_size + vcf_size + cache_size + size(synonyms_file, "GB"))
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "64GB"
     bootDiskSizeGb: 30
     cpu: 4
@@ -83,7 +85,11 @@ task vepTask {
 # happen in WDL instead of a task
 task parseVepCustomAnnotationIntoArg {
   input { VepCustomAnnotation obj }
-  runtime { docker: "python:3.10" }
+  runtime {
+    preemptible: 1
+    maxRetries: 2 
+    docker: "python:3.10" 
+  }
   command <<<
     python <<CODE
     check_existing = "~{true="--check_existing" false="" obj.annotation.check_existing}"

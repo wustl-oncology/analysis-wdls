@@ -11,6 +11,8 @@ task bisulfiteQc {
 
   Int space_needed_gb = 10 + round(size([vcf, bam, reference, reference_fai, QCannotation], "GB"))
   runtime {
+    preemptible: 1
+    maxRetries: 2
     cpu: 1
     memory: "16GB"
     bootDiskSizeGb: 20

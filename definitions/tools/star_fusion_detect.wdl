@@ -18,6 +18,8 @@ task starFusionDetect {
   Float fastq_size = size(flatten([fastq, fastq2]), "GB")
   Int space_needed_gb = 10 + round(3 * (zip_size + fastq_size))
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "64GB"
     cpu: cores
     docker: "trinityctat/starfusion:pre-1.11.c"

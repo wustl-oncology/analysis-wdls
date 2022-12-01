@@ -19,6 +19,8 @@ task pindel {
   Int cores = 4
   Int space_needed_gb = 10 + round(size([reference, reference_fai, reference_dict, normal_bam, normal_bam_bai, tumor_bam, tumor_bam_bai, region_file], "GB"))
   runtime {
+    preemptible: 1
+    maxRetries: 2
     bootDiskSizeGb: 100
     cpu: cores
     disks: "local-disk ~{space_needed_gb} HDD"

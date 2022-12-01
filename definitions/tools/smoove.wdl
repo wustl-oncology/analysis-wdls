@@ -14,6 +14,8 @@ task smoove {
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
   Int space_needed_gb = 10 + round(2*(size(bams, "GB") + reference_size))
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "20GB"
     cpu: cores
     bootDiskSizeGb: 10

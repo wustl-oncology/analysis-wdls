@@ -130,6 +130,7 @@ task CreateSequenceGroupingTSV {
     CODE
   >>>
   runtime {
+    maxRetries: 2
     preemptible: preemptible_tries
     docker: "python:2.7"
     memory: "2 GiB"
@@ -158,6 +159,7 @@ task bqsr {
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
   Int space_needed_gb = 10 + round(known_sites_size  + bam_size + reference_size)
   runtime {
+    maxRetries: 2
     docker: "broadinstitute/gatk:4.1.8.1"
     memory: "6GB"
     disks: "local-disk ~{space_needed_gb} SSD"
@@ -192,6 +194,7 @@ task GatherBqsrReports {
       -O bqsr_report.txt
   }
   runtime {
+    maxRetries: 2
     preemptible: preemptible_tries
     docker: "broadinstitute/gatk:4.1.8.1"
     memory: "4 GiB"
@@ -218,6 +221,8 @@ task applyBqsr {
 
   Int space_needed_gb = 10 + round(size([bqsr_table, reference, reference_fai, reference_dict], "GB") + size([bam, bam_bai], "GB") * 2)
   runtime {
+    preemptible: 1
+    maxRetries: 2
     docker: "broadinstitute/gatk:4.1.8.1"
     memory: "18GB"
     disks: "local-disk ~{space_needed_gb} SSD"
@@ -251,6 +256,7 @@ task GatherBamFiles {
   Int command_mem_gb = ceil(mem_size_gb) - 1
   Int space_needed_gb = 10 + round(bam_size * 2.5)
   runtime {
+    maxRetries: 2
     preemptible: preemptible_tries
     docker: "broadinstitute/gatk:4.1.8.1"
     memory: "3 GiB"

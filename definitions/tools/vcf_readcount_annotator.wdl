@@ -11,6 +11,8 @@ task vcfReadcountAnnotator {
 
   Int space_needed_gb = 10 + round(size(vcf, "GB")*2 + size(bam_readcount_tsv, "GB"))
   runtime {
+    preemptible: 1
+    maxRetries: 2
     docker: "griffithlab/vatools:4.1.0"
     memory: "4GB"
     disks: "local-disk ~{space_needed_gb} HDD"

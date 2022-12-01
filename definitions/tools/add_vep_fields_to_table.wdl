@@ -10,6 +10,8 @@ task addVepFieldsToTable {
 
   Int space_needed_gb = 10 + round(size([vcf, tsv], "GB")*2)
   runtime {
+    preemptible: 1
+    maxRetries: 2
     memory: "4GB"
     docker: "griffithlab/vatools:4.1.0"
     disks: "local-disk ~{space_needed_gb} HDD"
