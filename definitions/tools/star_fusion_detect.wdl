@@ -22,7 +22,7 @@ task starFusionDetect {
     maxRetries: 2
     memory: "64GB"
     cpu: cores
-    docker: "trinityctat/starfusion:pre-1.11.c"
+    docker: "mgibio/starfusion:pre-1.11.c-fefaf71"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
