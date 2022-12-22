@@ -11,7 +11,7 @@ task varscanProcessSomatic {
     preemptible: 1
     maxRetries: 2
     memory: "4GB"
-    docker: "mgibio/cle:v1.3.1"
+    docker: "mgibio/varscan-cwl:v2.4.2-samtools1.16.1"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
