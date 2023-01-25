@@ -12,7 +12,7 @@ task filterVcfDocm {
   runtime {
     preemptible: 1
     maxRetries: 2
-    docker: "mgibio/cle:v1.4.2"
+    docker: "mgibio/samtools-cwl:1.16.1"
     memory: "4GB"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
