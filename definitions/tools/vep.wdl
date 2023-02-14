@@ -47,7 +47,7 @@ task vepTask {
     mkdir ~{cache_dir} && unzip -qq ~{cache_dir_zip} -d ~{cache_dir}
     #custom vep inputs (required files) get localized and we have to define this variable
     #pointing to their current path so that the custom string works as expected
-    custom_inputs_dir=$(dirname ~{required_files[0]})
+    ~{if length(required_files) > 0 then "custom_inputs_dir=$(dirname ~{required_files[0]})" else ""}
 
     /usr/bin/perl -I /opt/lib/perl/VEP/Plugins /usr/bin/variant_effect_predictor.pl \
     --format vcf \
