@@ -71,6 +71,15 @@ struct MHC {
   Array[File]? phase_vcf
 }
 
+struct FdaMetricBundle {
+  FdaMetrics unaligned_normal_dna
+  FdaMetrics unaligned_tumor_dna
+  FdaMetrics unaligned_tumor_rna
+  FdaMetrics aligned_normal_dna
+  FdaMetrics aligned_tumor_dna
+  FdaMetrics aligned_tumor_rna
+}
+
 
 workflow immuno {
   input {
@@ -701,12 +710,14 @@ workflow immuno {
 
     # --------- FDA metrics outputs ------------------------------------
 
-    FdaMetrics unaligned_normal_dna_fda_metrics = generateFdaMetrics.unaligned_normal_dna_metrics
-    FdaMetrics unaligned_tumor_dna_fda_metrics = generateFdaMetrics.unaligned_tumor_dna_metrics
-    FdaMetrics unaligned_tumor_rna_fda_metrics = generateFdaMetrics.unaligned_tumor_rna_metrics
-    FdaMetrics aligned_normal_dna_fda_metrics = generateFdaMetrics.aligned_normal_dna_metrics
-    FdaMetrics aligned_tumor_dna_fda_metrics = generateFdaMetrics.aligned_tumor_dna_metrics
-    FdaMetrics aligned_tumor_rna_fda_metrics = generateFdaMetrics.aligned_tumor_rna_metrics
+    FdaMetricBundle fda_metrics = object {
+      unaligned_normal_dna: generateFdaMetrics.unaligned_normal_dna_metrics,
+      unaligned_tumor_dna: generateFdaMetrics.unaligned_tumor_dna_metrics,
+      unaligned_tumor_rna: generateFdaMetrics.unaligned_tumor_rna_metrics,
+      aligned_normal_dna: generateFdaMetrics.aligned_normal_dna_metrics,
+      aligned_tumor_dna: generateFdaMetrics.aligned_tumor_dna_metrics,
+      aligned_tumor_rna: generateFdaMetrics.aligned_tumor_rna_metrics
+    }
 
     # --------- Other Outputs ------------------------------------------
 
