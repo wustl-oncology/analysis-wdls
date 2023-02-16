@@ -19,6 +19,13 @@ task varscanSomatic {
     File? roi_bed
   }
 
+  parameter_meta {
+    tumor_bam: { localization_optional: true }
+    tumor_bam_bai: { localization_optional: true }
+    normal_bam: { localization_optional: true }
+    normal_bam_bai: { localization_optional: true }
+  }
+
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
   Float bam_size = size([tumor_bam, tumor_bam_bai, normal_bam, normal_bam_bai], "GB")
   Int space_needed_gb = 10 + ceil(reference_size + bam_size*2)
@@ -27,13 +34,20 @@ task varscanSomatic {
     maxRetries: 2
     memory: "12GB"
     cpu: 2
-    docker: "mgibio/cle:v1.3.1"
+    docker: "mgibio/varscan-cwl:v2.4.2-samtools1.16.1"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<
     set -o errexit
     set -o nounset
+
+    ACCESS_TOKEN=$(wget -O - --header "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token?alt=text 2> /dev/null | grep access_token)
+    if [[ "$ACCESS_TOKEN" == "access_token"* ]]; then
+       # When the BAMs aren't localized in GCP, samtools needs this token to access them via gs:// URLs.
+       export GCS_OAUTH_TOKEN=$(echo "$ACCESS_TOKEN" | cut -d ' ' -f 2 )
+       echo "got token" ${GCS_OAUTH_TOKEN:0:5}
+    fi
 
     java -jar /opt/varscan/VarScan.jar somatic \
     <(/opt/samtools/bin/samtools mpileup --no-baq ~{if defined(roi_bed) then "-l ~{roi_bed}" else ""} -f "~{reference}" "~{normal_bam}" "~{tumor_bam}") \
