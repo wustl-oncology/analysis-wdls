@@ -92,7 +92,7 @@ task unalignedSeqFdaStats {
                         {
                             chomp $i;
 
-                            update_hash($i, \%freq, \%count, $offset, $path);
+                            update_hash($i, \%freq, \%count, $path);
                         }
                         elsif ($n % 4 == 1)
                         {
@@ -117,7 +117,7 @@ task unalignedSeqFdaStats {
 
                         my @fields = split /\t/, $i;
 
-                        update_hash($fields[10], \%freq, \%count, $offset, $path);
+                        update_hash($fields[10], \%freq, \%count, $path);
 
                         my $nbase = count_N($fields[9]);
 
@@ -168,7 +168,7 @@ task unalignedSeqFdaStats {
                 my $nfilter = 0;
                 foreach my $score (keys %{$freq{$key}})
                 {
-                    if ($filter <= $score)
+                    if ($filter <= (ord($score) - $offset))
                     {
                         $nfilter += $freq{$key}->{$score};
                     }
@@ -188,10 +188,10 @@ task unalignedSeqFdaStats {
 
 
         sub update_hash {
-            my ($qual, $freq, $count, $offset, $path) = @_;
+            my ($qual, $freq, $count, $path) = @_;
 
             # converts characters to ASCII numbers
-            my @scores = map { unpack("C*", $_ ) - $offset } unpack('(a)*', $qual);
+            my @scores = unpack('(a)*', $qual);
 
             # updates the frequency of basecalling score
             foreach (@scores)
@@ -227,7 +227,7 @@ task unalignedSeqFdaStats {
             croak "empty frequency hash" unless keys(%$hash) > 0;
 
             # sorts the data values
-            my @sort = sort {$a <=> $b} keys %$hash;
+            my @sort = sort {ord($a) <=> ord($b)} keys %$hash;
 
             # counts the total number of data
             my $n = 0;
@@ -242,11 +242,12 @@ task unalignedSeqFdaStats {
             for (my $i=0; $i<@sort; $i ++)
             {
                 # gets the last index of the given score in the array (1-based)
-                my $score = $sort[$i];
-                $idx += $hash->{$score};
+                my $score_chr = $sort[$i];
+                my $score_num = ord($score_chr) - $offset;
+                $idx += $hash->{$score_chr};
 
                 # to calculate the mean
-                $mean += $score * $hash->{$score};
+                $mean += $score_num * $hash->{$score_chr};
 
                 # calculates the median
                 unless (defined $median)
@@ -257,16 +258,16 @@ task unalignedSeqFdaStats {
                         {
                             if ($midx[1] <= $idx - 1)
                             {
-                                $median = $score;
+                                $median = $score_num;
                             }
                             else
                             {
-                                $median = ($score + $sort[$i + 1]) / 2;
+                                $median = ($score_num + $sort[$i + 1]) / 2;
                             }
                         }
                         else
                         {
-                            $median = $score;
+                            $median = $score_num;
                         }
                     }
                 }
