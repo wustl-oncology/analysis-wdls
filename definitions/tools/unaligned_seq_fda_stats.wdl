@@ -158,7 +158,7 @@ task unalignedSeqFdaStats {
             {
                 # calculates the total number of base calls and sequences
                 my ($nseq, $ncall) = (0, 0);
-                foreach my $len (sort {$a <=> $b} keys %{$count{$key}})
+                foreach my $len (keys %{$count{$key}})
                 {
                     $ncall += $len * $count{$key}->{$len};
                     $nseq += $count{$key}->{$len};
