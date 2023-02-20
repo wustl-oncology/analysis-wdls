@@ -201,8 +201,9 @@ task unalignedSeqFdaStats {
             }
 
             # counts the sequence length
-            $count->{sum}->{$#scores + 1} ++;
-            $count->{$path}->{$#scores + 1} ++;
+            my $length = scalar(@scores);
+            $count->{sum}->{$length} ++;
+            $count->{$path}->{$length} ++;
         }
 
 
