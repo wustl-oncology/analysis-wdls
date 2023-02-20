@@ -30,7 +30,7 @@ task unalignedSeqFdaStats {
 
 
         # sets global variables with the default
-        use vars qw/$filter $base $offset $samtools/;
+        use vars qw/$filter $offset $samtools/;
 
         # defines the minimum base call quality score to filter
         # inclusive, for example, Bases with >= Q30
@@ -39,11 +39,6 @@ task unalignedSeqFdaStats {
         # defines the offset to calculate the base call quality score from the Phred +33 encoded by ASCII characters
         # For example, 33 = 63.06707094 - 30.06707094 (see below)
         $offset = 33;
-
-        # Please replace count_N() with count_base() below to enable this option.
-        # defines a basecalling letter to count
-        # (default: "N")
-        $base = 'N';        # now inactivated, don't change this.
 
         # specifies the program paths in docker(mgibio/cle:v1.4.2)
         $samtools = "/opt/samtools/bin/samtools";              # samtools 1.3.1 using htslib 1.3.2
@@ -103,7 +98,6 @@ task unalignedSeqFdaStats {
                         {
                             chomp $i;
 
-                            # instead of count_base($i, $base);
                             my $nbase = count_N($i);
 
                             $base{sum} += $nbase;
@@ -125,7 +119,6 @@ task unalignedSeqFdaStats {
 
                         update_hash($fields[10], \%freq, \%count, $offset, $path);
 
-                        # instead of count_base($fields[9], $base);
                         my $nbase = count_N($fields[9]);
 
                         $base{sum} += $nbase;
@@ -185,7 +178,7 @@ task unalignedSeqFdaStats {
                 printf "\n\n[Quality score summary from %s]", $key eq "sum" ? sprintf("%d file(s)", scalar(@paths)) : $key;
                 printf "\nTotal Number of Reads\t%s", $nseq;                                                                    # total sequence number
                 printf "\nTotal Number of basecalls\t%s", $ncall;
-                printf "\nBases with %s\t%s\t%s (%%)", $base, $base{$key}, $base{$key} / $ncall * 100;
+                printf "\nBases with N\t%s\t%s (%%)", $base{$key}, $base{$key} / $ncall * 100;
                 printf "\nMedian Basecall Quality Score\t%s", $median;
                 printf "\nMean Basecall Quality Score\t%s", $mean;
                 printf "\nBases with >= Q%s\t%d\t%s (%%)", $filter, $nfilter, $nfilter / $ncall * 100;
@@ -225,21 +218,6 @@ task unalignedSeqFdaStats {
 
             return $count;
         }
-
-
-        sub count_base {
-            my ($str, $base) = @_;
-
-            # calculates the frequency of a letter
-            my $count = 0;
-            if (index($str, $base) > -1)
-            {
-                $count = $str =~ s/$base//g;
-            }
-
-            return $count;
-        }
-
 
         sub stat_freq {
             my ($hash) = @_;
