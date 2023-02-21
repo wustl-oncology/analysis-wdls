@@ -63,6 +63,11 @@ task unalignedSeqFdaStats {
             my $n = 0;
             foreach my $path (@paths)
             {
+                my $count_for_path = {}; # $count{$path};
+                my $freq_for_path = {};  # $freq{$path};
+
+                my $base_for_path = 0; # $base{$path};
+
                 my $fh;
                 if ($path =~ /\.gz$/ || $path =~ /\.bz2$/)
                 {
@@ -92,7 +97,7 @@ task unalignedSeqFdaStats {
                         {
                             chomp $i;
 
-                            update_hash($i, \%freq, \%count, $path);
+                            update_hash($i, $freq_for_path, $count_for_path);
                         }
                         elsif ($n % 4 == 1)
                         {
@@ -100,8 +105,7 @@ task unalignedSeqFdaStats {
 
                             my $nbase = count_N($i);
 
-                            $base{sum} += $nbase;
-                            $base{$path} += $nbase;
+                            $base_for_path += $nbase;
                         }
 
 
@@ -117,12 +121,11 @@ task unalignedSeqFdaStats {
 
                         my @fields = split /\t/, $i;
 
-                        update_hash($fields[10], \%freq, \%count, $path);
+                        update_hash($fields[10], $freq_for_path, $count_for_path);
 
                         my $nbase = count_N($fields[9]);
 
-                        $base{sum} += $nbase;
-                        $base{$path} += $nbase;
+                        $base_for_path += $nbase;
 
                         $n ++;
                     }
@@ -131,6 +134,19 @@ task unalignedSeqFdaStats {
                 {
                     croak "Invalid input file format: $format";
                 }
+
+                for my $freq (keys %$freq_for_path) {
+                    $freq{sum}{$freq} += $freq_for_path->{$freq};
+                }
+                $freq{$path} = $freq_for_path;
+
+                for my $c (keys %$count_for_path) {
+                    $count{sum}{$c} += $count_for_path->{$c};
+                }
+                $count{$path} = $count_for_path;
+
+                $base{sum} += $base_for_path;
+                $base{$path} = $base_for_path;
 
                 # closes the file handler
                 printf "\n%d lines (cumulative) read from %s", $n, $path;
@@ -188,7 +204,7 @@ task unalignedSeqFdaStats {
 
 
         sub update_hash {
-            my ($qual, $freq, $count, $path) = @_;
+            my ($qual, $freq, $count) = @_;
 
             # converts characters to ASCII numbers
             my @scores = unpack('(a)*', $qual);
@@ -196,14 +212,12 @@ task unalignedSeqFdaStats {
             # updates the frequency of basecalling score
             foreach (@scores)
             {
-                $freq->{sum}->{$_} ++;
-                $freq->{$path}->{$_} ++;
+                $freq->{$_} ++;
             }
 
             # counts the sequence length
             my $length = scalar(@scores);
-            $count->{sum}->{$length} ++;
-            $count->{$path}->{$length} ++;
+            $count->{$length} ++;
         }
 
 
