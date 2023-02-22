@@ -40,8 +40,8 @@ task unalignedSeqFdaStats {
         # For example, 33 = 63.06707094 - 30.06707094 (see below)
         $offset = 33;
 
-        # specifies the program paths in docker(mgibio/cle:v1.4.2)
-        $samtools = "/opt/samtools/bin/samtools";              # samtools 1.3.1 using htslib 1.3.2
+        # specifies the program paths in docker
+        $samtools = "/opt/samtools/bin/samtools";
 
 
         # main subroutine
