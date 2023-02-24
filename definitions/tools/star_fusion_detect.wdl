@@ -59,7 +59,14 @@ task starFusionDetect {
     File chim_junc = fusion_output_dir + "/Chimeric.out.junction"
     # STAR also outputs gene counts file just like Kallisto
     File gene_counts = fusion_output_dir + "/ReadsPerGene.out.tab"
-  }
+    File f1 = fusion_output_dir + "/star-fusion.preliminary/star-fusion.fusion_candidates.preliminary"
+    File f2 = fusion_output_dir + "/star-fusion.preliminary/star-fusion.filter.intermediates_dir/star-fusion.post_blast_and_promiscuity_filter"
+    File f3 = fusion_output_dir + "/star-fusion.fusion_candidates.preliminary.filtered.FFPM"
+    File f4 = fusion_output_dir + "/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot"
+    File f5 = fusion_output_dir + "/tar-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot.annot_filter.pass"
+    File f6 = fusion_output_dir + "/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot.annot_filter.pass.RTartifact.pass"
+    File f7 = fusion_output_dir + "/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot.annot_filter.pass.RTartifact.pass.minFFPM." + min_ffpm_level + ".pass"
+ }
 }
 
 workflow wf { call starFusionDetect { input: } }
