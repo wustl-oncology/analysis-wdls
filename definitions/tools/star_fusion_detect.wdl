@@ -11,7 +11,7 @@ task starFusionDetect {
     Array[File] fastq
     Array[File] fastq2
     Array[String] outsam_attrrg_line
-    Int? min_ffpm_level = 0.05
+    Float? min_ffpm_level = 0.05
   }
 
   Int cores = 12
