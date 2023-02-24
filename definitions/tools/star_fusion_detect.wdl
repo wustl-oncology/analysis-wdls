@@ -11,6 +11,7 @@ task starFusionDetect {
     Array[File] fastq
     Array[File] fastq2
     Array[String] outsam_attrrg_line
+    Int? min_ffpm_level = 0.05
   }
 
   Int cores = 12
@@ -36,7 +37,8 @@ task starFusionDetect {
         ~{true="--examine_coding_effect" false="" examine_coding_effect} \
         ~{if defined(fusioninspector_mode) then "--FusionInspector " + fusioninspector_mode else ""} \
         --STAR_outSAMattrRGline "~{sep=" , " outsam_attrrg_line}" \
-        --left_fq ~{sep="," fastq} --right_fq ~{sep="," fastq2}
+        --left_fq ~{sep="," fastq} --right_fq ~{sep="," fastq2} \
+        --min_FFPM ~{min_ffpm_level}
   >>>
 
   output {
