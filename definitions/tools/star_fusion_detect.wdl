@@ -65,7 +65,7 @@ task starFusionDetect {
     File f4 = fusion_output_dir + "/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot"
     File f5 = fusion_output_dir + "/tar-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot.annot_filter.pass"
     File f6 = fusion_output_dir + "/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot.annot_filter.pass.RTartifact.pass"
-    File f7 = fusion_output_dir + "/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot.annot_filter.pass.RTartifact.pass.minFFPM." + min_ffpm_level + ".pass"
+    File f7 = fusion_output_dir + "/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot.annot_filter.pass.RTartifact.pass.minFFPM.${min_ffpm_level}.pass"
  }
 }
 
