@@ -147,7 +147,8 @@ workflow rnaseqStarFusion {
     File cram_crai = indexCram.indexed_cram_crai
     File star_fusion_out = starFusionDetect.chim_junc
     File star_junction_out = starFusionDetect.splice_junction_out
-    File star_fusion_log = starFusionDetect.log_final
+    File star_fusion_log_final = starFusionDetect.log_final
+    File star_fusion_log = starFusionDetect.log
     File star_fusion_predict = starFusionDetect.fusion_predictions
     File star_fusion_abridge = starFusionDetect.fusion_abridged
     File stringtie_transcript_gtf = stringtie.transcript_gtf
@@ -165,5 +166,12 @@ workflow rnaseqStarFusion {
     File annotated_fusion_predictions_zip = agfusion.annotated_fusion_predictions_zip
     File? star_fusion_coding_region_effects = starFusionDetect.coding_region_effects
     Array[File] fusioninspector_evidence = starFusionDetect.fusioninspector_evidence
+    File star_fusion_bp_filter = starFusionDetect.bp_filter
+    File star_fusion_candidates = starFusionDetect.candidates
+    File star_fusion_candidates_filtered = starFusionDetect.candidates_filtered_FFPM
+    File star_fusion_wAnnot = starFusionDetect.wAnnot
+    File star_fusion_wAnnot_filter = starFusionDetect.wAnnot_filter
+    File star_fusion_wAnnot_filter_artifact = starFusionDetect.wAnnot_filter_artifact
+    File star_fusion_wAnnot_filter_artifact_minFFPM = starFusionDetect.wAnnot_filter_artifact_minFFPM 
   }
 }
