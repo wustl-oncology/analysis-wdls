@@ -11,8 +11,8 @@ task alignedSeqFdaStats {
 
   Int space_needed_gb = 10 + ceil(size(files, "GB") + size(reference, "GB"))
   runtime {
-    memory: "16GB"
-    docker: "mgibio/cle:v1.4.2"
+    memory: "4GB"
+    docker: "mgibio/samtools-cwl:1.16.1"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
@@ -33,8 +33,8 @@ task alignedSeqFdaStats {
         # sets global variables with the default
         use vars qw/$samtools/;
 
-        # specifies the program paths in docker(mgibio/cle:v1.4.2)
-        $samtools = "/opt/samtools/bin/samtools";                # samtools 1.3.1 using htslib 1.3.2
+        # specifies the program paths in docker
+        $samtools = "/opt/samtools/bin/samtools";
 
 
         # main subroutine
