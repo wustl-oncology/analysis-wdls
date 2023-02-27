@@ -8,7 +8,7 @@ task md5sum {
 
   Int space_needed_gb = 10 + round(size(files, "GB"))
   runtime {
-    memory: "16GB"
+    memory: "4GB"
     docker: "ubuntu:bionic"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
