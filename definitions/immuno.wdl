@@ -508,7 +508,7 @@ workflow immuno {
           rna.star_fusion_wAnnot_filter,
           rna.star_fusion_wAnnot_filter_artifact,
           rna.star_fusion_wAnnot_filter_artifact_minFFPM
-        ]
+        ],
       }
     }
 
