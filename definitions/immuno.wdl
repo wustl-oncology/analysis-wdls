@@ -26,11 +26,16 @@ import "tools/phlat.wdl" as ph
 # to encode intended output directory for each file.
 #
 
+struct StarFusion {
+  Array[File?] results
+  Array[File?] candidates_preliminary
+}
+
 struct Rnaseq {
   Array[File] alignments
   Array[File] stringtie_expression
   Array[File] kallisto_expression
-  Array[File?] star_fusion
+  StarFusion star_fusion
 }
 
 struct Qc {
@@ -484,23 +489,27 @@ workflow immuno {
         rna.kallisto_gene_abundance,
         rna.kallisto_fusion_evidence
       ],
-      star_fusion: [
-        rna.star_fusion_out,
-        rna.star_junction_out,
-        rna.star_fusion_predict,
-        rna.star_fusion_abridge,
-        rna.star_fusion_coding_region_effects,
-        rna.annotated_fusion_predictions_zip,
-        rna.star_fusion_log,
-        rna.star_fusion_log_final,
-        rna.star_fusion_bp_filter,
-        rna.star_fusion_candidates,
-        rna.star_fusion_candidates_filtered,
-        rna.star_fusion_wAnnot,
-        rna.star_fusion_wAnnot_filter,
-        rna.star_fusion_wAnnot_filter_artifact,
-        rna.star_fusion_wAnnot_filter_artifact_minFFPM
-      ]
+      StarFusion star_fusion = object {
+        results: [
+          rna.star_fusion_out,
+          rna.star_junction_out,
+          rna.star_fusion_predict,
+          rna.star_fusion_abridge,
+          rna.star_fusion_coding_region_effects,
+          rna.annotated_fusion_predictions_zip
+        ],
+        cadidates_preliminary: [
+          rna.star_fusion_log,
+          rna.star_fusion_log_final,
+          rna.star_fusion_bp_filter,
+          rna.star_fusion_candidates,
+          rna.star_fusion_candidates_filtered,
+          rna.star_fusion_wAnnot,
+          rna.star_fusion_wAnnot_filter,
+          rna.star_fusion_wAnnot_filter_artifact,
+          rna.star_fusion_wAnnot_filter_artifact_minFFPM
+        ]
+      }
     }
 
     # -------- Somatic Outputs -----------------------------------------
