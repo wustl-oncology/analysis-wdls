@@ -51,12 +51,15 @@ struct Variants {
   Array[File?] varscan
   Array[File?] docm
 }
+
 struct Cnv {
   Array[File?] cnvkit
 }
+
 struct Sv {
   Array[File?] manta
 }
+
 struct Somatic {
   Variants variants
   Array[File] final
@@ -489,7 +492,7 @@ workflow immuno {
         rna.kallisto_gene_abundance,
         rna.kallisto_fusion_evidence
       ],
-      star_fusion: object {
+      StarFusion star_fusion: object {
         results: [
           rna.star_fusion_out,
           rna.star_junction_out,
@@ -508,7 +511,7 @@ workflow immuno {
           rna.star_fusion_wAnnot_filter,
           rna.star_fusion_wAnnot_filter_artifact,
           rna.star_fusion_wAnnot_filter_artifact_minFFPM
-        ],
+        ]
       }
     }
 
