@@ -492,7 +492,7 @@ workflow immuno {
         rna.kallisto_gene_abundance,
         rna.kallisto_fusion_evidence
       ],
-      StarFusion star_fusion: object {
+      star_fusion: object {
         results: [
           rna.star_fusion_out,
           rna.star_junction_out,
