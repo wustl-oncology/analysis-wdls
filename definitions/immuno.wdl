@@ -501,7 +501,7 @@ workflow immuno {
           rna.star_fusion_coding_region_effects,
           rna.annotated_fusion_predictions_zip
         ],
-        cadidates_preliminary: [
+        candidates_preliminary: [
           rna.star_fusion_log,
           rna.star_fusion_log_final,
           rna.star_fusion_bp_filter,
