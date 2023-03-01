@@ -63,7 +63,7 @@ task starFusionDetect {
     File bp_filter = fusion_output_dir + "/star-fusion.preliminary/star-fusion.filter.intermediates_dir/star-fusion.post_blast_and_promiscuity_filter"
     File candidates_filtered_FFPM = fusion_output_dir + "/star-fusion.fusion_candidates.preliminary.filtered.FFPM"
     File wAnnot = fusion_output_dir + "/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot"
-    File wAnnot_filter = fusion_output_dir + "/tar-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot.annot_filter.pass"
+    File wAnnot_filter = fusion_output_dir + "/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot.annot_filter.pass"
     File wAnnot_filter_artifact = fusion_output_dir + "/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot.annot_filter.pass.RTartifact.pass"
     File wAnnot_filter_artifact_minFFPM = fusion_output_dir + "/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot.annot_filter.pass.RTartifact.pass.minFFPM.${min_ffpm_level}.pass"
  }
