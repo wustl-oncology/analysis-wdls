@@ -45,6 +45,7 @@ workflow rnaseqStarFusion {
     String? fusioninspector_mode  # enum [inspect validate]
     File agfusion_database
     Boolean? agfusion_annotate_noncanonical
+    Float? min_ffpm_level
   }
 
   scatter(sequence in unaligned) {
@@ -78,7 +79,8 @@ workflow rnaseqStarFusion {
     fusioninspector_mode=fusioninspector_mode,
     fastq=sequenceToTrimmedFastq.fastq1,
     fastq2=sequenceToTrimmedFastq.fastq2,
-    outsam_attrrg_line=select_all(attrrg_line)
+    outsam_attrrg_line=select_all(attrrg_line),
+    min_ffpm_level=min_ffpm_level
   }
 
   call k.kallisto {

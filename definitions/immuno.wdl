@@ -105,6 +105,7 @@ workflow immuno {
     File cdna_fasta
     File agfusion_database
     Boolean agfusion_annotate_noncanonical = true
+    Float? min_ffpm_level = 0.05
 
     # --------- Somatic Exome Inputs -----------------------------------
 
@@ -248,7 +249,8 @@ workflow immuno {
     fusioninspector_mode=fusioninspector_mode,
     cdna_fasta=cdna_fasta,
     agfusion_database=agfusion_database,
-    agfusion_annotate_noncanonical=agfusion_annotate_noncanonical
+    agfusion_annotate_noncanonical=agfusion_annotate_noncanonical,
+    min_ffpm_level=min_ffpm_level
   }
 
   call se.somaticExome {
