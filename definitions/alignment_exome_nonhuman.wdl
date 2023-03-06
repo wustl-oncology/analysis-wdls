@@ -64,15 +64,6 @@ workflow alignmentExomeNonhuman {
     File bam = alignment.final_bam
     File bam_bai = alignment.final_bam_bai
     File mark_duplicates_metrics = alignment.mark_duplicates_metrics_file
-    File insert_size_metrics = qc.insert_size_metrics
-    File insert_size_histogram = qc.insert_size_histogram
-    File alignment_summary_metrics = qc.alignment_summary_metrics
-    File hs_metrics = qc.hs_metrics
-    Array[File] per_target_coverage_metrics = qc.per_target_coverage_metrics
-    Array[File] per_target_hs_metrics = qc.per_target_hs_metrics
-    Array[File] per_base_coverage_metrics = qc.per_base_coverage_metrics
-    Array[File] per_base_hs_metrics = qc.per_base_hs_metrics
-    Array[File] summary_hs_metrics = qc.summary_hs_metrics
-    File flagstats = qc.flagstats
+    QCMetrics qc_metrics = qc.metrics
   }
 }

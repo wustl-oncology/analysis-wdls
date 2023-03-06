@@ -41,8 +41,8 @@ struct Rnaseq {
 
 struct Qc {
   Array[File?] tumor_rna
-  Array[File?] tumor_dna
-  Array[File?] normal_dna
+  QCMetrics tumor_dna
+  QCMetrics normal_dna
   Array[File?] concordance
 }
 
@@ -524,16 +524,10 @@ workflow immuno {
       aligned_tumor_dna_index = somaticExome.tumor_cram_crai,
       aligned_tumor_rna = rna.final_bam,
 
-      normal_alignment_summary_metrics = somaticExome.normal_alignment_summary_metrics,
+      normal_qc_metrics = somaticExome.normal_qc_metrics,
       normal_duplication_metrics = somaticExome.normal_mark_duplicates_metrics,
-      normal_insert_size_metrics = somaticExome.normal_insert_size_metrics,
-      normal_hs_metrics = somaticExome.normal_hs_metrics,
-      normal_flagstat = somaticExome.normal_flagstats,
-      tumor_alignment_summary_metrics = somaticExome.tumor_alignment_summary_metrics,
+      tumor_qc_metrics = somaticExome.tumor_qc_metrics,
       tumor_duplication_metrics = somaticExome.tumor_mark_duplicates_metrics,
-      tumor_insert_size_metrics = somaticExome.tumor_insert_size_metrics,
-      tumor_hs_metrics = somaticExome.tumor_hs_metrics,
-      tumor_flagstat  = somaticExome.tumor_flagstats,
       rna_metrics = rna.metrics,
 
       reference_genome = reference_genome_name,
@@ -599,34 +593,8 @@ workflow immuno {
           rna.chart ],
         rna.strand_info  
       ]),
-      tumor_dna: flatten([
-        [ somaticExome.tumor_mark_duplicates_metrics,
-          somaticExome.tumor_insert_size_metrics,
-          somaticExome.tumor_alignment_summary_metrics,
-          somaticExome.tumor_hs_metrics,
-          somaticExome.tumor_flagstats,
-          somaticExome.tumor_verify_bam_id_metrics,
-          somaticExome.tumor_verify_bam_id_depth ],
-        somaticExome.tumor_per_target_coverage_metrics,
-        somaticExome.tumor_per_target_hs_metrics,
-        somaticExome.tumor_per_base_coverage_metrics,
-        somaticExome.tumor_per_base_hs_metrics,
-        somaticExome.tumor_summary_hs_metrics
-      ]),
-      normal_dna: flatten([
-        [ somaticExome.normal_mark_duplicates_metrics,
-          somaticExome.normal_insert_size_metrics,
-          somaticExome.normal_alignment_summary_metrics,
-          somaticExome.normal_hs_metrics,
-          somaticExome.normal_flagstats,
-          somaticExome.normal_verify_bam_id_metrics,
-          somaticExome.normal_verify_bam_id_depth ],
-        somaticExome.normal_per_target_coverage_metrics,
-        somaticExome.normal_per_target_hs_metrics,
-        somaticExome.normal_per_base_coverage_metrics,
-        somaticExome.normal_per_base_hs_metrics,
-        somaticExome.normal_summary_hs_metrics
-      ]),
+      tumor_dna: somaticExome.tumor_qc_metrics,
+      normal_dna: somaticExome.normal_qc_metrics,
       concordance: [
         somaticExome.somalier_concordance_metrics,
         somaticExome.somalier_concordance_statistics

@@ -67,7 +67,7 @@ workflow germlineExomeGvcf {
 
   call f.freemix {
     input:
-    verify_bam_id_metrics=alignmentAndQc.verify_bam_id_metrics
+    verify_bam_id_metrics=select_first([alignmentAndQc.qc_metrics.verify_bam_id_metrics])
   }
 
   call ghi.gatkHaplotypecallerIterator as generateGvcfs {
@@ -100,18 +100,7 @@ workflow germlineExomeGvcf {
     File cram = indexCram.indexed_cram
     File cram_crai = indexCram.indexed_cram_crai
     File mark_duplicates_metrics = alignmentAndQc.mark_duplicates_metrics
-    File insert_size_metrics = alignmentAndQc.insert_size_metrics
-    File insert_size_histogram = alignmentAndQc.insert_size_histogram
-    File alignment_summary_metrics = alignmentAndQc.alignment_summary_metrics
-    File hs_metrics = alignmentAndQc.hs_metrics
-    Array[File] per_target_coverage_metrics = alignmentAndQc.per_target_coverage_metrics
-    Array[File] per_target_hs_metrics = alignmentAndQc.per_target_hs_metrics
-    Array[File] per_base_coverage_metrics = alignmentAndQc.per_base_coverage_metrics
-    Array[File] per_base_hs_metrics = alignmentAndQc.per_base_hs_metrics
-    Array[File] summary_hs_metrics = alignmentAndQc.summary_hs_metrics
-    File flagstats = alignmentAndQc.flagstats
-    File verify_bam_id_metrics = alignmentAndQc.verify_bam_id_metrics
-    File verify_bam_id_depth = alignmentAndQc.verify_bam_id_depth
+    QCMetrics qc_metrics = alignmentAndQc.qc_metrics
     Array[File] gvcf = generateGvcfs.gvcf
   }
 }

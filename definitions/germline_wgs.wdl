@@ -111,7 +111,7 @@ workflow germlineWgs {
     reference_dict=reference_dict,
     bam=alignmentAndQc.bam,
     bai=alignmentAndQc.bai,
-    verify_bam_id_metrics=alignmentAndQc.verify_bam_id_metrics,
+    verify_bam_id_metrics=select_first([alignmentAndQc.qc_metrics.verify_bam_id_metrics]),
     gvcf_gq_bands=gvcf_gq_bands,
     intervals=intervals,
     ploidy=ploidy,
@@ -259,16 +259,7 @@ workflow germlineWgs {
   output {
     File cram = indexCram.indexed_cram
     File mark_duplicates_metrics = alignmentAndQc.mark_duplicates_metrics
-    File insert_size_metrics = alignmentAndQc.insert_size_metrics
-    File insert_size_histogram = alignmentAndQc.insert_size_histogram
-    File alignment_summary_metrics = alignmentAndQc.alignment_summary_metrics
-    File gc_bias_metrics = alignmentAndQc.gc_bias_metrics
-    File gc_bias_metrics_chart = alignmentAndQc.gc_bias_metrics_chart
-    File gc_bias_metrics_summary = alignmentAndQc.gc_bias_metrics_summary
-    File wgs_metrics = alignmentAndQc.wgs_metrics
-    File flagstats = alignmentAndQc.flagstats
-    File verify_bam_id_metrics = alignmentAndQc.verify_bam_id_metrics
-    File verify_bam_id_depth = alignmentAndQc.verify_bam_id_depth
+    QCMetrics qc_metrics = alignmentAndQc.qc_metrics
     File raw_vcf = detectVariants.raw_vcf
     File raw_vcf_tbi = detectVariants.raw_vcf_tbi
     File final_vcf = indexDisclaimerFinalVcf.indexed_vcf
@@ -276,11 +267,6 @@ workflow germlineWgs {
     File filtered_vcf = indexDisclaimerFilteredVcf.indexed_vcf
     File filtered_vcf_tbi = indexDisclaimerFilteredVcf.indexed_vcf_tbi
     File vep_summary = detectVariants.vep_summary
-    Array[File] per_base_coverage_metrics = alignmentAndQc.per_base_coverage_metrics
-    Array[File] per_base_hs_metrics = alignmentAndQc.per_base_hs_metrics
-    Array[File] per_target_coverage_metrics = alignmentAndQc.per_target_coverage_metrics
-    Array[File] per_target_hs_metrics = alignmentAndQc.per_target_hs_metrics
-    Array[File] summary_hs_metrics = alignmentAndQc.summary_hs_metrics
     File? cn_diagram = svDetectVariants.cn_diagram
     File? cn_scatter_plot = svDetectVariants.cn_scatter_plot
     File tumor_antitarget_coverage = svDetectVariants.tumor_antitarget_coverage
