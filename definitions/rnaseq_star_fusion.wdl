@@ -168,6 +168,6 @@ workflow rnaseqStarFusion {
     File annotated_fusion_predictions_zip = agfusion.annotated_fusion_predictions_zip
     File? star_fusion_coding_region_effects = starFusionDetect.coding_region_effects
     Array[File] fusioninspector_evidence = starFusionDetect.fusioninspector_evidence
-    PreliminaryStarFusionResults prelim_starfusion_results = starFusionDetect.prelim_starfusion_results
+    PreliminaryStarFusionResults prelim_starfusion_results = starFusionDetect.prelim_results
   }
 }

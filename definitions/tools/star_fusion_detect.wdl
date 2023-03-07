@@ -70,7 +70,7 @@ task starFusionDetect {
     # STAR also outputs gene counts file just like Kallisto
     File gene_counts = fusion_output_dir + "/ReadsPerGene.out.tab"
 
-    PreliminaryStarFusionResults prelim_starfusion_results = object {
+    PreliminaryStarFusionResults prelim_results = object {
       candidates: fusion_output_dir + "/star-fusion.preliminary/star-fusion.fusion_candidates.preliminary",
       bp_filter: fusion_output_dir + "/star-fusion.preliminary/star-fusion.filter.intermediates_dir/star-fusion.post_blast_and_promiscuity_filter",
       candidates_filtered_ffpm: fusion_output_dir + "/star-fusion.preliminary/star-fusion.fusion_candidates.preliminary.filtered.FFPM",
