@@ -28,7 +28,7 @@ import "tools/phlat.wdl" as ph
 
 struct StarFusion {
   Array[File?] results
-  Array[File?] candidates_preliminary
+  PreliminaryStarFusionResults candidates_preliminary
 }
 
 struct Rnaseq {
@@ -503,17 +503,7 @@ workflow immuno {
           rna.star_fusion_coding_region_effects,
           rna.annotated_fusion_predictions_zip
         ],
-        candidates_preliminary: [
-          rna.star_fusion_log,
-          rna.star_fusion_log_final,
-          rna.star_fusion_bp_filter,
-          rna.star_fusion_candidates,
-          rna.star_fusion_candidates_filtered,
-          rna.star_fusion_wAnnot,
-          rna.star_fusion_wAnnot_filter,
-          rna.star_fusion_wAnnot_filter_artifact,
-          rna.star_fusion_wAnnot_filter_artifact_minFFPM
-        ]
+        candidates_preliminary: rna.prelim_starfusion_results
       }
     }
 

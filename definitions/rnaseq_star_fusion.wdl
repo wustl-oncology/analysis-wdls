@@ -168,12 +168,6 @@ workflow rnaseqStarFusion {
     File annotated_fusion_predictions_zip = agfusion.annotated_fusion_predictions_zip
     File? star_fusion_coding_region_effects = starFusionDetect.coding_region_effects
     Array[File] fusioninspector_evidence = starFusionDetect.fusioninspector_evidence
-    File star_fusion_bp_filter = starFusionDetect.bp_filter
-    File star_fusion_candidates = starFusionDetect.candidates
-    File star_fusion_candidates_filtered = starFusionDetect.candidates_filtered_FFPM
-    File star_fusion_wAnnot = starFusionDetect.wAnnot
-    File star_fusion_wAnnot_filter = starFusionDetect.wAnnot_filter
-    File star_fusion_wAnnot_filter_artifact = starFusionDetect.wAnnot_filter_artifact
-    File star_fusion_wAnnot_filter_artifact_minFFPM = starFusionDetect.wAnnot_filter_artifact_minFFPM 
+    PreliminaryStarFusionResults prelim_starfusion_results = starFusionDetect.prelim_starfusion_results
   }
 }
