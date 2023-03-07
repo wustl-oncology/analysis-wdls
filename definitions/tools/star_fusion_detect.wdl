@@ -71,12 +71,12 @@ task starFusionDetect {
     File gene_counts = fusion_output_dir + "/ReadsPerGene.out.tab"
 
     PreliminaryStarFusionResults prelim_starfusion_results = object {
-      candidates: fusion_output_dir + "/star-fusion.preliminary/star-fusion.fusion_candidates.preliminary"
-      bp_filter: fusion_output_dir + "/star-fusion.preliminary/star-fusion.filter.intermediates_dir/star-fusion.post_blast_and_promiscuity_filter"
-      candidates_filtered_ffpm: fusion_output_dir + "/star-fusion.preliminary/star-fusion.fusion_candidates.preliminary.filtered.FFPM"
-      wannot: fusion_output_dir + "/star-fusion.preliminary/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot"
-      wannot_filter: fusion_output_dir + "/star-fusion.preliminary/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot.annot_filter.pass"
-      wannot_filter_artifact: fusion_output_dir + "/star-fusion.preliminary/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot.annot_filter.pass.RTartifact.pass"
+      candidates: fusion_output_dir + "/star-fusion.preliminary/star-fusion.fusion_candidates.preliminary",
+      bp_filter: fusion_output_dir + "/star-fusion.preliminary/star-fusion.filter.intermediates_dir/star-fusion.post_blast_and_promiscuity_filter",
+      candidates_filtered_ffpm: fusion_output_dir + "/star-fusion.preliminary/star-fusion.fusion_candidates.preliminary.filtered.FFPM",
+      wannot: fusion_output_dir + "/star-fusion.preliminary/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot",
+      wannot_filter: fusion_output_dir + "/star-fusion.preliminary/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot.annot_filter.pass",
+      wannot_filter_artifact: fusion_output_dir + "/star-fusion.preliminary/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot.annot_filter.pass.RTartifact.pass",
       wannot_filter_artifact_minffpm: fusion_output_dir + "/star-fusion.preliminary/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot.annot_filter.pass.RTartifact.pass.minFFPM.${min_ffpm_level}.pass"
     }
   }
