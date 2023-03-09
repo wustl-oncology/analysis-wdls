@@ -8,12 +8,13 @@ import "somatic_exome.wdl" as se
 # others
 import "subworkflows/phase_vcf.wdl" as pv
 import "subworkflows/pvacseq.wdl" as p
+import "subworkflows/generate_fda_metrics.wdl" as generate_fda_metrics
 import "tools/extract_hla_alleles.wdl" as eha
 import "tools/hla_consensus.wdl" as hc
 import "tools/intersect_known_variants.wdl" as ikv
 import "tools/pvacfuse.wdl" as pf
 import "types.wdl"  # !UnusedImport
-import "tools/optitype_dna.wdl" as od 
+import "tools/optitype_dna.wdl" as od
 import "tools/phlat.wdl" as ph
 
 #
@@ -76,6 +77,15 @@ struct MHC {
   Array[File] mhc_ii
   Array[File] combined
   Array[File]? phase_vcf
+}
+
+struct FdaMetricBundle {
+  FdaMetrics unaligned_normal_dna
+  FdaMetrics unaligned_tumor_dna
+  FdaMetrics unaligned_tumor_rna
+  FdaMetrics aligned_normal_dna
+  FdaMetrics aligned_tumor_dna
+  FdaMetrics aligned_tumor_rna
 }
 
 
@@ -224,6 +234,28 @@ workflow immuno {
     Int? pvacseq_threads
     Int? iedb_retries
     Boolean? pvacfuse_keep_tmp_files
+
+    # --------- FDA metrics inputs -------------------------------------
+    String? reference_genome_name
+    String? dna_sequencing_platform
+    String? dna_sequencing_instrument
+    String? dna_sequencing_kit
+    String? dna_sequencing_type
+    String? dna_single_or_paired_end
+    String? normal_dna_spike_in_error_rate
+    String? tumor_dna_spike_in_error_rate
+    String? normal_dna_total_dna
+    String? tumor_dna_total_dna
+    String? rna_sequencing_platform
+    String? rna_sequencing_instrument
+    String? rna_sequencing_kit
+    String? rna_sequencing_type
+    String? rna_single_or_paired_end
+    String? rna_spike_in_error_rate
+    String? rna_total_rna
+    String? rna_rin_score
+    String? rna_freq_normalization_method
+    String? rna_annotation_file
   }
 
   call rsf.rnaseqStarFusion as rna {
@@ -477,6 +509,58 @@ workflow immuno {
     n_threads=pvacseq_threads
   }
 
+  call generate_fda_metrics.generateFdaMetrics {
+    input:
+      reference = reference,
+      reference_dict = reference_dict,
+      reference_index = reference_fai,
+
+      unaligned_normal_dna = normal_sequence,
+      unaligned_tumor_dna = tumor_sequence,
+      unaligned_tumor_rna = rna_sequence,
+      aligned_normal_dna = somaticExome.normal_cram,
+      aligned_normal_dna_index = somaticExome.normal_cram_crai,
+      aligned_tumor_dna = somaticExome.tumor_cram,
+      aligned_tumor_dna_index = somaticExome.tumor_cram_crai,
+      aligned_tumor_rna = rna.final_bam,
+
+      normal_alignment_summary_metrics = somaticExome.normal_alignment_summary_metrics,
+      normal_duplication_metrics = somaticExome.normal_mark_duplicates_metrics,
+      normal_insert_size_metrics = somaticExome.normal_insert_size_metrics,
+      normal_hs_metrics = somaticExome.normal_hs_metrics,
+      normal_flagstat = somaticExome.normal_flagstats,
+      tumor_alignment_summary_metrics = somaticExome.tumor_alignment_summary_metrics,
+      tumor_duplication_metrics = somaticExome.tumor_mark_duplicates_metrics,
+      tumor_insert_size_metrics = somaticExome.tumor_insert_size_metrics,
+      tumor_hs_metrics = somaticExome.tumor_hs_metrics,
+      tumor_flagstat  = somaticExome.tumor_flagstats,
+      rna_metrics = rna.metrics,
+
+      reference_genome = reference_genome_name,
+      dna_sequencing_platform = dna_sequencing_platform,
+      dna_sequencing_instrument = dna_sequencing_instrument,
+      dna_sequencing_kit = dna_sequencing_kit,
+      dna_sequencing_type = dna_sequencing_type,
+      dna_single_or_paired_end = dna_single_or_paired_end,
+      normal_dna_spike_in_error_rate = normal_dna_spike_in_error_rate,
+      tumor_dna_spike_in_error_rate = tumor_dna_spike_in_error_rate,
+      normal_dna_total_dna = normal_dna_total_dna,
+      tumor_dna_total_dna = tumor_dna_total_dna,
+      normal_dna_sample_name = normal_sample_name,
+      tumor_dna_sample_name = tumor_sample_name,
+      rna_sequencing_platform = rna_sequencing_platform,
+      rna_sequencing_instrument = rna_sequencing_instrument,
+      rna_sequencing_kit = rna_sequencing_kit,
+      rna_sequencing_type = rna_sequencing_type ,
+      rna_single_or_paired_end = rna_single_or_paired_end,
+      rna_spike_in_error_rate = rna_spike_in_error_rate,
+      rna_total_rna = rna_total_rna,
+      rna_rin_score = rna_rin_score,
+      rna_freq_normalization_method = rna_freq_normalization_method,
+      rna_annotation_file = rna_annotation_file,
+      rna_sample_name = sample_name
+  }
+
   output {
     # ---------- RNAseq Outputs ----------------------------------------
     Rnaseq rnaseq = object {
@@ -636,6 +720,17 @@ workflow immuno {
        hlaConsensus.consensus_alleles_file],
       hlaConsensus.hla_call_files
     ])
+
+    # --------- FDA metrics outputs ------------------------------------
+
+    FdaMetricBundle fda_metrics = object {
+      unaligned_normal_dna: generateFdaMetrics.unaligned_normal_dna_metrics,
+      unaligned_tumor_dna: generateFdaMetrics.unaligned_tumor_dna_metrics,
+      unaligned_tumor_rna: generateFdaMetrics.unaligned_tumor_rna_metrics,
+      aligned_normal_dna: generateFdaMetrics.aligned_normal_dna_metrics,
+      aligned_tumor_dna: generateFdaMetrics.aligned_tumor_dna_metrics,
+      aligned_tumor_rna: generateFdaMetrics.aligned_tumor_rna_metrics
+    }
 
     # --------- Other Outputs ------------------------------------------
 
