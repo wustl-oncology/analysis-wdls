@@ -1,5 +1,15 @@
 version 1.0
 
+struct PreliminaryStarFusionResults {
+  File candidates
+  File bp_filter
+  File candidates_filtered_ffpm
+  File wannot
+  File wannot_filter
+  File wannot_filter_artifact
+  File wannot_filter_artifact_minffpm
+}
+
 task starFusionDetect {
   input {
     File star_fusion_genome_dir_zip
@@ -11,6 +21,7 @@ task starFusionDetect {
     Array[File] fastq
     Array[File] fastq2
     Array[String] outsam_attrrg_line
+    Float? min_ffpm_level = 0.05
   }
 
   Int cores = 12
@@ -36,7 +47,8 @@ task starFusionDetect {
         ~{true="--examine_coding_effect" false="" examine_coding_effect} \
         ~{if defined(fusioninspector_mode) then "--FusionInspector " + fusioninspector_mode else ""} \
         --STAR_outSAMattrRGline "~{sep=" , " outsam_attrrg_line}" \
-        --left_fq ~{sep="," fastq} --right_fq ~{sep="," fastq2}
+        --left_fq ~{sep="," fastq} --right_fq ~{sep="," fastq2} \
+        --min_FFPM ~{min_ffpm_level}
   >>>
 
   output {
@@ -57,6 +69,16 @@ task starFusionDetect {
     File chim_junc = fusion_output_dir + "/Chimeric.out.junction"
     # STAR also outputs gene counts file just like Kallisto
     File gene_counts = fusion_output_dir + "/ReadsPerGene.out.tab"
+
+    PreliminaryStarFusionResults prelim_results = object {
+      candidates: fusion_output_dir + "/star-fusion.preliminary/star-fusion.fusion_candidates.preliminary",
+      bp_filter: fusion_output_dir + "/star-fusion.preliminary/star-fusion.filter.intermediates_dir/star-fusion.post_blast_and_promiscuity_filter",
+      candidates_filtered_ffpm: fusion_output_dir + "/star-fusion.preliminary/star-fusion.fusion_candidates.preliminary.filtered.FFPM",
+      wannot: fusion_output_dir + "/star-fusion.preliminary/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot",
+      wannot_filter: fusion_output_dir + "/star-fusion.preliminary/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot.annot_filter.pass",
+      wannot_filter_artifact: fusion_output_dir + "/star-fusion.preliminary/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot.annot_filter.pass.RTartifact.pass",
+      wannot_filter_artifact_minffpm: fusion_output_dir + "/star-fusion.preliminary/star-fusion.fusion_candidates.preliminary.wSpliceInfo.wAnnot.annot_filter.pass.RTartifact.pass.minFFPM.${min_ffpm_level}.pass"
+    }
   }
 }
 

@@ -45,6 +45,7 @@ workflow rnaseqStarFusion {
     String? fusioninspector_mode  # enum [inspect validate]
     File agfusion_database
     Boolean? agfusion_annotate_noncanonical
+    Float? min_ffpm_level
   }
 
   scatter(sequence in unaligned) {
@@ -78,7 +79,8 @@ workflow rnaseqStarFusion {
     fusioninspector_mode=fusioninspector_mode,
     fastq=sequenceToTrimmedFastq.fastq1,
     fastq2=sequenceToTrimmedFastq.fastq2,
-    outsam_attrrg_line=select_all(attrrg_line)
+    outsam_attrrg_line=select_all(attrrg_line),
+    min_ffpm_level=min_ffpm_level
   }
 
   call k.kallisto {
@@ -147,7 +149,8 @@ workflow rnaseqStarFusion {
     File cram_crai = indexCram.indexed_cram_crai
     File star_fusion_out = starFusionDetect.chim_junc
     File star_junction_out = starFusionDetect.splice_junction_out
-    File star_fusion_log = starFusionDetect.log_final
+    File star_fusion_log_final = starFusionDetect.log_final
+    File star_fusion_log = starFusionDetect.log
     File star_fusion_predict = starFusionDetect.fusion_predictions
     File star_fusion_abridge = starFusionDetect.fusion_abridged
     File stringtie_transcript_gtf = stringtie.transcript_gtf
@@ -165,5 +168,6 @@ workflow rnaseqStarFusion {
     File annotated_fusion_predictions_zip = agfusion.annotated_fusion_predictions_zip
     File? star_fusion_coding_region_effects = starFusionDetect.coding_region_effects
     Array[File] fusioninspector_evidence = starFusionDetect.fusioninspector_evidence
+    PreliminaryStarFusionResults prelim_starfusion_results = starFusionDetect.prelim_results
   }
 }

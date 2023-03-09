@@ -26,11 +26,16 @@ import "tools/phlat.wdl" as ph
 # to encode intended output directory for each file.
 #
 
+struct StarFusion {
+  Array[File?] results
+  PreliminaryStarFusionResults candidates_preliminary
+}
+
 struct Rnaseq {
   Array[File] alignments
   Array[File] stringtie_expression
   Array[File] kallisto_expression
-  Array[File?] star_fusion
+  StarFusion star_fusion
 }
 
 struct Qc {
@@ -46,12 +51,15 @@ struct Variants {
   Array[File?] varscan
   Array[File?] docm
 }
+
 struct Cnv {
   Array[File?] cnvkit
 }
+
 struct Sv {
   Array[File?] manta
 }
+
 struct Somatic {
   Variants variants
   Array[File] final
@@ -97,6 +105,7 @@ workflow immuno {
     File cdna_fasta
     File agfusion_database
     Boolean agfusion_annotate_noncanonical = true
+    Float? min_ffpm_level = 0.05
 
     # --------- Somatic Exome Inputs -----------------------------------
 
@@ -240,7 +249,8 @@ workflow immuno {
     fusioninspector_mode=fusioninspector_mode,
     cdna_fasta=cdna_fasta,
     agfusion_database=agfusion_database,
-    agfusion_annotate_noncanonical=agfusion_annotate_noncanonical
+    agfusion_annotate_noncanonical=agfusion_annotate_noncanonical,
+    min_ffpm_level=min_ffpm_level
   }
 
   call se.somaticExome {
@@ -484,14 +494,17 @@ workflow immuno {
         rna.kallisto_gene_abundance,
         rna.kallisto_fusion_evidence
       ],
-      star_fusion: [
-        rna.star_fusion_out,
-        rna.star_junction_out,
-        rna.star_fusion_predict,
-        rna.star_fusion_abridge,
-        rna.star_fusion_coding_region_effects,
-        rna.annotated_fusion_predictions_zip
-      ]
+      star_fusion: object {
+        results: [
+          rna.star_fusion_out,
+          rna.star_junction_out,
+          rna.star_fusion_predict,
+          rna.star_fusion_abridge,
+          rna.star_fusion_coding_region_effects,
+          rna.annotated_fusion_predictions_zip
+        ],
+        candidates_preliminary: rna.prelim_starfusion_results
+      }
     }
 
     # -------- Somatic Outputs -----------------------------------------
