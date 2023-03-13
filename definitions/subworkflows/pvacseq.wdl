@@ -26,7 +26,6 @@ workflow pvacseq {
     String expression_tool = "kallisto"
     Array[String] alleles
     Array[String] prediction_algorithms
-    String? blastp_db  # enum [refseq_select_prot, refseq_protein]
     Array[Int]? epitope_lengths_class_i
     Array[Int]? epitope_lengths_class_ii
     Int? binding_threshold
@@ -56,6 +55,11 @@ workflow pvacseq {
     Array[String] variants_to_table_genotype_fields = ["GT", "AD", "AF", "DP", "RAD", "RAF", "RDP", "GX", "TX"]
     Array[String] vep_to_table_fields = ["HGVSc", "HGVSp"]
     Float? tumor_purity
+    Boolean? allele_specific_binding_thresholds
+    Int? aggregate_inclusion_binding_threshold
+    Array[String]? problematic_amino_acids
+    Boolean? allele_specific_anchors
+    Float? anchor_contribution_threshold
   }
 
   call br.bamReadcount as tumorRnaBamReadcount {
@@ -135,9 +139,13 @@ workflow pvacseq {
     net_chop_threshold=net_chop_threshold,
     netmhc_stab=netmhc_stab,
     run_reference_proteome_similarity=run_reference_proteome_similarity,
-    blastp_db=blastp_db,
     n_threads=n_threads,
-    tumor_purity=tumor_purity
+    tumor_purity=tumor_purity,
+    allele_specific_binding_thresholds=allele_specific_binding_thresholds,
+    aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
+    problematic_amino_acids=problematic_amino_acids,
+    allele_specific_anchors=allele_specific_anchors,
+    anchor_contribution_threshold=anchor_contribution_threshold,
   }
 
   call vtt.variantsToTable {

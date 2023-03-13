@@ -17,19 +17,24 @@ task pvacfuse {
     String? top_score_metric  # enum [lowest, median]
     Float? net_chop_threshold
     Boolean run_reference_proteome_similarity = false
-    String? blastp_db  # enum [refseq_select_prot, refseq_protein]
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
     Int? downstream_sequence_length
     Boolean exclude_nas = false
     Int n_threads = 8
+    Boolean allele_specific_binding_thresholds = false
+    Int? aggregate_inclusion_binding_threshold
+    Array[String]? problematic_amino_acids
+    File? star_fusion_file
+    Int? read_support
+    Float? expn_val
   }
 
   Int space_needed_gb = 10 + round(size([input_fusions_zip], "GB") * 3)
   runtime {
     preemptible: 1
     maxRetries: 2
-    docker: "griffithlab/pvactools:3.1.0"
+    docker: "susannakiwala/pvactools:4.0.0_rc_pvacview_v3"
     memory: "16GB"
     cpu: n_threads
     disks: "local-disk ~{space_needed_gb} HDD"
@@ -38,13 +43,13 @@ task pvacfuse {
   # explicit typing required, don't inline
   Array[Int] epitope_i = select_first([epitope_lengths_class_i, []])
   Array[Int] epitope_ii = select_first([epitope_lengths_class_ii, []])
+  Array[String] problematic_aa = select_first([problematic_amino_acids, []])
   command <<<
     mkdir agfusion_dir && unzip -qq ~{input_fusions_zip} -d agfusion_dir
 
     ln -s "$TMPDIR" /tmp/pvacfuse && export TMPDIR=/tmp/pvacfuse && \
     /usr/local/bin/pvacfuse run --iedb-install-directory /opt/iedb \
-    --blastp-path /opt/ncbi-lbast-2.12.0+/bin/blastp \
-    ~{if defined(blastp_db) then "--blastp-db " + select_first([blastp_db]) else ""} \
+    --peptide-fasta /opt/reference_fasta/Homo_sapiens.GRCh38.pep.all.fa.gz \
     agfusion_dir ~{sample_name} \
     ~{sep="," alleles} \
     ~{sep=" " prediction_algorithms} \
@@ -53,6 +58,8 @@ task pvacfuse {
     ~{if defined(epitope_lengths_class_ii) then "-e2 " else ""} ~{sep="," epitope_ii} \
     ~{if defined(binding_threshold) then "-b ~{binding_threshold}" else ""} \
     ~{if defined(percentile_threshold) then "--percentile-threshold ~{percentile_threshold}" else ""} \
+    ~{if allele_specific_binding_thresholds then "--allele-specific-binding-thresholds" else ""} \
+    ~{if defined(aggregate_inclusion_binding_threshold) then "--aggregate-inclusion-binding-threshold ~{aggregate_inclusion_binding_threshold}" else ""} \
     ~{if defined(iedb_retries) then "-r ~{iedb_retries}" else ""} \
     ~{if keep_tmp_files then "-k" else ""} \
     ~{if defined(net_chop_method) then "--net-chop-method ~{net_chop_method}" else ""} \
@@ -65,6 +72,10 @@ task pvacfuse {
     ~{if defined(fasta_size) then "-s ~{fasta_size}" else ""} \
     ~{if defined(downstream_sequence_length) then "-d ~{downstream_sequence_length}" else ""} \
     ~{if exclude_nas then "--exclude-NAs" else ""} \
+    ~{if defined(problematic_amino_acids) then "--problematic-amino-acids" else ""} ~{sep="," problematic_aa} \
+    ~{if defined(star_fusion_file) then "--starfusion-file ~{star_fusion_file}" else ""} \
+    ~{if defined(read_support) then "--read-support ~{read_support}" else ""} \
+    ~{if defined(expn_val) then "--expn-val ~{expn_val}" else ""} \
     --n-threads ~{n_threads}
   >>>
 

@@ -34,13 +34,16 @@ task pvacseq {
     Float? trna_vaf
     Float? expn_val
     Int? maximum_transcript_support_level  # enum [1, 2, 3, 4, 5]
+    Int? aggregate_inclusion_binding_threshold
+    Array[String]? problematic_amino_acids
+    Float? anchor_contribution_threshold
 
     Boolean allele_specific_binding_thresholds = false
     Boolean keep_tmp_files = false
     Boolean netmhc_stab = false
     Boolean run_reference_proteome_similarity = false
+    Boolean allele_specific_anchors = false
 
-    String? blastp_db  # enum [refseq_select_prot, refseq_protein]
     Float? tumor_purity
   }
 
@@ -52,13 +55,14 @@ task pvacseq {
     maxRetries: 2
     memory: "16GB"
     cpu: n_threads
-    docker: "griffithlab/pvactools:3.1.0"
+    docker: "susannakiwala/pvactools:4.0.0_rc_pvacview_v3"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   # explicit typing required, don't inline
   Array[Int] epitope_i = select_first([epitope_lengths_class_i, []])
   Array[Int] epitope_ii = select_first([epitope_lengths_class_ii, []])
+  Array[String] problematic_aa = select_first([problematic_amino_acids, []])
   command <<<
     # touch each tbi to ensure they have a timestamp after the vcf
     touch ~{phased_proximal_variants_vcf_tbi}
@@ -66,8 +70,7 @@ task pvacseq {
 
     ln -s "$TMPDIR" /tmp/pvacseq && export TMPDIR=/tmp/pvacseq && \
     /usr/local/bin/pvacseq run --iedb-install-directory /opt/iedb \
-    --blastp-path /opt/ncbi-blast-2.12.0+/bin/blastp \
-    ~{if defined(blastp_db) then "--blastp-db " + select_first([blastp_db]) else ""} \
+    --peptide-fasta /opt/reference_fasta/Homo_sapiens.GRCh38.pep.all.fa.gz \
     --pass-only \
     ~{if defined(tumor_purity) then "--tumor-purity " + select_first([tumor_purity]) else ""} \
     ~{if defined(epitope_lengths_class_i ) then "-e1 " else ""} ~{sep="," epitope_i} \
@@ -75,6 +78,7 @@ task pvacseq {
     ~{if defined(binding_threshold) then "-b ~{binding_threshold}" else ""} \
     ~{if defined(percentile_threshold) then "--percentile-threshold ~{percentile_threshold}" else ""} \
     ~{if allele_specific_binding_thresholds then "--allele-specific-binding-thresholds" else ""} \
+    ~{if defined(aggregate_inclusion_binding_threshold) then "--aggregate-inclusion-binding-threshold ~{aggregate_inclusion_binding_threshold}" else ""} \
     ~{if defined(iedb_retries) then "-r ~{iedb_retries}" else ""} \
     ~{if keep_tmp_files then "-k" else ""} \
     ~{if defined(normal_sample_name) then "--normal-sample-name ~{normal_sample_name}" else ""} \
@@ -97,6 +101,9 @@ task pvacseq {
     ~{if defined(trna_vaf) then "--trna-vaf ~{trna_vaf}" else ""} \
     ~{if defined(expn_val) then "--expn-val ~{expn_val}" else ""} \
     ~{if defined(maximum_transcript_support_level) then "--maximum-transcript-support-level ~{maximum_transcript_support_level}" else ""} \
+    ~{if defined(problematic_amino_acids) then "--problematic-amino-acids" else ""} ~{sep="," problematic_aa} \
+    ~{if allele_specific_anchors then "--allele-specific-anchors" else ""} \
+    ~{if defined(anchor_contribution_threshold) then "--anchor-contribution-threshold ~{anchor_contribution_threshold}" else ""} \
     --n-threads ~{n_threads} \
     ~{input_vcf} ~{sample_name} ~{sep="," alleles} ~{sep=" " prediction_algorithms} \
     pvacseq_predictions
@@ -159,11 +166,15 @@ workflow wf {
     Float? trna_vaf
     Float? expn_val
     String? maximum_transcript_support_level  # enum [1, 2, 3, 4, 5]
+    Int? aggregate_inclusion_binding_threshold
+    Array[String]? problematic_amino_acids
+    Float? anchor_contribution_threshold
 
     Boolean? allele_specific_binding_thresholds
     Boolean? keep_tmp_files
     Boolean? netmhc_stab
     Boolean? run_reference_proteome_similarity
+    Boolean allele_specific_anchors = false
   }
   call pvacseq {
     input:
@@ -177,6 +188,7 @@ workflow wf {
     epitope_lengths_class_ii=epitope_lengths_class_ii,
     binding_threshold=binding_threshold,
     percentile_threshold=percentile_threshold,
+    aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
     iedb_retries=iedb_retries,
     normal_sample_name=normal_sample_name,
     net_chop_method=net_chop_method,
@@ -198,6 +210,9 @@ workflow wf {
     expn_val=expn_val,
     maximum_transcript_support_level=maximum_transcript_support_level,
     allele_specific_binding_thresholds=allele_specific_binding_thresholds,
+    problematic_amino_acids=problematic_amino_acids,
+    allele_specific_anchors=allele_specific_anchors,
+    anchor_contribution_threshold=anchor_contribution_threshold,
     keep_tmp_files=keep_tmp_files,
     netmhc_stab=netmhc_stab,
     run_reference_proteome_similarity=run_reference_proteome_similarity
