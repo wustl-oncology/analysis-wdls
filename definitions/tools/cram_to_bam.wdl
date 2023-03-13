@@ -9,7 +9,7 @@ task cramToBam {
     File reference_dict
   }
 
-  Int space_needed_gb = 10 + round(size([cram, cram_index, reference, reference_index, reference_dict], "GB"))
+  Int space_needed_gb = 10 + round(size([cram, cram_index, reference, reference_index, reference_dict], "GB") * 2)
   runtime {
     memory: "4GB"
     docker: "quay.io/biocontainers/samtools:1.11--h6270b1f_0"
