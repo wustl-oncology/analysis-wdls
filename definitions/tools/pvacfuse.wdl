@@ -54,8 +54,8 @@ task pvacfuse {
     ~{sep="," alleles} \
     ~{sep=" " prediction_algorithms} \
     pvacfuse_predictions \
-    ~{if defined(epitope_lengths_class_i ) then "-e1 " else ""} ~{sep="," epitope_i} \
-    ~{if defined(epitope_lengths_class_ii) then "-e2 " else ""} ~{sep="," epitope_ii} \
+    ~{if length(epitope_i) > 0 then "-e1 " else ""} ~{sep="," epitope_i} \
+    ~{if length(epitope_ii) > 0 then "-e2 " else ""} ~{sep="," epitope_ii} \
     ~{if defined(binding_threshold) then "-b ~{binding_threshold}" else ""} \
     ~{if defined(percentile_threshold) then "--percentile-threshold ~{percentile_threshold}" else ""} \
     ~{if allele_specific_binding_thresholds then "--allele-specific-binding-thresholds" else ""} \
@@ -72,7 +72,7 @@ task pvacfuse {
     ~{if defined(fasta_size) then "-s ~{fasta_size}" else ""} \
     ~{if defined(downstream_sequence_length) then "-d ~{downstream_sequence_length}" else ""} \
     ~{if exclude_nas then "--exclude-NAs" else ""} \
-    ~{if defined(problematic_amino_acids) then "--problematic-amino-acids" else ""} ~{sep="," problematic_aa} \
+    ~{if length(problematic_aa) > 0 then "--problematic-amino-acids" else ""} ~{sep="," problematic_aa} \
     ~{if defined(star_fusion_file) then "--starfusion-file ~{star_fusion_file}" else ""} \
     ~{if defined(read_support) then "--read-support ~{read_support}" else ""} \
     ~{if defined(expn_val) then "--expn-val ~{expn_val}" else ""} \

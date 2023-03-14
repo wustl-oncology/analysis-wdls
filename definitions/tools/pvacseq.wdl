@@ -73,8 +73,8 @@ task pvacseq {
     --peptide-fasta /opt/reference_fasta/Homo_sapiens.GRCh38.pep.all.fa.gz \
     --pass-only \
     ~{if defined(tumor_purity) then "--tumor-purity " + select_first([tumor_purity]) else ""} \
-    ~{if defined(epitope_lengths_class_i ) then "-e1 " else ""} ~{sep="," epitope_i} \
-    ~{if defined(epitope_lengths_class_ii) then "-e2 " else ""} ~{sep="," epitope_ii} \
+    ~{if length(epitope_i ) > 0 then "-e1 " else ""} ~{sep="," epitope_i} \
+    ~{if length(epitope_ii) > 0 then "-e2 " else ""} ~{sep="," epitope_ii} \
     ~{if defined(binding_threshold) then "-b ~{binding_threshold}" else ""} \
     ~{if defined(percentile_threshold) then "--percentile-threshold ~{percentile_threshold}" else ""} \
     ~{if allele_specific_binding_thresholds then "--allele-specific-binding-thresholds" else ""} \
@@ -101,7 +101,7 @@ task pvacseq {
     ~{if defined(trna_vaf) then "--trna-vaf ~{trna_vaf}" else ""} \
     ~{if defined(expn_val) then "--expn-val ~{expn_val}" else ""} \
     ~{if defined(maximum_transcript_support_level) then "--maximum-transcript-support-level ~{maximum_transcript_support_level}" else ""} \
-    ~{if defined(problematic_amino_acids) then "--problematic-amino-acids" else ""} ~{sep="," problematic_aa} \
+    ~{if length(problematic_aa) > 0 then "--problematic-amino-acids" else ""} ~{sep="," problematic_aa} \
     ~{if allele_specific_anchors then "--allele-specific-anchors" else ""} \
     ~{if defined(anchor_contribution_threshold) then "--anchor-contribution-threshold ~{anchor_contribution_threshold}" else ""} \
     --n-threads ~{n_threads} \
