@@ -61,19 +61,6 @@ workflow alignmentWgsNonhuman {
   output {
     File bam = alignment.final_bam
     File mark_duplicates_metrics = alignment.mark_duplicates_metrics_file
-    File insert_size_metrics = qc.insert_size_metrics
-    File insert_size_histogram = qc.insert_size_histogram
-    File alignment_summary_metrics = qc.alignment_summary_metrics
-    File wgs_metrics = qc.wgs_metrics
-    File gc_bias_metrics = qc.gc_bias_metrics
-    File gc_bias_metrics_chart = qc.gc_bias_metrics_chart
-    File gc_bias_metrics_summary = qc.gc_bias_metrics_summary
-    File flagstats = qc.flagstats
-    Array[File] per_base_coverage_metrics = qc.per_base_coverage_metrics
-    Array[File] per_base_hs_metrics = qc.per_base_hs_metrics
-    Array[File] per_target_coverage_metrics = qc.per_target_coverage_metrics
-    Array[File] summary_hs_metrics = qc.summary_hs_metrics
-    Array[File] per_target_hs_metrics = qc.per_target_hs_metrics
-    File bamcoverage_bigwig = qc.bamcoverage_bigwig
+    QCMetrics qc_metrics = qc.metrics
   }
 }

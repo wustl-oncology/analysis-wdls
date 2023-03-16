@@ -268,39 +268,11 @@ workflow somaticWgs {
   output {
     File tumor_cram = tumorIndexCram.indexed_cram
     File tumor_mark_duplicates_metrics = tumorAlignment.mark_duplicates_metrics_file
-    File tumor_insert_size_metrics = tumorQc.insert_size_metrics
-    File tumor_alignment_summary_metrics = tumorQc.alignment_summary_metrics
-    Array[File] tumor_per_target_coverage_metrics = tumorQc.per_target_coverage_metrics
-    Array[File] tumor_per_target_hs_metrics = tumorQc.per_target_hs_metrics
-    Array[File] tumor_per_base_coverage_metrics = tumorQc.per_base_coverage_metrics
-    Array[File] tumor_per_base_hs_metrics = tumorQc.per_base_hs_metrics
-    Array[File] tumor_summary_hs_metrics = tumorQc.summary_hs_metrics
-    File tumor_flagstats = tumorQc.flagstats
-    File tumor_verify_bam_id_metrics = tumorQc.verify_bam_id_metrics
-    File tumor_verify_bam_id_depth = tumorQc.verify_bam_id_depth
-    File tumor_insert_size_histogram = tumorQc.insert_size_histogram
-    File tumor_gc_bias_metrics = tumorQc.gc_bias_metrics
-    File tumor_gc_bias_metrics_chart = tumorQc.gc_bias_metrics_chart
-    File tumor_gc_bias_metrics_summary = tumorQc.gc_bias_metrics_summary
-    File tumor_wgs_metrics = tumorQc.wgs_metrics
+    QCMetrics tumor_qc_metrics = tumorQc.metrics
 ##normal alignment and qc
     File normal_cram = normalIndexCram.indexed_cram
     File normal_mark_duplicates_metrics = normalAlignment.mark_duplicates_metrics_file
-    File normal_insert_size_metrics = normalQc.insert_size_metrics
-    File normal_alignment_summary_metrics = normalQc.alignment_summary_metrics
-    Array[File] normal_per_target_coverage_metrics = normalQc.per_target_coverage_metrics
-    Array[File] normal_per_target_hs_metrics = normalQc.per_target_hs_metrics
-    Array[File] normal_per_base_coverage_metrics = normalQc.per_base_coverage_metrics
-    Array[File] normal_per_base_hs_metrics = normalQc.per_base_hs_metrics
-    Array[File] normal_summary_hs_metrics = normalQc.summary_hs_metrics
-    File normal_flagstats = normalQc.flagstats
-    File normal_verify_bam_id_metrics = normalQc.verify_bam_id_metrics
-    File normal_verify_bam_id_depth = normalQc.verify_bam_id_depth
-    File normal_insert_size_histogram = normalQc.insert_size_histogram
-    File normal_gc_bias_metrics = normalQc.gc_bias_metrics
-    File normal_gc_bias_metrics_chart = normalQc.gc_bias_metrics_chart
-    File normal_gc_bias_metrics_summary = normalQc.gc_bias_metrics_summary
-    File normal_wgs_metrics = normalQc.wgs_metrics
+    QCMetrics normal_qc_metrics = normalQc.metrics
 ##variant calling
     File mutect_unfiltered_vcf = detectVariants.mutect_unfiltered_vcf
     File mutect_unfiltered_vcf_tbi = detectVariants.mutect_unfiltered_vcf_tbi

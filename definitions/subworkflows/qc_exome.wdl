@@ -104,17 +104,19 @@ workflow qcExome {
   }
 
   output {
-    File insert_size_metrics = collectInsertSizeMetrics.insert_size_metrics
-    File insert_size_histogram = collectInsertSizeMetrics.insert_size_histogram
-    File alignment_summary_metrics = collectAlignmentSummaryMetrics.alignment_summary_metrics
-    File hs_metrics = collectRoiHsMetrics.hs_metrics
-    Array[File] per_target_coverage_metrics = collectDetailedHsMetrics.per_target_coverage_metrics
-    Array[File] per_target_hs_metrics = collectDetailedHsMetrics.per_target_hs_metrics
-    Array[File] per_base_coverage_metrics = collectDetailedHsMetrics.per_base_coverage_metrics
-    Array[File] per_base_hs_metrics = collectDetailedHsMetrics.per_base_hs_metrics
-    Array[File] summary_hs_metrics = collectDetailedHsMetrics.summary_hs_metrics
-    File flagstats = samtoolsFlagstat.flagstats
-    File verify_bam_id_metrics = verifyBamId.verify_bam_id_metrics
-    File verify_bam_id_depth = verifyBamId.verify_bam_id_depth
+    QCMetrics metrics = object {
+      insert_size_metrics: collectInsertSizeMetrics.insert_size_metrics,
+      insert_size_histogram: collectInsertSizeMetrics.insert_size_histogram,
+      alignment_summary_metrics: collectAlignmentSummaryMetrics.alignment_summary_metrics,
+      hs_metrics: collectRoiHsMetrics.hs_metrics,
+      per_target_coverage_metrics: collectDetailedHsMetrics.per_target_coverage_metrics,
+      per_target_hs_metrics: collectDetailedHsMetrics.per_target_hs_metrics,
+      per_base_coverage_metrics: collectDetailedHsMetrics.per_base_coverage_metrics,
+      per_base_hs_metrics: collectDetailedHsMetrics.per_base_hs_metrics,
+      summary_hs_metrics: collectDetailedHsMetrics.summary_hs_metrics,
+      flagstats: samtoolsFlagstat.flagstats,
+      verify_bam_id_metrics: verifyBamId.verify_bam_id_metrics,
+      verify_bam_id_depth: verifyBamId.verify_bam_id_depth
+    }
   }
 }
