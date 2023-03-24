@@ -37,6 +37,7 @@ struct Rnaseq {
   Array[File] stringtie_expression
   Array[File] kallisto_expression
   StarFusion star_fusion
+  Array[File] fusioninspector_evidence
 }
 
 struct Qc {
@@ -582,7 +583,8 @@ workflow immuno {
           rna.annotated_fusion_predictions_zip
         ],
         candidates_preliminary: rna.prelim_starfusion_results
-      }
+      },
+      fusioninspector_evidence = rna.fusioninspector_evidence
     }
 
     # -------- Somatic Outputs -----------------------------------------
@@ -719,8 +721,5 @@ workflow immuno {
     File pvacseq_annotated_expression_vcf_gz_tbi = pvacseq.annotated_vcf_tbi
     File pvacseq_annotated_variants_tsv = pvacseq.annotated_tsv
 
-    Array[File] fusioninspector_evidence = rna.fusioninspector_evidence
   }
 }
-
-
