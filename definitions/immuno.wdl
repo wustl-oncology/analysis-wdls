@@ -40,6 +40,15 @@ struct Rnaseq {
   Array[File] fusioninspector_evidence
 }
 
+struct FdaMetricBundle {
+  FdaMetrics unaligned_normal_dna
+  FdaMetrics unaligned_tumor_dna
+  FdaMetrics unaligned_tumor_rna
+  FdaMetrics aligned_normal_dna
+  FdaMetrics aligned_tumor_dna
+  FdaMetrics aligned_tumor_rna
+}
+
 struct Qc {
   Array[File?] tumor_rna
   QCMetrics tumor_dna
@@ -80,16 +89,6 @@ struct MHC {
   Array[File] combined
   Array[File]? phase_vcf
 }
-
-struct FdaMetricBundle {
-  FdaMetrics unaligned_normal_dna
-  FdaMetrics unaligned_tumor_dna
-  FdaMetrics unaligned_tumor_rna
-  FdaMetrics aligned_normal_dna
-  FdaMetrics aligned_tumor_dna
-  FdaMetrics aligned_tumor_rna
-}
-
 
 workflow immuno {
   input {
