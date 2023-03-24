@@ -8,7 +8,7 @@ These pipelines were developed by the [Washington University Division of Oncolog
 ## Getting Started
 
 ### Workflows
-Download our repository with `git clone https://github.com/wustl-oncology/analysis-wdls.git`
+Download our repository with `git clone https://github.com/wustl-oncology/analysis-wdls.git`.
 
 Terra hosts an excellent guide to [getting started with WDL](https://support.terra.bio/hc/en-us/articles/360037117492-Overview-Getting-started-with-WDL) 
 
