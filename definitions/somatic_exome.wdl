@@ -61,7 +61,6 @@ workflow somaticExome {
     Float varscan_min_var_freq = 0.05
     Float varscan_p_value = 0.99
     Float? varscan_max_normal_freq
-    Float? min_var_freq = varsan_min_var_freq
 
     File docm_vcf
     File docm_vcf_tbi
@@ -205,7 +204,6 @@ workflow somaticExome {
     varscan_strand_filter=varscan_strand_filter,
     varscan_min_coverage=varscan_min_coverage,
     varscan_min_var_freq=varscan_min_var_freq,
-    min_var_freq=min_var_freq,
     varscan_p_value=varscan_p_value,
     varscan_max_normal_freq=varscan_max_normal_freq,
     docm_vcf=docm_vcf,

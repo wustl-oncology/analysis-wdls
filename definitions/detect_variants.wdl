@@ -41,7 +41,6 @@ workflow detectVariants {
     Float varscan_min_var_freq = 0.1
     Float varscan_p_value = 0.99
     Float? varscan_max_normal_freq
-    Float? min_var_freq = varscan_min_var_freq
 
     File docm_vcf
     File docm_vcf_tbi
@@ -121,7 +120,7 @@ workflow detectVariants {
     scatter_count=scatter_count,
     strand_filter=varscan_strand_filter,
     min_coverage=varscan_min_coverage,
-    min_var_freq=min_var_freq,
+    min_var_freq=varscan_min_var_freq,
     p_value=varscan_p_value,
     max_normal_freq=varscan_max_normal_freq,
     normal_sample_name=normal_sample_name,
