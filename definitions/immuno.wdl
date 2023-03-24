@@ -45,6 +45,7 @@ struct Qc {
   QCMetrics tumor_dna
   QCMetrics normal_dna
   Array[File?] concordance
+  FdaMetricBundle fda_metrics
 }
 
 struct Variants {
@@ -584,7 +585,7 @@ workflow immuno {
         ],
         candidates_preliminary: rna.prelim_starfusion_results
       },
-      fusioninspector_evidence = rna.fusioninspector_evidence
+      fusioninspector_evidence: rna.fusioninspector_evidence
     }
 
     # -------- Somatic Outputs -----------------------------------------
@@ -600,7 +601,15 @@ workflow immuno {
       concordance: [
         somaticExome.somalier_concordance_metrics,
         somaticExome.somalier_concordance_statistics
-      ]
+      ],
+      fda_metrics: object {
+        unaligned_normal_dna: generateFdaMetrics.unaligned_normal_dna_metrics,
+        unaligned_tumor_dna: generateFdaMetrics.unaligned_tumor_dna_metrics,
+        unaligned_tumor_rna: generateFdaMetrics.unaligned_tumor_rna_metrics,
+        aligned_normal_dna: generateFdaMetrics.aligned_normal_dna_metrics,
+        aligned_tumor_dna: generateFdaMetrics.aligned_tumor_dna_metrics,
+        aligned_tumor_rna: generateFdaMetrics.aligned_tumor_rna_metrics
+      }
     }
 
     File tumor_cram = somaticExome.tumor_cram
@@ -691,16 +700,6 @@ workflow immuno {
       hlaConsensus.hla_call_files
     ])
 
-    # --------- FDA metrics outputs ------------------------------------
-
-    FdaMetricBundle fda_metrics = object {
-      unaligned_normal_dna: generateFdaMetrics.unaligned_normal_dna_metrics,
-      unaligned_tumor_dna: generateFdaMetrics.unaligned_tumor_dna_metrics,
-      unaligned_tumor_rna: generateFdaMetrics.unaligned_tumor_rna_metrics,
-      aligned_normal_dna: generateFdaMetrics.aligned_normal_dna_metrics,
-      aligned_tumor_dna: generateFdaMetrics.aligned_tumor_dna_metrics,
-      aligned_tumor_rna: generateFdaMetrics.aligned_tumor_rna_metrics
-    }
 
     # --------- Other Outputs ------------------------------------------
 
@@ -719,7 +718,7 @@ workflow immuno {
 
     File pvacseq_annotated_expression_vcf_gz = pvacseq.annotated_vcf
     File pvacseq_annotated_expression_vcf_gz_tbi = pvacseq.annotated_vcf_tbi
-    File pvacseq_annotated_variants_tsv = pvacseq.annotated_tsv
+    File variants_final_annotated_tsv = pvacseq.annotated_tsv
 
   }
 }
