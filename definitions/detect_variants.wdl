@@ -42,6 +42,8 @@ workflow detectVariants {
     Float varscan_p_value = 0.99
     Float? varscan_max_normal_freq
 
+    Float? min_var_freq = varscan_min_var_freq
+
     File docm_vcf
     File docm_vcf_tbi
 
@@ -88,7 +90,8 @@ workflow detectVariants {
     normal_bam=normal_bam,
     normal_bam_bai=normal_bam_bai,
     interval_list=roi_intervals,
-    scatter_count=scatter_count
+    scatter_count=scatter_count,
+    min_var_freq=min_var_freq
   }
 
   call sapp.strelkaAndPostProcessing as strelka {
@@ -104,7 +107,8 @@ workflow detectVariants {
     exome_mode=strelka_exome_mode,
     cpu_reserved=strelka_cpu_reserved,
     normal_sample_name=normal_sample_name,
-    tumor_sample_name=tumor_sample_name
+    tumor_sample_name=tumor_sample_name,
+    min_var_freq=min_var_freq
   }
 
   call vpapp.varscanPreAndPostProcessing as varscan {
