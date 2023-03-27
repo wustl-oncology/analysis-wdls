@@ -1,4 +1,4 @@
-# Analysis Workflows for Genomic Analysis
+# Workflows for Genomic Analysis
 
 A collection of WDL workflows for analysis of genomic sequencing data. These enable primary analysis of many common experiments, including somatic and germline variant calling, RNA sequencing, epigenomic assays, and ommunogenomics approaches for cancer vaccine development.
 
