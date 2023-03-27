@@ -482,7 +482,8 @@ workflow immuno {
     n_threads=pvacseq_threads,
     variants_to_table_fields=variants_to_table_fields,
     variants_to_table_genotype_fields=variants_to_table_genotype_fields,
-    vep_to_table_fields=vep_to_table_fields
+    vep_to_table_fields=vep_to_table_fields,
+    prefix="variants.final"
   }
 
   call pf.pvacfuse {

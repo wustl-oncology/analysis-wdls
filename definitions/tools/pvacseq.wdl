@@ -42,6 +42,8 @@ task pvacseq {
 
     String? blastp_db  # enum [refseq_select_prot, refseq_protein]
     Float? tumor_purity
+
+    String? prefix = "variants"
   }
 
   Float input_size = size([input_vcf, input_vcf_tbi], "GB")
@@ -200,6 +202,7 @@ workflow wf {
     allele_specific_binding_thresholds=allele_specific_binding_thresholds,
     keep_tmp_files=keep_tmp_files,
     netmhc_stab=netmhc_stab,
-    run_reference_proteome_similarity=run_reference_proteome_similarity
+    run_reference_proteome_similarity=run_reference_proteome_similarity,
+    prefix=prefix
   }
 }

@@ -56,6 +56,7 @@ workflow pvacseq {
     Array[String] variants_to_table_genotype_fields = ["GT", "AD", "AF", "DP", "RAD", "RAF", "RDP", "GX", "TX"]
     Array[String] vep_to_table_fields = ["HGVSc", "HGVSp"]
     Float? tumor_purity
+    String? prefix = "pvacseq"
   }
 
   call br.bamReadcount as tumorRnaBamReadcount {
@@ -156,7 +157,7 @@ workflow pvacseq {
     vcf=index.indexed_vcf,
     vep_fields=vep_to_table_fields,
     tsv=variantsToTable.variants_tsv,
-    prefix="pvacseq"
+    prefix=prefix
   }
 
   output {
