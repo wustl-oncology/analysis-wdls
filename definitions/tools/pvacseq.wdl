@@ -42,7 +42,6 @@ task pvacseq {
 
     String? blastp_db  # enum [refseq_select_prot, refseq_protein]
     Float? tumor_purity
-
   }
 
   Float input_size = size([input_vcf, input_vcf_tbi], "GB")
@@ -165,7 +164,6 @@ workflow wf {
     Boolean? keep_tmp_files
     Boolean? netmhc_stab
     Boolean? run_reference_proteome_similarity
-
   }
   call pvacseq {
     input:
