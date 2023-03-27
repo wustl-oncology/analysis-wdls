@@ -143,7 +143,7 @@ workflow immuno {
     Float varscan_p_value = 0.99
     Float? varscan_max_normal_freq
     Float? filter_somatic_llr_threshold
-    Float? min_var_freq = .05
+    Float? min_var_freq = .05 # used for strelka and mutect
 
     File docm_vcf
     File docm_vcf_tbi
