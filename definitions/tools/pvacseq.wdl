@@ -166,6 +166,8 @@ workflow wf {
     Boolean? keep_tmp_files
     Boolean? netmhc_stab
     Boolean? run_reference_proteome_similarity
+
+    String? prefix
   }
   call pvacseq {
     input:
