@@ -61,7 +61,7 @@ workflow somaticExome {
     Float varscan_min_var_freq = 0.05
     Float varscan_p_value = 0.99
     Float? varscan_max_normal_freq
-    Float? min_var_freq = varscan_min_var_freq
+    Float? min_var_freq
 
     File docm_vcf
     File docm_vcf_tbi
