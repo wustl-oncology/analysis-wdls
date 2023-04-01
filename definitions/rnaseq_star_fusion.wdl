@@ -13,6 +13,7 @@ import "tools/star_fusion_detect.wdl" as sfd
 import "tools/strandedness_check.wdl" as sc
 import "tools/stringtie.wdl" as s
 import "tools/transcript_to_gene.wdl" as ttg
+import "tools/samtools_flagstat.wdl" as sf
 import "types.wdl"  # !UnusedImport
 
 workflow rnaseqStarFusion {
@@ -144,6 +145,11 @@ workflow rnaseqStarFusion {
     annotate_noncanonical=agfusion_annotate_noncanonical
   }
 
+  call sf.samtoolsFlagstat {
+    bam=indexBam.indexed_bam,
+    bam_bai=indexBam.indexed_bam_bai
+  }
+
   output {
     File cram = indexCram.indexed_cram
     File cram_crai = indexCram.indexed_cram_crai
@@ -168,6 +174,7 @@ workflow rnaseqStarFusion {
     File annotated_fusion_predictions_zip = agfusion.annotated_fusion_predictions_zip
     File? star_fusion_coding_region_effects = starFusionDetect.coding_region_effects
     Array[File] fusioninspector_evidence = starFusionDetect.fusioninspector_evidence
+    File flagstats = samtoolsFlagstat.flagstats
     PreliminaryStarFusionResults prelim_starfusion_results = starFusionDetect.prelim_results
   }
 }
