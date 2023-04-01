@@ -146,6 +146,7 @@ workflow rnaseqStarFusion {
   }
 
   call sf.samtoolsFlagstat {
+    input:
     bam=indexBam.indexed_bam,
     bam_bai=indexBam.indexed_bam_bai
   }
