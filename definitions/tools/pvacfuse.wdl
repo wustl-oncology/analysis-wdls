@@ -34,7 +34,7 @@ task pvacfuse {
   runtime {
     preemptible: 1
     maxRetries: 2
-    docker: "susannakiwala/pvactools:4.0.0_rc_pvacview_v5"
+    docker: "susannakiwala/pvactools:4.0.0_rc_pvacview_v12"
     memory: "16GB"
     cpu: n_threads
     disks: "local-disk ~{space_needed_gb} HDD"
@@ -49,7 +49,7 @@ task pvacfuse {
 
     ln -s "$TMPDIR" /tmp/pvacfuse && export TMPDIR=/tmp/pvacfuse && \
     /usr/local/bin/pvacfuse run --iedb-install-directory /opt/iedb \
-    --peptide-fasta /opt/reference_fasta/Homo_sapiens.GRCh38.pep.all.fa.gz \
+    --peptide-fasta /opt/reference_fasta/Homo_sapiens.GRCh38.105.pep.all.fa.gz \
     agfusion_dir ~{sample_name} \
     ~{sep="," alleles} \
     ~{sep=" " prediction_algorithms} \

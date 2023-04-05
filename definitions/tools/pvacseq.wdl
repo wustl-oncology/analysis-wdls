@@ -55,7 +55,7 @@ task pvacseq {
     maxRetries: 2
     memory: "16GB"
     cpu: n_threads
-    docker: "susannakiwala/pvactools:4.0.0_rc_pvacview_v5"
+    docker: "susannakiwala/pvactools:4.0.0_rc_pvacview_v12"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
@@ -70,7 +70,7 @@ task pvacseq {
 
     ln -s "$TMPDIR" /tmp/pvacseq && export TMPDIR=/tmp/pvacseq && \
     /usr/local/bin/pvacseq run --iedb-install-directory /opt/iedb \
-    --peptide-fasta /opt/reference_fasta/Homo_sapiens.GRCh38.pep.all.fa.gz \
+    --peptide-fasta /opt/reference_fasta/Homo_sapiens.GRCh38.105.pep.all.fa.gz \
     --pass-only \
     ~{if defined(tumor_purity) then "--tumor-purity " + select_first([tumor_purity]) else ""} \
     ~{if length(epitope_i ) > 0 then "-e1 " else ""} ~{sep="," epitope_i} \
