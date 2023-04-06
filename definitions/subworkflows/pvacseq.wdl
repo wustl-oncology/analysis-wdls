@@ -19,6 +19,7 @@ workflow pvacseq {
     File reference
     File reference_fai
     File reference_dict
+    File? peptide_fasta
     Int? readcount_minimum_base_quality
     Int? readcount_minimum_mapping_quality
     File gene_expression_file
@@ -139,6 +140,7 @@ workflow pvacseq {
     net_chop_threshold=net_chop_threshold,
     netmhc_stab=netmhc_stab,
     run_reference_proteome_similarity=run_reference_proteome_similarity,
+    peptide_fasta=peptide_fasta,
     n_threads=n_threads,
     tumor_purity=tumor_purity,
     allele_specific_binding_thresholds=allele_specific_binding_thresholds,
