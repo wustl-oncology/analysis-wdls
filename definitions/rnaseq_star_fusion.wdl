@@ -10,6 +10,7 @@ import "tools/kallisto.wdl" as k
 import "tools/mark_duplicates_and_sort.wdl" as mdas
 import "tools/samtools_sort.wdl" as ss
 import "tools/star_fusion_detect.wdl" as sfd
+import "tools/arriba.wdl" as ar
 import "tools/strandedness_check.wdl" as sc
 import "tools/stringtie.wdl" as s
 import "tools/transcript_to_gene.wdl" as ttg
@@ -81,6 +82,15 @@ workflow rnaseqStarFusion {
     fastq2=sequenceToTrimmedFastq.fastq2,
     outsam_attrrg_line=select_all(attrrg_line),
     min_ffpm_level=min_ffpm_level
+  }
+
+  call ar.arriba {
+    input:
+    reference_annotation=reference_annotation,
+    reference=reference,
+    reference_fai=reference_fai,
+    reference_dict=reference_dict,
+    aligned_bam=starFusionDetect.aligned_bam
   }
 
   call k.kallisto {
@@ -166,6 +176,8 @@ workflow rnaseqStarFusion {
     File final_bam_bai = indexBam.indexed_bam_bai
     File final_bai = indexBam.indexed_bai
     File annotated_fusion_predictions_zip = agfusion.annotated_fusion_predictions_zip
+    File arriba_fusion_predict=arriba.fusion_predictions
+    File arriba_fusion_discard=arriba.discarded_fusion_predictions
     File? star_fusion_coding_region_effects = starFusionDetect.coding_region_effects
     Array[File] fusioninspector_evidence = starFusionDetect.fusioninspector_evidence
     PreliminaryStarFusionResults prelim_starfusion_results = starFusionDetect.prelim_results
