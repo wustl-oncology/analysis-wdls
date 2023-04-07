@@ -593,7 +593,8 @@ workflow immuno {
     Qc qc =  object {
       tumor_rna: flatten([
         [ rna.metrics, 
-          rna.chart ],
+          rna.chart,
+          rna.flagstats ],
         rna.strand_info  
       ]),
       tumor_dna: somaticExome.tumor_qc_metrics,
