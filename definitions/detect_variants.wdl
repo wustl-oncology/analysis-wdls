@@ -231,7 +231,8 @@ workflow detectVariants {
     normal_sample_name=normal_sample_name,
     tumor_sample_name=tumor_sample_name,
     gnomad_field_name=gnomad_field_name,
-    validated_variants=validated_variants
+    validated_variants=validated_variants,
+    validated_variants_tbi=validated_variants_tbi
   }
 
   call b.bgzip as annotatedFilterBgzip {
