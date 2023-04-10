@@ -498,7 +498,7 @@ workflow immuno {
     anchor_contribution_threshold=anchor_contribution_threshold
   }
 
-  call pf.pvacfuse as agfusion_pvacfuse{
+  call pf.pvacfuse as agfusion_pvacfuse {
     input:
     input_fusions_zip=rna.annotated_fusion_predictions_zip,
     star_fusion_file=rna.star_fusion_abridge,
@@ -528,7 +528,7 @@ workflow immuno {
     problematic_amino_acids=problematic_amino_acids,
   }
 
-  call pf.pvacfuse as arriba_pvacfuse{
+  call pf.pvacfuse as arriba_pvacfuse {
     input:
     input_fusions_zip=rna.arriba_fusion_predict,
     sample_name=tumor_sample_name,
