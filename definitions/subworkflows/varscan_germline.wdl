@@ -13,11 +13,12 @@ workflow varscanGermline {
     File reference_fai
     File reference_dict
     File interval_list
-    Int strand_filter = 0
-    Int min_coverage = 8
-    Float min_var_freq = 0.1
-    Int min_reads = 2
-    Float p_value = 0.99
+    Int strand_filter
+    Int min_coverage
+    Float varscan_min_var_freq
+    Int min_reads
+    Float p_value
+    Fooat fp_min_var_freq
     String sample_name
   }
 
@@ -36,7 +37,7 @@ workflow varscanGermline {
     roi_bed=intervalsToBed.interval_bed,
     strand_filter=strand_filter,
     min_coverage=min_coverage,
-    min_var_freq=min_var_freq,
+    varscan_min_var_freq=varscan_min_var_freq,
     min_reads=min_reads,
     p_value=p_value,
     sample_name=sample_name
@@ -58,7 +59,7 @@ workflow varscanGermline {
     vcf_tbi=bgzipAndIndex.indexed_vcf_tbi,
     variant_caller="varscan",
     sample_name=sample_name,
-    min_var_freq=min_var_freq
+    fp_min_var_freq=fp_min_var_freq
   }
 
   output {

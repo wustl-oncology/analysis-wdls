@@ -61,6 +61,7 @@ workflow tumorOnlyWgs {
     Int varscan_min_coverage
     Float varscan_min_var_freq
     Int varscan_min_reads
+    Float fp_min_var_freq
     Float maximum_population_allele_frequency = 0.001
 }
 
@@ -102,6 +103,7 @@ workflow tumorOnlyWgs {
     varscan_min_coverage=varscan_min_coverage,
     varscan_min_var_freq=varscan_min_var_freq,
     varscan_min_reads=varscan_min_reads,
+    fp_min_var_freq=fp_min_var_freq,
     maximum_population_allele_frequency=maximum_population_allele_frequency,
     vep_cache_dir_zip=vep_cache_dir_zip,
     synonyms_file=synonyms_file,

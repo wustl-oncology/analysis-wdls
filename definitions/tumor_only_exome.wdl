@@ -39,6 +39,7 @@ workflow tumorOnlyExome {
     Float varscan_min_var_freq
     Float varscan_p_value
     Int varscan_min_reads
+    Float fp_min_var_freq
     Float maximum_population_allele_frequency = 0.001
 
     File vep_cache_dir_zip
@@ -107,6 +108,7 @@ workflow tumorOnlyExome {
     varscan_min_var_freq=varscan_min_var_freq,
     varscan_p_value=varscan_p_value,
     varscan_min_reads=varscan_min_reads,
+    fp_min_var_freq=fp_min_var_freq,
     maximum_population_allele_frequency=maximum_population_allele_frequency,
     vep_cache_dir_zip=vep_cache_dir_zip,
     vep_ensembl_assembly=vep_ensembl_assembly,
