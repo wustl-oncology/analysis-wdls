@@ -43,11 +43,13 @@ workflow somaticExomeNonhuman {
     Int strelka_cpu_reserved = 8
     Int scatter_count = 50
 
-    Int varscan_strand_filter = 0
-    Int varscan_min_coverage = 8
-    Float varscan_min_var_freq = 0.1
-    Float varscan_p_value = 0.99
+    Int varscan_strand_filter
+    Int varscan_min_coverage
+    Float varscan_min_var_freq
+    Float varscan_p_value
     Float? varscan_max_normal_freq
+
+    Float fp_min_var_freq
 
     File vep_cache_dir_zip
     String vep_ensembl_assembly
@@ -142,6 +144,7 @@ workflow somaticExomeNonhuman {
     varscan_min_var_freq=varscan_min_var_freq,
     varscan_p_value=varscan_p_value,
     varscan_max_normal_freq=varscan_max_normal_freq,
+    fp_min_var_freq=fp_min_var_freq,
     filter_somatic_llr_threshold=filter_somatic_llr_threshold,
     filter_somatic_llr_tumor_purity=filter_somatic_llr_tumor_purity,
     filter_somatic_llr_normal_contamination_rate=filter_somatic_llr_normal_contamination_rate,

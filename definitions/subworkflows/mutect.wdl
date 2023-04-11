@@ -22,6 +22,7 @@ workflow mutect {
     File interval_list
     Int scatter_count
     String tumor_sample_name
+    Float fp_min_var_freq
   }
 
   call sil.splitIntervalList {
@@ -64,7 +65,8 @@ workflow mutect {
     vcf=indexVcf.indexed_vcf,
     vcf_tbi=indexVcf.indexed_vcf_tbi,
     variant_caller="mutect",
-    sample_name=tumor_sample_name
+    sample_name=tumor_sample_name,
+    fp_min_var_freq=fp_min_var_freq
   }
 
   output {

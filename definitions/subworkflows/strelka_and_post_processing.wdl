@@ -29,6 +29,8 @@ workflow strelkaAndPostProcessing {
 
     File? call_regions
     File? call_regions_tbi
+
+    Float fp_min_var_freq
   }
 
   call s.strelka {
@@ -96,7 +98,8 @@ workflow strelkaAndPostProcessing {
     vcf=regionFilter.filtered_vcf,
     vcf_tbi=regionFilter.filtered_vcf_tbi,
     sample_name=tumor_sample_name,
-    variant_caller="strelka"
+    variant_caller="strelka",
+    fp_min_var_freq=fp_min_var_freq
   }
 
   output {
