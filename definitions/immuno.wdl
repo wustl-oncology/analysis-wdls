@@ -157,11 +157,13 @@ workflow immuno {
     Int strelka_cpu_reserved = 8
     Int scatter_count = 50
 
-    Int varscan_strand_filter = 0
-    Int varscan_min_coverage = 8
-    Float varscan_min_var_freq = 0.05
-    Float varscan_p_value = 0.99
+    Int varscan_strand_filter
+    Int varscan_min_coverage
+    Float varscan_min_var_freq
+    Float varscan_p_value
     Float? varscan_max_normal_freq
+
+    Float fp_min_var_freq
 
     File docm_vcf
     File docm_vcf_tbi
@@ -322,6 +324,7 @@ workflow immuno {
     varscan_min_var_freq=varscan_min_var_freq,
     varscan_p_value=varscan_p_value,
     varscan_max_normal_freq=varscan_max_normal_freq,
+    fp_min_var_freq=fp_min_var_freq,
     docm_vcf=docm_vcf,
     docm_vcf_tbi=docm_vcf_tbi,
     filter_docm_variants=filter_docm_variants,

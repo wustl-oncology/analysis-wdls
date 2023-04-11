@@ -78,10 +78,10 @@ workflow wf {
     File normal_bam
     File normal_bam_bai
 
-    Int strand_filter = 0
-    Int min_coverage = 8
-    Float min_var_freq = 0.1
-    Float p_value = 0.99
+    Int strand_filter
+    Int min_coverage
+    Float min_var_freq
+    Float p_value
     File? roi_bed
   }
 

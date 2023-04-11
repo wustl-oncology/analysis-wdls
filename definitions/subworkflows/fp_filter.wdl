@@ -19,7 +19,7 @@ workflow fpFilter {
     File vcf_tbi
     String variant_caller
     String? sample_name
-    Float? min_var_freq
+    Float? fp_min_var_freq
   }
 
   call vs.vcfSanitize as sanitizeVcf {
@@ -53,7 +53,7 @@ workflow fpFilter {
     bam=bam,
     vcf=index.indexed_vcf,
     sample_name=sample_name,
-    min_var_freq=min_var_freq,
+    fp_min_var_freq=fp_min_var_freq,
     output_vcf_basename = variant_caller + "_full"
   }
 
