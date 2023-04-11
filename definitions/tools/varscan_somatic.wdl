@@ -14,7 +14,7 @@ task varscanSomatic {
 
     Int strand_filter = 0
     Int min_coverage = 8
-    Float min_var_freq = 0.1
+    Float varscan_min_var_freq = 0.1
     Float p_value = 0.99
     File? roi_bed
   }
@@ -54,7 +54,7 @@ task varscanSomatic {
     "output" \
     --strand-filter "~{strand_filter}" \
     --min-coverage "~{min_coverage}" \
-    --min-var-freq "~{min_var_freq}" \
+    --min-var-freq "~{varscan_min_var_freq}" \
     --p-value "~{p_value}" \
     --mpileup 1 \
     --output-vcf
@@ -80,7 +80,7 @@ workflow wf {
 
     Int strand_filter
     Int min_coverage
-    Float min_var_freq
+    Float varscan_min_var_freq
     Float p_value
     File? roi_bed
   }
@@ -96,7 +96,7 @@ workflow wf {
     normal_bam_bai=normal_bam_bai,
     strand_filter=strand_filter,
     min_coverage=min_coverage,
-    min_var_freq=min_var_freq,
+    varscan_min_var_freq=varscan_min_var_freq,
     p_value=p_value,
     roi_bed=roi_bed
   }
