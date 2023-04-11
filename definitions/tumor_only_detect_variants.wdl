@@ -38,6 +38,8 @@ workflow tumorOnlyDetectVariants {
     Float varscan_p_value
     Float maximum_population_allele_frequency = 0.001
 
+    Float fp_min_var_freq
+
     File vep_cache_dir_zip
     String vep_ensembl_assembly
     String vep_ensembl_version
@@ -71,9 +73,10 @@ workflow tumorOnlyDetectVariants {
     interval_list=roi_intervals,
     strand_filter=varscan_strand_filter,
     min_coverage=varscan_min_coverage,
-    min_var_freq=varscan_min_var_freq,
+    varscan_min_var_freq=varscan_min_var_freq,
     min_reads=varscan_min_reads,
     p_value=varscan_p_value,
+    fp_min_var_freq=fp_min_var_freq,
     sample_name=sample_name
   }
 
