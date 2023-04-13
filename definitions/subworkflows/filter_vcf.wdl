@@ -32,17 +32,19 @@ workflow filterVcf {
     File? validated_variants_tbi
   }
 
-  call fkv.filterKnownVariants {
-    input:
-    vcf=vcf,
-    vcf_tbi=vcf_tbi,
-    validated_variants=validated_variants,
-    validated_variants_tbi=validated_variants_tbi
+  if (defined(validated_variants)) {
+    call fkv.filterKnownVariants {
+      input:
+      vcf=vcf,
+      vcf_tbi=vcf_tbi,
+      validated_variants=validated_variants,
+      validated_variants_tbi=validated_variants_tbi
+    }
   }
 
   call fvcaf.filterVcfCustomAlleleFreq as filterVcfGnomadeAlleleFreq {
     input:
-    vcf=filterKnownVariants.validated_annotated_vcf,
+    vcf=select_first([filterKnownVariants.validated_annotated_vcf, vcf]),
     maximum_population_allele_frequency=filter_gnomADe_maximum_population_allele_frequency,
     field_name=gnomad_field_name
   }
@@ -56,15 +58,17 @@ workflow filterVcf {
     threshold=filter_mapq0_threshold
   }
 
-  call fvc.filterVcfCle {
-    input:
-    vcf=filterVcfMapq0.mapq0_filtered_vcf,
-    filter=do_cle_vcf_filter
+  if (do_cle_vcf_filter) {
+    call fvc.filterVcfCle {
+      input:
+      vcf=filterVcfMapq0.mapq0_filtered_vcf,
+      filter=do_cle_vcf_filter
+    }
   }
 
   call fvd.filterVcfDepth {
     input:
-    vcf=filterVcfCle.cle_filtered_vcf,
+    vcf=select_first([filterVcfCle.cle_filtered_vcf, filterVcfMapq0.mapq0_filtered_vcf]),
     minimum_depth=filter_minimum_depth,
     sample_names=[normal_sample_name, tumor_sample_name]
   }
