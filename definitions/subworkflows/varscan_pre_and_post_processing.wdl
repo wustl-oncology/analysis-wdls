@@ -29,7 +29,6 @@ workflow varscanPreAndPostProcessing {
     Int strand_filter
     Int min_coverage
     Float varscan_min_var_freq
-    Float fp_min_var_freq
     Float p_value
     Float? max_normal_freq
     Int scatter_count = 50
@@ -155,7 +154,7 @@ workflow varscanPreAndPostProcessing {
     bam_bai=tumor_bam_bai,
     vcf=index.indexed_vcf,
     vcf_tbi=index.indexed_vcf_tbi,
-    fp_min_var_freq=fp_min_var_freq,
+    fp_min_var_freq=varscan_min_var_freq,
     sample_name=tumor_sample_name,
     variant_caller="varscan"
   }
