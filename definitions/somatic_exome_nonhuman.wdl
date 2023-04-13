@@ -61,9 +61,9 @@ workflow somaticExomeNonhuman {
     String? vep_pick
     Boolean cle_vcf_filter = false
 
-    Float filter_somatic_llr_threshold = 5
-    Float filter_somatic_llr_tumor_purity = 1
-    Float filter_somatic_llr_normal_contamination_rate = 0
+    Float filter_somatic_llr_threshold
+    Float filter_somatic_llr_tumor_purity
+    Float filter_somatic_llr_normal_contamination_rate
 
     Array[String] vep_to_table_fields = ["Consequence", "SYMBOL", "Feature"]
     Array[String] variants_to_table_genotype_fields = ["GT", "AD"]

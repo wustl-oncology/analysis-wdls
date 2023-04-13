@@ -70,9 +70,9 @@ workflow somaticExome {
     Boolean filter_docm_variants = true
 
     String? gnomad_field_name
-    Float filter_somatic_llr_threshold = 5
-    Float filter_somatic_llr_tumor_purity = 1
-    Float filter_somatic_llr_normal_contamination_rate = 0
+    Float filter_somatic_llr_threshold
+    Float filter_somatic_llr_tumor_purity
+    Float filter_somatic_llr_normal_contamination_rate
 
     File vep_cache_dir_zip
     String vep_ensembl_assembly
