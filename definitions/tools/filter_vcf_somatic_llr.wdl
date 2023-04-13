@@ -3,9 +3,9 @@ version 1.0
 task filterVcfSomaticLlr {
   input {
     File vcf
-    Float threshold
     String tumor_sample_name
     String normal_sample_name
+    Float threshold = 5
     Float tumor_purity = 1
     Float normal_contamination_rate = 0
   }

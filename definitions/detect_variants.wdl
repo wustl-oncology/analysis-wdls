@@ -67,9 +67,9 @@ workflow detectVariants {
     Float filter_gnomADe_maximum_population_allele_frequency = 0.001
 
     Float filter_mapq0_threshold = 0.15
-    Float filter_somatic_llr_threshold = 5
-    Float filter_somatic_llr_tumor_purity = 1
-    Float filter_somatic_llr_normal_contamination_rate = 0
+    Float filter_somatic_llr_threshold
+    Float filter_somatic_llr_tumor_purity
+    Float filter_somatic_llr_normal_contamination_rate
     Int filter_minimum_depth = 1
     Boolean cle_vcf_filter = false
     Array[String] variants_to_table_fields = ["CHROM", "POS", "ID", "REF", "ALT", "set", "AC", "AF"]

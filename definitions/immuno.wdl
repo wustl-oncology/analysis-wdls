@@ -181,6 +181,11 @@ workflow immuno {
     # one of [pick, flag_pick, pick-allele, per_gene, pick_allele_gene, flag_pick_allele, flag_pick_allele_gene]
     String? vep_pick
     Boolean cle_vcf_filter = false
+    
+    Float filter_somatic_llr_threshold
+    Float filter_somatic_llr_tumor_purity
+    Float filter_somatic_llr_normal_contamination_rate
+
     Array[String] vep_to_table_fields = ["HGVSc", "HGVSp"]
     Array[String] variants_to_table_genotype_fields = ["GT", "AD"]
     Array[String] variants_to_table_fields = ["CHROM", "POS", "ID", "REF", "ALT", "set", "AC", "AF"]
@@ -346,6 +351,9 @@ workflow immuno {
     annotate_coding_only=annotate_coding_only,
     vep_pick=vep_pick,
     cle_vcf_filter=cle_vcf_filter,
+    filter_somatic_llr_threshold=filter_somatic_llr_threshold,
+    filter_somatic_llr_tumor_purity=filter_somatic_llr_tumor_purity,
+    filter_somatic_llr_normal_contamination_rate=filter_somatic_llr_normal_contamination_rate,
     variants_to_table_fields=variants_to_table_fields,
     variants_to_table_genotype_fields=variants_to_table_genotype_fields,
     vep_to_table_fields=vep_to_table_fields,
