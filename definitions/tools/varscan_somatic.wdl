@@ -14,7 +14,7 @@ task varscanSomatic {
 
     Int strand_filter = 0
     Int min_coverage = 8
-    Float varscan_min_var_freq = 0.1
+    Float varscan_min_var_freq = 0.05
     Float p_value = 0.99
     File? roi_bed
   }

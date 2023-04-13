@@ -127,8 +127,7 @@ workflow detectVariantsWgs {
     min_coverage=varscan_min_coverage,
     varscan_min_var_freq=varscan_min_var_freq,
     p_value=varscan_p_value,
-    max_normal_freq=varscan_max_normal_freq,
-    fp_min_var_freq=fp_min_var_freq
+    max_normal_freq=varscan_max_normal_freq
   }
 
   call dc.docmCle as docm {
