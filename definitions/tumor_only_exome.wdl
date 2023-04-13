@@ -108,7 +108,6 @@ workflow tumorOnlyExome {
     varscan_min_var_freq=varscan_min_var_freq,
     varscan_p_value=varscan_p_value,
     varscan_min_reads=varscan_min_reads,
-    fp_min_var_freq=fp_min_var_freq,
     maximum_population_allele_frequency=maximum_population_allele_frequency,
     vep_cache_dir_zip=vep_cache_dir_zip,
     vep_ensembl_assembly=vep_ensembl_assembly,
