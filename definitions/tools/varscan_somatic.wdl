@@ -19,13 +19,6 @@ task varscanSomatic {
     File? roi_bed
   }
 
-  parameter_meta {
-    tumor_bam: { localization_optional: true }
-    tumor_bam_bai: { localization_optional: true }
-    normal_bam: { localization_optional: true }
-    normal_bam_bai: { localization_optional: true }
-  }
-
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
   Float bam_size = size([tumor_bam, tumor_bam_bai, normal_bam, normal_bam_bai], "GB")
   Int space_needed_gb = 10 + ceil(reference_size + bam_size*2)
