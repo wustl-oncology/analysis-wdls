@@ -548,6 +548,7 @@ workflow immuno {
     top_score_metric=top_score_metric,
     net_chop_threshold=net_chop_threshold,
     run_reference_proteome_similarity=run_reference_proteome_similarity,
+    peptide_fasta=peptide_fasta,
     additional_report_columns=additional_report_columns,
     fasta_size=fasta_size,
     downstream_sequence_length=downstream_sequence_length,
