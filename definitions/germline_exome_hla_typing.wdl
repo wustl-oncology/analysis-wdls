@@ -101,18 +101,7 @@ workflow germlineExomeHlaTyping {
   output {
     File cram = germlineExome.cram
     File mark_duplicates_metrics = germlineExome.mark_duplicates_metrics
-    File insert_size_metrics = germlineExome.insert_size_metrics
-    File insert_size_histogram = germlineExome.insert_size_histogram
-    File alignment_summary_metrics = germlineExome.alignment_summary_metrics
-    File hs_metrics = germlineExome.hs_metrics
-    Array[File] per_target_coverage_metrics = germlineExome.per_target_coverage_metrics
-    Array[File] per_target_hs_metrics = germlineExome.per_target_hs_metrics
-    Array[File] per_base_coverage_metrics = germlineExome.per_base_coverage_metrics
-    Array[File] per_base_hs_metrics = germlineExome.per_base_hs_metrics
-    Array[File] summary_hs_metrics = germlineExome.summary_hs_metrics
-    File flagstats = germlineExome.flagstats
-    File verify_bam_id_metrics = germlineExome.verify_bam_id_metrics
-    File verify_bam_id_depth = germlineExome.verify_bam_id_depth
+    QCMetrics qc_metrics = germlineExome.qc_metrics
     File raw_vcf = germlineExome.raw_vcf
     File raw_vcf_tbi = germlineExome.raw_vcf_tbi
     File final_vcf = germlineExome.final_vcf

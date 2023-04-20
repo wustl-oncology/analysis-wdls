@@ -15,8 +15,9 @@ task filterVcfCle {
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
+  String do_filtering = if filter then "filter" else "0"
   command <<<
-    /usr/bin/perl - "~{vcf}" "$PWD" "~{filter}" <<'EOF'
+    /usr/bin/perl - "~{vcf}" "$PWD" "~{do_filtering}" <<'EOF'
 #! /usr/bin/perl
 
 #Copyright (C) 2015 Feiyu Du <fdu@genome.wustl.edu>

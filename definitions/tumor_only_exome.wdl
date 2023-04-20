@@ -141,18 +141,7 @@ workflow tumorOnlyExome {
   output {
     File cram = indexCram.indexed_cram
     File mark_duplicates_metrics = alignmentAndQc.mark_duplicates_metrics
-    File insert_size_metrics = alignmentAndQc.insert_size_metrics
-    File insert_size_histogram = alignmentAndQc.insert_size_histogram
-    File alignment_summary_metrics = alignmentAndQc.alignment_summary_metrics
-    File hs_metrics = alignmentAndQc.hs_metrics
-    Array[File] per_target_coverage_metrics = alignmentAndQc.per_target_coverage_metrics
-    Array[File] per_target_hs_metrics = alignmentAndQc.per_target_hs_metrics
-    Array[File] per_base_coverage_metrics = alignmentAndQc.per_base_coverage_metrics
-    Array[File] per_base_hs_metrics = alignmentAndQc.per_base_hs_metrics
-    Array[File] summary_hs_metrics = alignmentAndQc.summary_hs_metrics
-    File flagstats = alignmentAndQc.flagstats
-    File verify_bam_id_metrics = alignmentAndQc.verify_bam_id_metrics
-    File verify_bam_id_depth = alignmentAndQc.verify_bam_id_depth
+    QCMetrics qc_metrics = alignmentAndQc.qc_metrics
     File varscan_vcf = detectVariants.varscan_vcf
     File varscan_vcf_tbi = detectVariants.varscan_vcf_tbi
     File docm_gatk_vcf = detectVariants.docm_gatk_vcf

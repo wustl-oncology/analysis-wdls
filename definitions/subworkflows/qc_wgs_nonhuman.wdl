@@ -94,19 +94,21 @@ workflow qcWgsNonhuman {
   }
 
   output {
-    File insert_size_metrics = collectInsertSizeMetrics.insert_size_metrics
-    File insert_size_histogram = collectInsertSizeMetrics.insert_size_histogram
-    File alignment_summary_metrics = collectAlignmentSummaryMetrics.alignment_summary_metrics
-    File gc_bias_metrics = collectGcBiasMetrics.gc_bias_metrics
-    File wgs_metrics = collectWgsMetrics.wgs_metrics
-    File gc_bias_metrics_chart = collectGcBiasMetrics.gc_bias_metrics_chart
-    File gc_bias_metrics_summary = collectGcBiasMetrics.gc_bias_metrics_summary
-    File flagstats = samtoolsFlagstat.flagstats
-    Array[File] per_base_coverage_metrics = collectHsMetrics.per_base_coverage_metrics
-    Array[File] per_base_hs_metrics = collectHsMetrics.per_base_hs_metrics
-    Array[File] per_target_coverage_metrics = collectHsMetrics.per_target_coverage_metrics
-    Array[File] per_target_hs_metrics = collectHsMetrics.per_target_hs_metrics
-    Array[File] summary_hs_metrics = collectHsMetrics.summary_hs_metrics
-    File bamcoverage_bigwig = cgpbigwigBamcoverage.outfile
+    QCMetrics metrics = object {
+      insert_size_metrics: collectInsertSizeMetrics.insert_size_metrics,
+      insert_size_histogram: collectInsertSizeMetrics.insert_size_histogram,
+      alignment_summary_metrics: collectAlignmentSummaryMetrics.alignment_summary_metrics,
+      gc_bias_metrics: collectGcBiasMetrics.gc_bias_metrics,
+      wgs_metrics: collectWgsMetrics.wgs_metrics,
+      gc_bias_metrics_chart: collectGcBiasMetrics.gc_bias_metrics_chart,
+      gc_bias_metrics_summary: collectGcBiasMetrics.gc_bias_metrics_summary,
+      flagstats: samtoolsFlagstat.flagstats,
+      per_base_coverage_metrics: collectHsMetrics.per_base_coverage_metrics,
+      per_base_hs_metrics: collectHsMetrics.per_base_hs_metrics,
+      per_target_coverage_metrics: collectHsMetrics.per_target_coverage_metrics,
+      per_target_hs_metrics: collectHsMetrics.per_target_hs_metrics,
+      summary_hs_metrics: collectHsMetrics.summary_hs_metrics,
+      bamcoverage_bigwig: cgpbigwigBamcoverage.outfile
+    }
   }
 }

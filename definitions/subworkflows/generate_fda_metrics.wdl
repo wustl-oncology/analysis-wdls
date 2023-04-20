@@ -19,16 +19,10 @@ workflow generateFdaMetrics {
     File aligned_tumor_dna_index
     File aligned_tumor_rna
 
-    File normal_alignment_summary_metrics
+    QCMetrics normal_qc_metrics
     File normal_duplication_metrics
-    File normal_insert_size_metrics
-    File normal_hs_metrics
-    File normal_flagstat
-    File tumor_alignment_summary_metrics
+    QCMetrics tumor_qc_metrics
     File tumor_duplication_metrics
-    File tumor_insert_size_metrics
-    File tumor_hs_metrics
-    File tumor_flagstat
     File rna_metrics
 
     String? reference_genome
@@ -136,11 +130,11 @@ workflow generateFdaMetrics {
       table_file_name = "aligned_normal_dna_table2.csv",
       table_num = "table2",
       is_aligned = true,
-      alignment_summary_metrics = normal_alignment_summary_metrics,
+      alignment_summary_metrics = normal_qc_metrics.alignment_summary_metrics,
       duplication_metrics = normal_duplication_metrics,
-      insert_size_metrics = normal_insert_size_metrics,
-      hs_metrics = normal_hs_metrics,
-      flagstat = normal_flagstat,
+      insert_size_metrics = normal_qc_metrics.insert_size_metrics,
+      hs_metrics = normal_qc_metrics.hs_metrics,
+      flagstat = normal_qc_metrics.flagstats,
       sample_name = normal_dna_sample_name,
       sequencing_platform = dna_sequencing_platform,
       sequencing_instrument = dna_sequencing_instrument,
@@ -172,11 +166,11 @@ workflow generateFdaMetrics {
       table_file_name = "aligned_tumor_dna_table2.csv",
       table_num = "table2",
       is_aligned = true,
-      alignment_summary_metrics = tumor_alignment_summary_metrics,
+      alignment_summary_metrics = tumor_qc_metrics.alignment_summary_metrics,
       duplication_metrics = tumor_duplication_metrics,
-      insert_size_metrics = tumor_insert_size_metrics,
-      hs_metrics = tumor_hs_metrics,
-      flagstat = tumor_flagstat,
+      insert_size_metrics = tumor_qc_metrics.insert_size_metrics,
+      hs_metrics = tumor_qc_metrics.hs_metrics,
+      flagstat = tumor_qc_metrics.flagstats,
       sample_name = tumor_dna_sample_name,
       sequencing_platform = dna_sequencing_platform,
       sequencing_instrument = dna_sequencing_instrument,

@@ -61,6 +61,7 @@ workflow pvacseq {
     Array[String]? problematic_amino_acids
     Boolean? allele_specific_anchors
     Float? anchor_contribution_threshold
+    String? prefix = "pvacseq"
   }
 
   call br.bamReadcount as tumorRnaBamReadcount {
@@ -166,11 +167,12 @@ workflow pvacseq {
     vcf=index.indexed_vcf,
     vep_fields=vep_to_table_fields,
     tsv=variantsToTable.variants_tsv,
-    prefix="pvacseq"
+    prefix=prefix
   }
 
   output {
-    File annotated_vcf = addTranscriptExpressionDataToVcf.annotated_expression_vcf
+    File annotated_vcf = index.indexed_vcf
+    File annotated_vcf_tbi = index.indexed_vcf_tbi
     File annotated_tsv = addVepFieldsToTable.annotated_variants_tsv
     Array[File] mhc_i = ps.mhc_i
     Array[File] mhc_ii = ps.mhc_ii

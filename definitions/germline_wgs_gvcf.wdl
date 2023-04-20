@@ -69,7 +69,7 @@ workflow germlineWgsGvcf {
 
   call f.freemix {
     input:
-    verify_bam_id_metrics=alignmentAndQc.verify_bam_id_metrics
+    verify_bam_id_metrics=select_first([alignmentAndQc.qc_metrics.verify_bam_id_metrics])
   }
 
   call ghi.gatkHaplotypecallerIterator as generateGvcfs {
@@ -102,21 +102,7 @@ workflow germlineWgsGvcf {
   output {
     File cram = indexCram.indexed_cram
     File mark_duplicates_metrics = alignmentAndQc.mark_duplicates_metrics
-    File insert_size_metrics = alignmentAndQc.insert_size_metrics
-    File insert_size_histogram = alignmentAndQc.insert_size_histogram
-    File alignment_summary_metrics = alignmentAndQc.alignment_summary_metrics
-    File gc_bias_metrics = alignmentAndQc.gc_bias_metrics
-    File gc_bias_metrics_chart = alignmentAndQc.gc_bias_metrics_chart
-    File gc_bias_metrics_summary = alignmentAndQc.gc_bias_metrics_summary
-    File wgs_metrics = alignmentAndQc.wgs_metrics
-    File flagstats = alignmentAndQc.flagstats
-    File verify_bam_id_metrics = alignmentAndQc.verify_bam_id_metrics
-    File verify_bam_id_depth = alignmentAndQc.verify_bam_id_depth
-    Array[File] per_base_coverage_metrics = alignmentAndQc.per_base_coverage_metrics
-    Array[File] per_base_hs_metrics = alignmentAndQc.per_base_hs_metrics
-    Array[File] per_target_coverage_metrics = alignmentAndQc.per_target_coverage_metrics
-    Array[File] per_target_hs_metrics = alignmentAndQc.per_target_hs_metrics
-    Array[File] summary_hs_metrics = alignmentAndQc.summary_hs_metrics
+    QCMetrics qc_metrics = alignmentAndQc.qc_metrics
     Array[File] gvcf = generateGvcfs.gvcf
   }
 }
