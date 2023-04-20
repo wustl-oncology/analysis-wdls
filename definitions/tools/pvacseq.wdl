@@ -8,6 +8,7 @@ task pvacseq {
     String sample_name
     Array[String] alleles
     Array[String] prediction_algorithms
+    File? peptide_fasta
 
     Array[Int]? epitope_lengths_class_i
     Array[Int]? epitope_lengths_class_ii
@@ -55,7 +56,7 @@ task pvacseq {
     maxRetries: 2
     memory: "16GB"
     cpu: n_threads
-    docker: "susannakiwala/pvactools:4.0.0_rc_pvacview_v12"
+    docker: "susannakiwala/pvactools:4.0.0_rc_pvacview_v13"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
@@ -70,7 +71,6 @@ task pvacseq {
 
     ln -s "$TMPDIR" /tmp/pvacseq && export TMPDIR=/tmp/pvacseq && \
     /usr/local/bin/pvacseq run --iedb-install-directory /opt/iedb \
-    --peptide-fasta /opt/reference_fasta/Homo_sapiens.GRCh38.105.pep.all.fa.gz \
     --pass-only \
     ~{if defined(tumor_purity) then "--tumor-purity " + select_first([tumor_purity]) else ""} \
     ~{if length(epitope_i ) > 0 then "-e1 " else ""} ~{sep="," epitope_i} \
@@ -85,6 +85,7 @@ task pvacseq {
     ~{if defined(net_chop_method) then "--net-chop-method ~{net_chop_method}" else ""} \
     ~{if netmhc_stab then "--netmhc-stab" else ""} \
     ~{if run_reference_proteome_similarity then "--run-reference-proteome-similarity" else ""} \
+    ~{if defined(peptide_fasta) then "--peptide-fasta ~{peptide_fasta}" else ""} \
     ~{if defined(top_score_metric) then "-m ~{top_score_metric}" else ""} \
     ~{if defined(net_chop_threshold) then "--net-chop-threshold ~{net_chop_threshold}" else ""} \
     ~{if defined(additional_report_columns) then "-m ~{additional_report_columns}" else ""} \

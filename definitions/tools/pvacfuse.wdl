@@ -3,6 +3,7 @@ version 1.0
 task pvacfuse {
   input {
     File input_fusions_zip
+    File? peptide_fasta
     String sample_name
     Array[String] alleles
     Array[String] prediction_algorithms
@@ -34,7 +35,7 @@ task pvacfuse {
   runtime {
     preemptible: 1
     maxRetries: 2
-    docker: "susannakiwala/pvactools:4.0.0_rc_pvacview_v12"
+    docker: "susannakiwala/pvactools:4.0.0_rc_pvacview_v13"
     memory: "16GB"
     cpu: n_threads
     disks: "local-disk ~{space_needed_gb} HDD"
@@ -49,7 +50,6 @@ task pvacfuse {
 
     ln -s "$TMPDIR" /tmp/pvacfuse && export TMPDIR=/tmp/pvacfuse && \
     /usr/local/bin/pvacfuse run --iedb-install-directory /opt/iedb \
-    --peptide-fasta /opt/reference_fasta/Homo_sapiens.GRCh38.105.pep.all.fa.gz \
     agfusion_dir ~{sample_name} \
     ~{sep="," alleles} \
     ~{sep=" " prediction_algorithms} \
@@ -68,6 +68,7 @@ task pvacfuse {
     ~{if defined(top_score_metric) then "-m ~{top_score_metric}" else ""} \
     ~{if defined(net_chop_threshold) then "--net-chop-threshold ~{net_chop_threshold}" else ""} \
     ~{if run_reference_proteome_similarity then "--run-reference-proteome-similarity" else ""} \
+    ~{if defined(peptide_fasta) then "--peptide-fasta ~{peptide_fasta}" else ""} \
     ~{if defined(additional_report_columns) then "-m ~{additional_report_columns}" else ""} \
     ~{if defined(fasta_size) then "-s ~{fasta_size}" else ""} \
     ~{if defined(downstream_sequence_length) then "-d ~{downstream_sequence_length}" else ""} \

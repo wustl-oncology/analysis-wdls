@@ -231,6 +231,7 @@ workflow immuno {
     Float? net_chop_threshold
     Boolean? netmhc_stab
     Boolean? run_reference_proteome_similarity
+    File? peptide_fasta
     Int? pvacseq_threads
     Int? iedb_retries
     Boolean? pvacfuse_keep_tmp_files
@@ -486,6 +487,7 @@ workflow immuno {
     net_chop_threshold=net_chop_threshold,
     netmhc_stab=netmhc_stab,
     run_reference_proteome_similarity=run_reference_proteome_similarity,
+    peptide_fasta=peptide_fasta,
     n_threads=pvacseq_threads,
     variants_to_table_fields=variants_to_table_fields,
     variants_to_table_genotype_fields=variants_to_table_genotype_fields,
@@ -516,6 +518,7 @@ workflow immuno {
     top_score_metric=top_score_metric,
     net_chop_threshold=net_chop_threshold,
     run_reference_proteome_similarity=run_reference_proteome_similarity,
+    peptide_fasta=peptide_fasta,
     additional_report_columns=additional_report_columns,
     fasta_size=fasta_size,
     downstream_sequence_length=downstream_sequence_length,
