@@ -37,13 +37,24 @@ struct Rnaseq {
   Array[File] stringtie_expression
   Array[File] kallisto_expression
   StarFusion star_fusion
+  Array[File] fusioninspector_evidence
+}
+
+struct FdaMetricBundle {
+  FdaMetrics unaligned_normal_dna
+  FdaMetrics unaligned_tumor_dna
+  FdaMetrics unaligned_tumor_rna
+  FdaMetrics aligned_normal_dna
+  FdaMetrics aligned_tumor_dna
+  FdaMetrics aligned_tumor_rna
 }
 
 struct Qc {
   Array[File?] tumor_rna
-  Array[File?] tumor_dna
-  Array[File?] normal_dna
+  QCMetrics tumor_dna
+  QCMetrics normal_dna
   Array[File?] concordance
+  FdaMetricBundle fda_metrics
 }
 
 struct Variants {
@@ -78,16 +89,6 @@ struct MHC {
   Array[File] combined
   Array[File]? phase_vcf
 }
-
-struct FdaMetricBundle {
-  FdaMetrics unaligned_normal_dna
-  FdaMetrics unaligned_tumor_dna
-  FdaMetrics unaligned_tumor_rna
-  FdaMetrics aligned_normal_dna
-  FdaMetrics aligned_tumor_dna
-  FdaMetrics aligned_tumor_rna
-}
-
 
 workflow immuno {
   input {
@@ -491,6 +492,7 @@ workflow immuno {
     variants_to_table_fields=variants_to_table_fields,
     variants_to_table_genotype_fields=variants_to_table_genotype_fields,
     vep_to_table_fields=vep_to_table_fields,
+    prefix="variants.final",
     tumor_purity=tumor_purity,
     allele_specific_binding_thresholds=allele_specific_binding_thresholds,
     aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
@@ -545,16 +547,10 @@ workflow immuno {
       aligned_tumor_dna_index = somaticExome.tumor_cram_crai,
       aligned_tumor_rna = rna.final_bam,
 
-      normal_alignment_summary_metrics = somaticExome.normal_alignment_summary_metrics,
+      normal_qc_metrics = somaticExome.normal_qc_metrics,
       normal_duplication_metrics = somaticExome.normal_mark_duplicates_metrics,
-      normal_insert_size_metrics = somaticExome.normal_insert_size_metrics,
-      normal_hs_metrics = somaticExome.normal_hs_metrics,
-      normal_flagstat = somaticExome.normal_flagstats,
-      tumor_alignment_summary_metrics = somaticExome.tumor_alignment_summary_metrics,
+      tumor_qc_metrics = somaticExome.tumor_qc_metrics,
       tumor_duplication_metrics = somaticExome.tumor_mark_duplicates_metrics,
-      tumor_insert_size_metrics = somaticExome.tumor_insert_size_metrics,
-      tumor_hs_metrics = somaticExome.tumor_hs_metrics,
-      tumor_flagstat  = somaticExome.tumor_flagstats,
       rna_metrics = rna.metrics,
 
       reference_genome = reference_genome_name,
@@ -609,7 +605,8 @@ workflow immuno {
           rna.annotated_fusion_predictions_zip
         ],
         candidates_preliminary: rna.prelim_starfusion_results
-      }
+      },
+      fusioninspector_evidence: rna.fusioninspector_evidence
     }
 
     # -------- Somatic Outputs -----------------------------------------
@@ -617,41 +614,24 @@ workflow immuno {
     Qc qc =  object {
       tumor_rna: flatten([
         [ rna.metrics, 
-          rna.chart ],
+          rna.chart,
+          rna.flagstats ],
         rna.strand_info  
       ]),
-      tumor_dna: flatten([
-        [ somaticExome.tumor_mark_duplicates_metrics,
-          somaticExome.tumor_insert_size_metrics,
-          somaticExome.tumor_alignment_summary_metrics,
-          somaticExome.tumor_hs_metrics,
-          somaticExome.tumor_flagstats,
-          somaticExome.tumor_verify_bam_id_metrics,
-          somaticExome.tumor_verify_bam_id_depth ],
-        somaticExome.tumor_per_target_coverage_metrics,
-        somaticExome.tumor_per_target_hs_metrics,
-        somaticExome.tumor_per_base_coverage_metrics,
-        somaticExome.tumor_per_base_hs_metrics,
-        somaticExome.tumor_summary_hs_metrics
-      ]),
-      normal_dna: flatten([
-        [ somaticExome.normal_mark_duplicates_metrics,
-          somaticExome.normal_insert_size_metrics,
-          somaticExome.normal_alignment_summary_metrics,
-          somaticExome.normal_hs_metrics,
-          somaticExome.normal_flagstats,
-          somaticExome.normal_verify_bam_id_metrics,
-          somaticExome.normal_verify_bam_id_depth ],
-        somaticExome.normal_per_target_coverage_metrics,
-        somaticExome.normal_per_target_hs_metrics,
-        somaticExome.normal_per_base_coverage_metrics,
-        somaticExome.normal_per_base_hs_metrics,
-        somaticExome.normal_summary_hs_metrics
-      ]),
+      tumor_dna: somaticExome.tumor_qc_metrics,
+      normal_dna: somaticExome.normal_qc_metrics,
       concordance: [
         somaticExome.somalier_concordance_metrics,
         somaticExome.somalier_concordance_statistics
-      ]
+      ],
+      fda_metrics: object {
+        unaligned_normal_dna: generateFdaMetrics.unaligned_normal_dna_metrics,
+        unaligned_tumor_dna: generateFdaMetrics.unaligned_tumor_dna_metrics,
+        unaligned_tumor_rna: generateFdaMetrics.unaligned_tumor_rna_metrics,
+        aligned_normal_dna: generateFdaMetrics.aligned_normal_dna_metrics,
+        aligned_tumor_dna: generateFdaMetrics.aligned_tumor_dna_metrics,
+        aligned_tumor_rna: generateFdaMetrics.aligned_tumor_rna_metrics
+      }
     }
 
     File tumor_cram = somaticExome.tumor_cram
@@ -742,37 +722,25 @@ workflow immuno {
       hlaConsensus.hla_call_files
     ])
 
-    # --------- FDA metrics outputs ------------------------------------
-
-    FdaMetricBundle fda_metrics = object {
-      unaligned_normal_dna: generateFdaMetrics.unaligned_normal_dna_metrics,
-      unaligned_tumor_dna: generateFdaMetrics.unaligned_tumor_dna_metrics,
-      unaligned_tumor_rna: generateFdaMetrics.unaligned_tumor_rna_metrics,
-      aligned_normal_dna: generateFdaMetrics.aligned_normal_dna_metrics,
-      aligned_tumor_dna: generateFdaMetrics.aligned_tumor_dna_metrics,
-      aligned_tumor_rna: generateFdaMetrics.aligned_tumor_rna_metrics
-    }
 
     # --------- Other Outputs ------------------------------------------
 
-    MHC pvactools = object {
+    MHC pVACseq = object {
       mhc_i: pvacseq.mhc_i,
       mhc_ii: pvacseq.mhc_ii,
       combined: pvacseq.combined,
       phase_vcf: [phaseVcf.phased_vcf, phaseVcf.phased_vcf_tbi]
     }
 
-    MHC pvacfuse_predictions = object {
+    MHC pVACfuse = object {
       mhc_i: pvacfuse.mhc_i,
       mhc_ii: pvacfuse.mhc_ii,
       combined: pvacfuse.combined
     }
 
     File pvacseq_annotated_expression_vcf_gz = pvacseq.annotated_vcf
-    File pvacseq_annotated_variants_tsv = pvacseq.annotated_tsv
+    File pvacseq_annotated_expression_vcf_gz_tbi = pvacseq.annotated_vcf_tbi
+    File variants_final_annotated_tsv = pvacseq.annotated_tsv
 
-    Array[File] fusioninspector_evidence = rna.fusioninspector_evidence
   }
 }
-
-

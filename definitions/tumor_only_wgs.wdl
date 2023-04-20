@@ -135,16 +135,7 @@ workflow tumorOnlyWgs {
   output {
     File cram = indexCram.indexed_cram
     File mark_duplicates_metrics = alignmentAndQc.mark_duplicates_metrics
-    File insert_size_metrics = alignmentAndQc.insert_size_metrics
-    File insert_size_histogram = alignmentAndQc.insert_size_histogram
-    File alignment_summary_metrics = alignmentAndQc.alignment_summary_metrics
-    File gc_bias_metrics = alignmentAndQc.gc_bias_metrics
-    File gc_bias_metrics_chart = alignmentAndQc.gc_bias_metrics_chart
-    File gc_bias_metrics_summary = alignmentAndQc.gc_bias_metrics_summary
-    File wgs_metrics = alignmentAndQc.wgs_metrics
-    File flagstats = alignmentAndQc.flagstats
-    File verify_bam_id_metrics = alignmentAndQc.verify_bam_id_metrics
-    File verify_bam_id_depth = alignmentAndQc.verify_bam_id_depth
+    QCMetrics qc_metrics = alignmentAndQc.qc_metrics
     File varscan_vcf = detectVariants.varscan_vcf
     File varscan_vcf_tbi = detectVariants.varscan_vcf_tbi
     File docm_gatk_vcf = detectVariants.docm_gatk_vcf
@@ -156,10 +147,5 @@ workflow tumorOnlyWgs {
     File vep_summary = detectVariants.vep_summary
     File tumor_snv_bam_readcount_tsv = detectVariants.tumor_snv_bam_readcount_tsv
     File tumor_indel_bam_readcount_tsv = detectVariants.tumor_indel_bam_readcount_tsv
-    Array[File] per_base_coverage_metrics = alignmentAndQc.per_base_coverage_metrics
-    Array[File] per_base_hs_metrics = alignmentAndQc.per_base_hs_metrics
-    Array[File] per_target_coverage_metrics = alignmentAndQc.per_target_coverage_metrics
-    Array[File] per_target_hs_metrics = alignmentAndQc.per_target_hs_metrics
-    Array[File] summary_hs_metrics = alignmentAndQc.summary_hs_metrics
   }
 }

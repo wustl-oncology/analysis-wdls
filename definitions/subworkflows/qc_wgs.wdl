@@ -102,22 +102,23 @@ workflow qcWgs {
     minimum_base_quality=minimum_base_quality
   }
 
-
   output {
-    File insert_size_metrics = collectInsertSizeMetrics.insert_size_metrics
-    File insert_size_histogram = collectInsertSizeMetrics.insert_size_histogram
-    File alignment_summary_metrics = collectAlignmentSummaryMetrics.alignment_summary_metrics
-    File gc_bias_metrics = collectGcBiasMetrics.gc_bias_metrics
-    File gc_bias_metrics_chart = collectGcBiasMetrics.gc_bias_metrics_chart
-    File gc_bias_metrics_summary = collectGcBiasMetrics.gc_bias_metrics_summary
-    File wgs_metrics = collectWgsMetrics.wgs_metrics
-    File flagstats = samtoolsFlagstat.flagstats
-    File verify_bam_id_metrics = verifyBamId.verify_bam_id_metrics
-    File verify_bam_id_depth = verifyBamId.verify_bam_id_depth
-    Array[File] per_base_coverage_metrics = collectHsMetrics.per_base_coverage_metrics
-    Array[File] per_base_hs_metrics = collectHsMetrics.per_base_hs_metrics
-    Array[File] per_target_coverage_metrics = collectHsMetrics.per_target_coverage_metrics
-    Array[File] per_target_hs_metrics = collectHsMetrics.per_target_hs_metrics
-    Array[File] summary_hs_metrics = collectHsMetrics.summary_hs_metrics
+    QCMetrics metrics = object {
+      insert_size_metrics: collectInsertSizeMetrics.insert_size_metrics,
+      insert_size_histogram: collectInsertSizeMetrics.insert_size_histogram,
+      alignment_summary_metrics: collectAlignmentSummaryMetrics.alignment_summary_metrics,
+      gc_bias_metrics: collectGcBiasMetrics.gc_bias_metrics,
+      gc_bias_metrics_chart: collectGcBiasMetrics.gc_bias_metrics_chart,
+      gc_bias_metrics_summary: collectGcBiasMetrics.gc_bias_metrics_summary,
+      wgs_metrics: collectWgsMetrics.wgs_metrics,
+      flagstats: samtoolsFlagstat.flagstats,
+      verify_bam_id_metrics: verifyBamId.verify_bam_id_metrics,
+      verify_bam_id_depth: verifyBamId.verify_bam_id_depth,
+      per_base_coverage_metrics: collectHsMetrics.per_base_coverage_metrics,
+      per_base_hs_metrics: collectHsMetrics.per_base_hs_metrics,
+      per_target_coverage_metrics: collectHsMetrics.per_target_coverage_metrics,
+      per_target_hs_metrics: collectHsMetrics.per_target_hs_metrics,
+      summary_hs_metrics: collectHsMetrics.summary_hs_metrics
+    }
   }
 }

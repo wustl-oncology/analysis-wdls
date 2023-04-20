@@ -19,13 +19,6 @@ task varscanSomatic {
     File? roi_bed
   }
 
-  parameter_meta {
-    tumor_bam: { localization_optional: true }
-    tumor_bam_bai: { localization_optional: true }
-    normal_bam: { localization_optional: true }
-    normal_bam_bai: { localization_optional: true }
-  }
-
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
   Float bam_size = size([tumor_bam, tumor_bam_bai, normal_bam, normal_bam_bai], "GB")
   Int space_needed_gb = 10 + ceil(reference_size + bam_size*2)
@@ -41,6 +34,7 @@ task varscanSomatic {
   command <<<
     set -o errexit
     set -o nounset
+    set -o pipefail
 
     ACCESS_TOKEN=$(wget -O - --header "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token?alt=text 2> /dev/null | grep access_token)
     if [[ "$ACCESS_TOKEN" == "access_token"* ]]; then
@@ -49,8 +43,8 @@ task varscanSomatic {
        echo "got token" ${GCS_OAUTH_TOKEN:0:5}
     fi
 
-    java -jar /opt/varscan/VarScan.jar somatic \
-    <(/opt/samtools/bin/samtools mpileup --no-baq ~{if defined(roi_bed) then "-l ~{roi_bed}" else ""} -f "~{reference}" "~{normal_bam}" "~{tumor_bam}") \
+    /opt/samtools/bin/samtools mpileup --no-baq ~{if defined(roi_bed) then "-l ~{roi_bed}" else ""} -f "~{reference}" "~{normal_bam}" "~{tumor_bam}" | \
+    java -jar /opt/varscan/VarScan.jar somatic /dev/stdin \
     "output" \
     --strand-filter "~{strand_filter}" \
     --min-coverage "~{min_coverage}" \

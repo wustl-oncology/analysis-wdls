@@ -40,33 +40,33 @@ task generateFdaTables {
 
   command <<<
     python - \
-      ~{"--table_file_name " + table_file_name} \
-      ~{"--table " + table_num} \
-      ~{"--md5sum_file " + md5sum_file} \
+      ~{"--table_file_name '" + table_file_name + "'"} \
+      ~{"--table '" + table_num + "'"} \
+      ~{"--md5sum_file '" + md5sum_file + "'"} \
       ~{if length(fastqc_zips) > 0 then "--fastqc_zips" else ""} ~{sep=" " fastqc_zips} \
-      ~{"--aligned_metrics " + aligned_metrics} \
+      ~{"--aligned_metrics '" + aligned_metrics + "'"} \
       ~{if length(select_first([unaligned_metrics, []])) > 0 then "--unaligned_metrics " else ""} ~{sep=" " unaligned_metrics} \
-      ~{"--alignment_summary_metrics " + alignment_summary_metrics} \
-      ~{"--duplication_metrics " + duplication_metrics} \
-      ~{"--insert_size_metrics " + insert_size_metrics} \
-      ~{"--hs_metrics " + hs_metrics} \
-      ~{"--rna_metrics " + rna_metrics} \
-      ~{"--flagstat " + flagstat} \
-      ~{"--unaligned_rna_table " + unaligned_rna_table} \
-      ~{"--sequencing_platform " + sequencing_platform} \
-      ~{"--sequencing_instrument " + sequencing_instrument} \
-      ~{"--sequencing_kit " + sequencing_kit} \
-      ~{"--sequencing_type " + sequencing_type} \
-      ~{"--single_or_paired_end " + single_or_paired_end} \
-      ~{"--spike_in_error_rate " + spike_in_error_rate} \
+      ~{"--alignment_summary_metrics '" + alignment_summary_metrics + "'"} \
+      ~{"--duplication_metrics '" + duplication_metrics + "'"} \
+      ~{"--insert_size_metrics '" + insert_size_metrics + "'"} \
+      ~{"--hs_metrics '" + hs_metrics + "'"} \
+      ~{"--rna_metrics '" + rna_metrics + "'"} \
+      ~{"--flagstat '" + flagstat + "'"} \
+      ~{"--unaligned_rna_table '" + unaligned_rna_table + "'"} \
+      ~{"--sequencing_platform '" + sequencing_platform + "'"} \
+      ~{"--sequencing_instrument '" + sequencing_instrument + "'"} \
+      ~{"--sequencing_kit '" + sequencing_kit + "'"} \
+      ~{"--sequencing_type '" + sequencing_type + "'"} \
+      ~{"--single_or_paired_end '" + single_or_paired_end + "'"} \
+      ~{"--spike_in_error_rate '" + spike_in_error_rate + "'"} \
       ~{"--source '" + source + "'"} \
-      ~{"--total_DNA " + total_dna} \
-      ~{"--reference_genome " + reference_genome} \
-      ~{"--total_RNA " + total_rna} \
-      ~{"--RIN_score " + rin_score} \
-      ~{"--freq_normalization_method " + freq_normalization_method} \
-      ~{"--annotation_file " + annotation_file} \
-      ~{"--sample_name " + sample_name} \
+      ~{"--total_DNA '" + total_dna + "'"} \
+      ~{"--reference_genome '" + reference_genome + "'"} \
+      ~{"--total_RNA '" + total_rna + "'"} \
+      ~{"--RIN_score '" + rin_score + "'"} \
+      ~{"--freq_normalization_method '" + freq_normalization_method + "'"} \
+      ~{"--annotation_file '" + annotation_file + "'"} \
+      ~{"--sample_name '" + sample_name + "'"} \
       <<'EOF'
 import argparse, zipfile, os, re
 
