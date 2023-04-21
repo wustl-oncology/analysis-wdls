@@ -54,6 +54,7 @@ workflow somaticExomeCle {
     File docm_vcf
     File docm_vcf_tbi
     String? gnomad_field_name
+    Float? filter_gnomADe_maximum_population_allele_frequency
     Boolean filter_docm_variants = true
     Int filter_minimum_depth = 20
     Float filter_somatic_llr_threshold = 5
@@ -171,6 +172,7 @@ workflow somaticExomeCle {
     docm_vcf=docm_vcf,
     docm_vcf_tbi=docm_vcf_tbi,
     gnomad_field_name=gnomad_field_name,
+    filter_gnomADe_maximum_population_allele_frequency=filter_gnomADe_maximum_population_allele_frequency,
     filter_docm_variants=filter_docm_variants,
     filter_minimum_depth=filter_minimum_depth,
     vep_cache_dir_zip=vep_cache_dir_zip,
