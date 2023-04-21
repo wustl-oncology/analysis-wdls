@@ -1,6 +1,6 @@
 version 1.0
 
-import "../tools/filter_known_variants.wdl" as fkv
+import "../tools/annotate_known_variants.wdl" as akv
 import "../tools/filter_vcf_custom_allele_freq.wdl" as fvcaf
 import "../tools/filter_vcf_mapq0.wdl" as fvm
 import "../tools/filter_vcf_cle.wdl" as fvc
@@ -33,7 +33,7 @@ workflow filterVcf {
   }
 
   if (defined(validated_variants)) {
-    call fkv.filterKnownVariants {
+    call akv.annotateKnownVariants {
       input:
       vcf=vcf,
       vcf_tbi=vcf_tbi,

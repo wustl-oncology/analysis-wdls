@@ -1,6 +1,6 @@
 version 1.0
 
-task filterKnownVariants {
+task annotateKnownVariants {
   input {
     File vcf
     File vcf_tbi
