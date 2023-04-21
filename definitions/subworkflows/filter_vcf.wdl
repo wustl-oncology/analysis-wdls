@@ -44,7 +44,7 @@ workflow filterVcf {
 
   call fvcaf.filterVcfCustomAlleleFreq as filterVcfGnomadeAlleleFreq {
     input:
-    vcf=select_first([filterKnownVariants.validated_annotated_vcf, vcf]),
+    vcf=select_first([annotateKnownVariants.validated_annotated_vcf, vcf]),
     maximum_population_allele_frequency=filter_gnomADe_maximum_population_allele_frequency,
     field_name=gnomad_field_name
   }
