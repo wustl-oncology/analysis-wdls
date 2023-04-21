@@ -13,9 +13,9 @@ workflow filterVcfNonhuman {
     File tumor_bam
     File tumor_bam_bai
     Boolean do_cle_vcf_filter
-    Float filter_somatic_llr_threshold
-    Float filter_somatic_llr_tumor_purity
-    Float filter_somatic_llr_normal_contamination_rate
+    Float? filter_somatic_llr_threshold
+    Float? filter_somatic_llr_tumor_purity
+    Float? filter_somatic_llr_normal_contamination_rate
     File reference
     File reference_fai
     File reference_dict
