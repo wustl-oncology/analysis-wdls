@@ -22,7 +22,7 @@ workflow mutect {
     File interval_list
     Int scatter_count
     String tumor_sample_name
-    Float fp_min_var_freq
+    Float? fp_min_var_freq
   }
 
   call sil.splitIntervalList {

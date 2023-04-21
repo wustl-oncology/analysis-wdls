@@ -30,7 +30,7 @@ workflow strelkaAndPostProcessing {
     File? call_regions
     File? call_regions_tbi
 
-    Float fp_min_var_freq
+    Float? fp_min_var_freq
   }
 
   call s.strelka {

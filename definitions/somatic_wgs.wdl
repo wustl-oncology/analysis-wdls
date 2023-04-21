@@ -51,19 +51,19 @@ workflow somaticWgs {
     File? strelka_call_regions
     File? strelka_call_regions_tbi
     Int scatter_count
-    Int varscan_strand_filter
-    Int varscan_min_coverage
-    Float varscan_min_var_freq
-    Float varscan_p_value
+    Int? varscan_strand_filter
+    Int? varscan_min_coverage
+    Float? varscan_min_var_freq
+    Float? varscan_p_value
     Float? varscan_max_normal_freq
-    Float fp_min_var_freq
+    Float? fp_min_var_freq
     File docm_vcf
     File docm_vcf_tbi
     Boolean filter_docm_variants = true
 
-    Float filter_somatic_llr_threshold
-    Float filter_somatic_llr_tumor_purity
-    Float filter_somatic_llr_normal_contamination_rate
+    Float? filter_somatic_llr_threshold
+    Float? filter_somatic_llr_tumor_purity
+    Float? filter_somatic_llr_normal_contamination_rate
     File vep_cache_dir_zip
     String vep_ensembl_assembly
     String vep_ensembl_version

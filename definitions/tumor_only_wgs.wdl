@@ -58,9 +58,9 @@ workflow tumorOnlyWgs {
     Array[String] variants_to_table_fields = ["CHROM", "POS", "ID", "REF", "ALT", "set", "AC", "AF"]
     Array[String] variants_to_table_genotype_fields = ["GT", "AD"]
     Array[String] vep_to_table_fields = ["HGVSc", "HGVSp"]
-    Int varscan_min_coverage
-    Float varscan_min_var_freq
-    Int varscan_min_reads
+    Int? varscan_min_coverage
+    Float? varscan_min_var_freq
+    Int? varscan_min_reads
     Float maximum_population_allele_frequency = 0.001
 }
 

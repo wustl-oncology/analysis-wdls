@@ -31,11 +31,11 @@ workflow tumorOnlyDetectVariants {
     String gnomad_field_name = "gnomADe_AF"  # only change with gnomad_filter_annotation
     File roi_intervals
 
-    Int varscan_strand_filter
-    Int varscan_min_coverage
-    Int varscan_min_reads
-    Float varscan_min_var_freq
-    Float varscan_p_value
+    Int? varscan_strand_filter
+    Int? varscan_min_coverage
+    Int? varscan_min_reads
+    Float? varscan_min_var_freq
+    Float? varscan_p_value
     Float maximum_population_allele_frequency = 0.001
 
     File vep_cache_dir_zip
