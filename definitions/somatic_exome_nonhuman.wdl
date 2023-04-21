@@ -43,13 +43,13 @@ workflow somaticExomeNonhuman {
     Int strelka_cpu_reserved = 8
     Int scatter_count = 50
 
-    Int varscan_strand_filter
-    Int varscan_min_coverage
-    Float varscan_min_var_freq
-    Float varscan_p_value
+    Int? varscan_strand_filter
+    Int? varscan_min_coverage
+    Float? varscan_min_var_freq
+    Float? varscan_p_value
     Float? varscan_max_normal_freq
 
-    Float fp_min_var_freq
+    Float? fp_min_var_freq
 
     File vep_cache_dir_zip
     String vep_ensembl_assembly
@@ -61,9 +61,9 @@ workflow somaticExomeNonhuman {
     String? vep_pick
     Boolean cle_vcf_filter = false
 
-    Float filter_somatic_llr_threshold
-    Float filter_somatic_llr_tumor_purity
-    Float filter_somatic_llr_normal_contamination_rate
+    Float? filter_somatic_llr_threshold
+    Float? filter_somatic_llr_tumor_purity
+    Float? filter_somatic_llr_normal_contamination_rate
 
     Array[String] vep_to_table_fields = ["Consequence", "SYMBOL", "Feature"]
     Array[String] variants_to_table_genotype_fields = ["GT", "AD"]

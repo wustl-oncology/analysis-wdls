@@ -17,10 +17,10 @@ workflow varscan {
 
     File? roi_bed
 
-    Int strand_filter
-    Int min_coverage
-    Float varscan_min_var_freq
-    Float p_value
+    Int? strand_filter
+    Int? min_coverage
+    Float? varscan_min_var_freq
+    Float? p_value
     Float? max_normal_freq
   }
 

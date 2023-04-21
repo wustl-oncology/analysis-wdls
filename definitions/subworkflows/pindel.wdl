@@ -23,7 +23,7 @@ workflow pindel {
     String normal_sample_name
     Int insert_size = 400
     Int scatter_count = 50
-    Float fp_min_var_freq
+    Float? fp_min_var_freq
   }
 
   call siltb.splitIntervalListToBed {

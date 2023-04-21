@@ -13,11 +13,11 @@ workflow varscanGermline {
     File reference_fai
     File reference_dict
     File interval_list
-    Int strand_filter
-    Int min_coverage
-    Float varscan_min_var_freq
-    Int min_reads
-    Float p_value
+    Int? strand_filter
+    Int? min_coverage
+    Float? varscan_min_var_freq
+    Int? min_reads
+    Float? p_value
     String sample_name
   }
 
