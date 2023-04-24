@@ -231,10 +231,18 @@ workflow immuno {
     Float? net_chop_threshold
     Boolean? netmhc_stab
     Boolean? run_reference_proteome_similarity
-    String? blastp_db  # enum [refseq_select_prot refseq_protein]
+    File? peptide_fasta
     Int? pvacseq_threads
     Int? iedb_retries
     Boolean? pvacfuse_keep_tmp_files
+    Float? tumor_purity
+    Boolean? allele_specific_binding_thresholds
+    Int? aggregate_inclusion_binding_threshold
+    Array[String]? problematic_amino_acids
+    Boolean? allele_specific_anchors
+    Float? anchor_contribution_threshold
+    Int? pvacfuse_read_support
+    Float? pvacfuse_expn_val
 
     # --------- FDA metrics inputs -------------------------------------
     String? reference_genome_name
@@ -479,16 +487,24 @@ workflow immuno {
     net_chop_threshold=net_chop_threshold,
     netmhc_stab=netmhc_stab,
     run_reference_proteome_similarity=run_reference_proteome_similarity,
+    peptide_fasta=peptide_fasta,
     n_threads=pvacseq_threads,
     variants_to_table_fields=variants_to_table_fields,
     variants_to_table_genotype_fields=variants_to_table_genotype_fields,
     vep_to_table_fields=vep_to_table_fields,
-    prefix="variants.final"
+    prefix="variants.final",
+    tumor_purity=tumor_purity,
+    allele_specific_binding_thresholds=allele_specific_binding_thresholds,
+    aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
+    problematic_amino_acids=problematic_amino_acids,
+    allele_specific_anchors=allele_specific_anchors,
+    anchor_contribution_threshold=anchor_contribution_threshold
   }
 
   call pf.pvacfuse {
     input:
     input_fusions_zip=rna.annotated_fusion_predictions_zip,
+    star_fusion_file=rna.star_fusion_abridge,
     sample_name=tumor_sample_name,
     alleles=hlaConsensus.consensus_alleles,
     prediction_algorithms=prediction_algorithms,
@@ -503,12 +519,17 @@ workflow immuno {
     top_score_metric=top_score_metric,
     net_chop_threshold=net_chop_threshold,
     run_reference_proteome_similarity=run_reference_proteome_similarity,
-    blastp_db=blastp_db,
+    peptide_fasta=peptide_fasta,
     additional_report_columns=additional_report_columns,
     fasta_size=fasta_size,
     downstream_sequence_length=downstream_sequence_length,
     exclude_nas=exclude_nas,
-    n_threads=pvacseq_threads
+    n_threads=pvacseq_threads,
+    read_support=pvacfuse_read_support,
+    expn_val=pvacfuse_expn_val,
+    allele_specific_binding_thresholds=allele_specific_binding_thresholds,
+    aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
+    problematic_amino_acids=problematic_amino_acids,
   }
 
   call generate_fda_metrics.generateFdaMetrics {
