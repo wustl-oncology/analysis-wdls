@@ -536,6 +536,7 @@ workflow immuno {
   call pf.pvacfuse as arriba_pvacfuse {
     input:
     input_fusions_zip=rna.arriba_fusion_predict,
+    star_fusion_file=rna.star_fusion_abridge,
     sample_name=tumor_sample_name,
     alleles=hlaConsensus.consensus_alleles,
     prediction_algorithms=prediction_algorithms,
