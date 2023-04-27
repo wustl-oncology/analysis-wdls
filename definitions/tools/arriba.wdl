@@ -7,6 +7,7 @@ task arriba {
     File reference
     File reference_fai
     File reference_dict
+    File star_fusion_chim_junc
   }
 
   Float bam_size_gb = size([aligned_bam, reference_annotation], "GB")
@@ -32,7 +33,8 @@ task arriba {
     -O arriba_fusions.discarded.tsv \
     -x ~{aligned_bam} \
     -g ~{reference_annotation} \
-    -a ~{reference}
+    -a ~{reference} \
+    -c ~{star_fusion_chim_junc}
   >>>
 
   output {

@@ -91,7 +91,8 @@ workflow rnaseqStarFusion {
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
-    aligned_bam=starFusionDetect.aligned_bam
+    aligned_bam=starFusionDetect.aligned_bam,
+    star_fusion_chim_junc=starFusionDetect.chim_junc
   }
 
   call k.kallisto {
