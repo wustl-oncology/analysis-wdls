@@ -1,0 +1,5 @@
+version: 1.2
+workflows:
+ - subclass: WDL
+   primaryDescriptorPath: /definitions/immuno.wdl
+   name: immuno
