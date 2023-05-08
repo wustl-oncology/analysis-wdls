@@ -3,3 +3,11 @@ workflows:
  - subclass: WDL
    primaryDescriptorPath: /definitions/immuno.wdl
    name: immuno
+   authors:
+    - orcid: 0000-0003-4266-6700 #cm
+    - orcid: 0000-0002-6388-446X #mg
+    - orcid: 0000-0003-4378-7328 #sk
+    - orcid: 0000-0002-0577-4705 #tm
+    - orcid: 0000-0001-6293-4632 #sn
+    - name: John Maruska
+    - name: Layth Aljorani
