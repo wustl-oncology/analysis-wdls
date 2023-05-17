@@ -16,9 +16,9 @@ workflows:
     - orcid: 0000-0003-0944-3126 #acoffman
     - orcid: 0000-0002-2584-5320 #jhundal
     - orcid: 0000-0002-9704-408X #Matthew-Mosior
+    - orcid: 0000-0002-3024-6891 #apaul7
     - name: John Maruska #johnmaruska
     - name: Layth Aljorani #Layth17
-    - name: Alex Paul #apaul7
     - name: Sai Mukund Ramakrishnan #saimukund20
     - name: Feiyu Du #dufeiyu
     - name: Saad Khan #smk5g5
