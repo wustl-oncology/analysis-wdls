@@ -6,7 +6,7 @@ task markDuplicatesAndSort {
     String output_name = "MarkedSorted.bam"
   }
   String metrics_file_name = sub(output_name, "\.bam$", ".mark_dups_metrics.txt")
-  Int space_needed_gb = 10 + round(5*size(bam, "GB"))
+  Int space_needed_gb = 20 + round(5*size(bam, "GB"))
   #estimate 15M reads per Gb size of bam
   #markdup is listed as 2Gb per 100M reads
   Int mem_needed_gb = round(((size(bam, "GB")*15)/100)*2)+32
