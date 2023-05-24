@@ -48,7 +48,8 @@ task starFusionDetect {
         ~{if defined(fusioninspector_mode) then "--FusionInspector " + fusioninspector_mode else ""} \
         --STAR_outSAMattrRGline "~{sep=" , " outsam_attrrg_line}" \
         --left_fq ~{sep="," fastq} --right_fq ~{sep="," fastq2} \
-        --min_FFPM ~{min_ffpm_level}
+        --min_FFPM ~{min_ffpm_level} \
+        --chimOutType SeparateSAMold
   >>>
 
   output {
@@ -66,7 +67,7 @@ task starFusionDetect {
     File log = fusion_output_dir + "/Log.out"
     File log_progress = fusion_output_dir + "/Log.progress.out"
     File splice_junction_out = fusion_output_dir + "/SJ.out.tab"
-    File chim_junc = fusion_output_dir + "/Chimeric.out.junction"
+    File chim_junc = fusion_output_dir + "/Chimeric.out.sam"
     # STAR also outputs gene counts file just like Kallisto
     File gene_counts = fusion_output_dir + "/ReadsPerGene.out.tab"
 

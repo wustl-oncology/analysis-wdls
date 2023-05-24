@@ -37,6 +37,7 @@ struct Rnaseq {
   Array[File] stringtie_expression
   Array[File] kallisto_expression
   StarFusion star_fusion
+  Array[File] arriba
   Array[File] fusioninspector_evidence
 }
 
@@ -501,9 +502,40 @@ workflow immuno {
     anchor_contribution_threshold=anchor_contribution_threshold
   }
 
-  call pf.pvacfuse {
+  call pf.pvacfuse as agfusion_pvacfuse {
     input:
     input_fusions_zip=rna.annotated_fusion_predictions_zip,
+    star_fusion_file=rna.star_fusion_abridge,
+    sample_name=tumor_sample_name,
+    alleles=hlaConsensus.consensus_alleles,
+    prediction_algorithms=prediction_algorithms,
+    epitope_lengths_class_i=epitope_lengths_class_i,
+    epitope_lengths_class_ii=epitope_lengths_class_ii,
+    binding_threshold=binding_threshold,
+    percentile_threshold=percentile_threshold,
+    iedb_retries=iedb_retries,
+    keep_tmp_files=pvacfuse_keep_tmp_files,
+    net_chop_method=net_chop_method,
+    netmhc_stab=netmhc_stab,
+    top_score_metric=top_score_metric,
+    net_chop_threshold=net_chop_threshold,
+    run_reference_proteome_similarity=run_reference_proteome_similarity,
+    peptide_fasta=peptide_fasta,
+    additional_report_columns=additional_report_columns,
+    fasta_size=fasta_size,
+    downstream_sequence_length=downstream_sequence_length,
+    exclude_nas=exclude_nas,
+    n_threads=pvacseq_threads,
+    read_support=pvacfuse_read_support,
+    expn_val=pvacfuse_expn_val,
+    allele_specific_binding_thresholds=allele_specific_binding_thresholds,
+    aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
+    problematic_amino_acids=problematic_amino_acids,
+  }
+
+  call pf.pvacfuse as arriba_pvacfuse {
+    input:
+    input_fusions_zip=rna.arriba_fusion_predict,
     star_fusion_file=rna.star_fusion_abridge,
     sample_name=tumor_sample_name,
     alleles=hlaConsensus.consensus_alleles,
@@ -606,6 +638,10 @@ workflow immuno {
         ],
         candidates_preliminary: rna.prelim_starfusion_results
       },
+      arriba: [
+        rna.arriba_fusion_predict,
+        rna.arriba_fusion_discard
+      ],
       fusioninspector_evidence: rna.fusioninspector_evidence
     }
 
@@ -732,10 +768,16 @@ workflow immuno {
       phase_vcf: [phaseVcf.phased_vcf, phaseVcf.phased_vcf_tbi]
     }
 
-    MHC pVACfuse = object {
-      mhc_i: pvacfuse.mhc_i,
-      mhc_ii: pvacfuse.mhc_ii,
-      combined: pvacfuse.combined
+    MHC agfusion_pvacfuse_predictions = object {
+      mhc_i: agfusion_pvacfuse.mhc_i,
+      mhc_ii: agfusion_pvacfuse.mhc_ii,
+      combined: agfusion_pvacfuse.combined
+    }
+
+    MHC arriba_pvacfuse_predictions = object {
+      mhc_i: arriba_pvacfuse.mhc_i,
+      mhc_ii: arriba_pvacfuse.mhc_ii,
+      combined: arriba_pvacfuse.combined
     }
 
     File pvacseq_annotated_expression_vcf_gz = pvacseq.annotated_vcf
