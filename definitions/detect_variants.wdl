@@ -63,6 +63,7 @@ workflow detectVariants {
 
     String gnomad_field_name = "gnomADe_AF"  # only change with gnomad_filter annotation
     Float filter_gnomADe_maximum_population_allele_frequency = 0.001
+
     Float filter_mapq0_threshold = 0.15
     Float filter_somatic_llr_threshold = 5
     Float filter_somatic_llr_tumor_purity = 1

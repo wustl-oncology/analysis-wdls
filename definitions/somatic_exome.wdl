@@ -68,6 +68,8 @@ workflow somaticExome {
     Boolean filter_docm_variants = true
 
     String? gnomad_field_name
+    Float? filter_gnomADe_maximum_population_allele_frequency
+
     Float filter_somatic_llr_threshold = 5
     Float filter_somatic_llr_tumor_purity = 1
     Float filter_somatic_llr_normal_contamination_rate = 0
@@ -209,6 +211,7 @@ workflow somaticExome {
     docm_vcf=docm_vcf,
     docm_vcf_tbi=docm_vcf_tbi,
     gnomad_field_name=gnomad_field_name,
+    filter_gnomADe_maximum_population_allele_frequency=filter_gnomADe_maximum_population_allele_frequency,
     filter_docm_variants=filter_docm_variants,
     filter_somatic_llr_threshold=filter_somatic_llr_threshold,
     filter_somatic_llr_tumor_purity=filter_somatic_llr_tumor_purity,

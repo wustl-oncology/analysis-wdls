@@ -166,7 +166,9 @@ workflow immuno {
     File docm_vcf_tbi
 
     Boolean filter_docm_variants = true
+
     String? gnomad_field_name
+    Float? filter_gnomADe_maximum_population_allele_frequency
 
     File vep_cache_dir_zip
     String vep_ensembl_assembly
@@ -317,6 +319,7 @@ workflow immuno {
     per_target_intervals=per_target_intervals,
     summary_intervals=summary_intervals,
     gnomad_field_name=gnomad_field_name,
+    filter_gnomADe_maximum_population_allele_frequency=filter_gnomADe_maximum_population_allele_frequency,
     omni_vcf=omni_vcf,
     omni_vcf_tbi=omni_vcf_tbi,
     picard_metric_accumulation_level=picard_metric_accumulation_level,
