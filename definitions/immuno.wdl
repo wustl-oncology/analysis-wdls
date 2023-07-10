@@ -11,7 +11,6 @@ import "subworkflows/pvacseq.wdl" as p
 import "subworkflows/generate_fda_metrics.wdl" as generate_fda_metrics
 import "tools/extract_hla_alleles.wdl" as eha
 import "tools/hla_consensus.wdl" as hc
-import "tools/intersect_known_variants.wdl" as ikv
 import "tools/pvacfuse.wdl" as pf
 import "types.wdl"  # !UnusedImport
 import "tools/optitype_dna.wdl" as od
@@ -440,16 +439,10 @@ workflow immuno {
     clinical_mhc_classII_alleles=clinical_mhc_classII_alleles
   }
 
-  call ikv.intersectKnownVariants as intersectPassingVariants {
-    input:
-    vcf=somaticExome.final_filtered_vcf,
-    vcf_tbi=somaticExome.final_filtered_vcf_tbi
-  }
-
   call p.pvacseq {
     input:
-    detect_variants_vcf=intersectPassingVariants.validated_and_pipeline_vcf,
-    detect_variants_vcf_tbi=intersectPassingVariants.validated_and_pipeline_vcf_tbi,
+    detect_variants_vcf=somaticExome.final_filtered_vcf,
+    detect_variants_vcf_tbi=somaticExome.final_filtered_vcf_tbi,
     sample_name=tumor_sample_name,
     normal_sample_name=normal_sample_name,
     rnaseq_bam=rna.final_bam,
