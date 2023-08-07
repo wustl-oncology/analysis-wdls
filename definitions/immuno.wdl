@@ -199,7 +199,7 @@ workflow immuno {
     Array[Array[String]] gatk_haplotypecaller_intervals
     Int? ploidy
     String? optitype_name
-    Float germline_filter_gnomAD_maximum_population_allele_frequency = 0.05
+    Float germline_filter_gnomAD_maximum_population_allele_frequency = 1.1
 
     # --------- Phase VCF Inputs ---------------------------------------
 
