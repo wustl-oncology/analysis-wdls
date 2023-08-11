@@ -27,13 +27,13 @@ task generateQcMetrics {
   }
   command <<<
     /usr/bin/java -Xmx16g -jar /opt/picard/picard.jar CollectRnaSeqMetrics \
-    O=rna_metrics.txt CHART=rna_metrics.pdf REF_FLAT=~{refFlat} \
+    O=rna_metrics.txt CHART=rna_coverage_by_transcript_position.pdf REF_FLAT=~{refFlat} \
     ~{if (defined(ribosomal_intervals)) then "RIBOSOMAL_INTERVALS=~{select_first([ribosomal_intervals])}" else ""} \
     STRAND=~{strandness[strand]} I=~{bam}
   >>>
 
   output {
     File metrics= "rna_metrics.txt"
-    File? chart = "rna_metrics.pdf"
+    File? chart = "rna_coverage_by_transcript_position.pdf"
   }
 }
