@@ -199,6 +199,7 @@ workflow immuno {
     Array[Array[String]] gatk_haplotypecaller_intervals
     Int? ploidy
     String? optitype_name
+    Float germline_filter_gnomAD_maximum_population_allele_frequency = 1.1
 
     # --------- Phase VCF Inputs ---------------------------------------
 
@@ -393,7 +394,8 @@ workflow immuno {
     annotate_coding_only=annotate_coding_only,
     qc_minimum_mapping_quality=qc_minimum_mapping_quality,
     qc_minimum_base_quality=qc_minimum_base_quality,
-    optitype_name="optitype_normal"
+    optitype_name="optitype_normal",
+    germline_filter_gnomAD_maximum_population_allele_frequency=germline_filter_gnomAD_maximum_population_allele_frequency
   }
 
   call od.optitypeDna as optitype {

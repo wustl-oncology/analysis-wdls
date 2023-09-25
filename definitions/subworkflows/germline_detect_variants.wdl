@@ -37,7 +37,7 @@ workflow germlineDetectVariants {
     Array[String]? vep_to_table_fields
     String final_tsv_prefix = "variants"
     String gnomad_field_name = "gnomADe_AF"  # only change with gnomad_filter annotation
-    Float filter_gnomAD_maximum_population_allele_frequency = 0.05
+    Float germline_filter_gnomAD_maximum_population_allele_frequency
   }
 
   call f.freemix {
@@ -87,7 +87,7 @@ workflow germlineDetectVariants {
     reference_fai=reference_fai,
     reference_dict=reference_dict,
     gnomad_field_name=gnomad_field_name,
-    filter_gnomAD_maximum_population_allele_frequency=filter_gnomAD_maximum_population_allele_frequency,
+    germline_filter_gnomAD_maximum_population_allele_frequency=germline_filter_gnomAD_maximum_population_allele_frequency,
     limit_variant_intervals=limit_variant_intervals
   }
 
