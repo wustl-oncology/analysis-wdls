@@ -24,12 +24,12 @@ task starFusionDetect {
     Float? min_ffpm_level = 0.05
   }
 
-  Int cores = 12
+  Int cores = 24
   Float zip_size = size(star_fusion_genome_dir_zip, "GB")
   Float fastq_size = size(flatten([fastq, fastq2]), "GB")
   Int space_needed_gb = 10 + round(3 * (zip_size + fastq_size))
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "64GB"
     cpu: cores
