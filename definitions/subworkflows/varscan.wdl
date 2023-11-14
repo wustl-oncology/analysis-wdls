@@ -17,10 +17,10 @@ workflow varscan {
 
     File? roi_bed
 
-    Int strand_filter = 0
-    Int min_coverage = 8
-    Float min_var_freq = 0.1
-    Float p_value = 0.99
+    Int? strand_filter
+    Int? min_coverage
+    Float? varscan_min_var_freq
+    Float? p_value
     Float? max_normal_freq
   }
 
@@ -36,7 +36,7 @@ workflow varscan {
     roi_bed=roi_bed,
     strand_filter=strand_filter,
     min_coverage=min_coverage,
-    min_var_freq=min_var_freq,
+    varscan_min_var_freq=varscan_min_var_freq,
     p_value=p_value
   }
 
@@ -51,7 +51,6 @@ workflow varscan {
     variants=somatic.indels,
     max_normal_freq=max_normal_freq
   }
-
 
   output {
     # somatic

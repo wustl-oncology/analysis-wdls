@@ -34,11 +34,12 @@ workflow detectVariantsWgs {
     Int? readcount_minimum_base_quality
     Int? readcount_minimum_mapping_quality
     Int scatter_count
-    Int varscan_strand_filter = 0
-    Int varscan_min_coverage = 8
-    Float varscan_min_var_freq = 0.1
-    Float varscan_p_value = 0.99
+    Int? varscan_strand_filter
+    Int? varscan_min_coverage
+    Float? varscan_min_var_freq
+    Float? varscan_p_value
     Float? varscan_max_normal_freq
+    Float? fp_min_var_freq
     File docm_vcf
     File docm_vcf_tbi
     Boolean filter_docm_variants = true
@@ -55,9 +56,9 @@ workflow detectVariantsWgs {
     Float filter_gnomADe_maximum_population_allele_frequency = 0.001
     Float filter_mapq0_threshold = 0.15
     Int filter_minimum_depth = 1
-    Float filter_somatic_llr_threshold = 5
-    Float filter_somatic_llr_tumor_purity = 1
-    Float filter_somatic_llr_normal_contamination_rate = 0
+    Float? filter_somatic_llr_threshold
+    Float? filter_somatic_llr_tumor_purity
+    Float? filter_somatic_llr_normal_contamination_rate
     Boolean cle_vcf_filter = false
     Array[String] variants_to_table_fields = ["CHROM", "POS", "ID", "REF", "ALT", "set", "AC", "AF"]
     Array[String] variants_to_table_genotype_fields = ["GT", "AD"]
@@ -80,7 +81,8 @@ workflow detectVariantsWgs {
     normal_bam_bai=normal_bam_bai,
     interval_list=roi_intervals,
     scatter_count=scatter_count,
-    tumor_sample_name=tumor_sample_name
+    tumor_sample_name=tumor_sample_name,
+    fp_min_var_freq=fp_min_var_freq
   }
 
   call sapp.strelkaAndPostProcessing as strelka {
@@ -101,7 +103,8 @@ workflow detectVariantsWgs {
     exome_mode=strelka_exome_mode,
     cpu_reserved=strelka_cpu_reserved,
     call_regions=strelka_call_regions,
-    call_regions_tbi=strelka_call_regions_tbi
+    call_regions_tbi=strelka_call_regions_tbi,
+    fp_min_var_freq=fp_min_var_freq
   }
 
   call vpapp.varscanPreAndPostProcessing as varscan {
@@ -122,7 +125,7 @@ workflow detectVariantsWgs {
     scatter_count=scatter_count,
     strand_filter=varscan_strand_filter,
     min_coverage=varscan_min_coverage,
-    min_var_freq=varscan_min_var_freq,
+    varscan_min_var_freq=varscan_min_var_freq,
     p_value=varscan_p_value,
     max_normal_freq=varscan_max_normal_freq
   }

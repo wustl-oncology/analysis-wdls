@@ -26,10 +26,10 @@ workflow varscanPreAndPostProcessing {
 
     File interval_list
 
-    Int strand_filter = 0
-    Int min_coverage = 8
-    Float min_var_freq = 0.1
-    Float p_value = 0.99
+    Int? strand_filter
+    Int? min_coverage
+    Float? varscan_min_var_freq
+    Float? p_value
     Float? max_normal_freq
     Int scatter_count = 50
   }
@@ -57,7 +57,7 @@ workflow varscanPreAndPostProcessing {
       roi_bed=intervalsToBed.interval_bed,
       strand_filter=strand_filter,
       min_coverage=min_coverage,
-      min_var_freq=min_var_freq,
+      varscan_min_var_freq=varscan_min_var_freq,
       p_value=p_value,
       max_normal_freq=max_normal_freq
     }
@@ -154,7 +154,7 @@ workflow varscanPreAndPostProcessing {
     bam_bai=tumor_bam_bai,
     vcf=index.indexed_vcf,
     vcf_tbi=index.indexed_vcf_tbi,
-    min_var_freq=min_var_freq,
+    fp_min_var_freq=varscan_min_var_freq,
     sample_name=tumor_sample_name,
     variant_caller="varscan"
   }

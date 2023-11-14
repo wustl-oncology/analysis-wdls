@@ -34,11 +34,12 @@ workflow tumorOnlyExome {
     File omni_vcf_tbi
     String picard_metric_accumulation_level
     Int target_interval_padding = 100
-    Int varscan_strand_filter = 0
-    Int varscan_min_coverage = 8
-    Float varscan_min_var_freq = 0.1
-    Float varscan_p_value = 0.99
-    Int varscan_min_reads = 2
+    Int? varscan_strand_filter
+    Int? varscan_min_coverage
+    Float? varscan_min_var_freq
+    Float? varscan_p_value
+    Int? varscan_min_reads
+    Float? fp_min_var_freq
     Float maximum_population_allele_frequency = 0.001
 
     File vep_cache_dir_zip

@@ -33,11 +33,13 @@ workflow detectVariantsNonhuman {
     Boolean strelka_exome_mode
     Int strelka_cpu_reserved = 8
 
-    Int varscan_strand_filter = 0
-    Int varscan_min_coverage = 8
-    Float varscan_min_var_freq = 0.1
-    Float varscan_p_value = 0.99
+    Int? varscan_strand_filter
+    Int? varscan_min_coverage
+    Float? varscan_min_var_freq
+    Float? varscan_p_value
     Float? varscan_max_normal_freq
+
+    Float? fp_min_var_freq
 
     File vep_cache_dir_zip
     String vep_ensembl_assembly
@@ -53,9 +55,9 @@ workflow detectVariantsNonhuman {
     Int? readcount_minimum_mapping_quality
 
     Float filter_mapq0_threshold = 0.15
-    Float filter_somatic_llr_threshold = 5
-    Float filter_somatic_llr_tumor_purity = 1
-    Float filter_somatic_llr_normal_contamination_rate = 0
+    Float? filter_somatic_llr_threshold
+    Float? filter_somatic_llr_tumor_purity
+    Float? filter_somatic_llr_normal_contamination_rate
     Int filter_minimum_depth = 1
     Boolean cle_vcf_filter = false
     Array[String] variants_to_table_fields = ["CHROM", "POS", "ID", "REF", "ALT", "set", "AC", "AF"]
@@ -74,7 +76,8 @@ workflow detectVariantsNonhuman {
     normal_bam=normal_bam,
     normal_bam_bai=normal_bam_bai,
     interval_list=roi_intervals,
-    scatter_count=scatter_count
+    scatter_count=scatter_count,
+    fp_min_var_freq=fp_min_var_freq
   }
 
   call sapp.strelkaAndPostProcessing as strelka {
@@ -90,7 +93,8 @@ workflow detectVariantsNonhuman {
     exome_mode=strelka_exome_mode,
     cpu_reserved=strelka_cpu_reserved,
     normal_sample_name=normal_sample_name,
-    tumor_sample_name=normal_sample_name
+    tumor_sample_name=normal_sample_name,
+    fp_min_var_freq=fp_min_var_freq
   }
 
   call vpapp.varscanPreAndPostProcessing as varscan {
@@ -106,7 +110,7 @@ workflow detectVariantsNonhuman {
     scatter_count=scatter_count,
     strand_filter=varscan_strand_filter,
     min_coverage=varscan_min_coverage,
-    min_var_freq=varscan_min_var_freq,
+    varscan_min_var_freq=varscan_min_var_freq,
     p_value=varscan_p_value,
     max_normal_freq=varscan_max_normal_freq,
     normal_sample_name=normal_sample_name,

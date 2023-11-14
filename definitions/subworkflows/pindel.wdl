@@ -23,6 +23,7 @@ workflow pindel {
     String normal_sample_name
     Int insert_size = 400
     Int scatter_count = 50
+    Float? fp_min_var_freq
   }
 
   call siltb.splitIntervalListToBed {
@@ -88,7 +89,8 @@ workflow pindel {
     vcf=reindex.indexed_vcf,
     vcf_tbi=reindex.indexed_vcf_tbi,
     variant_caller="pindel",
-    sample_name=tumor_sample_name
+    sample_name=tumor_sample_name,
+    fp_min_var_freq=fp_min_var_freq
   }
 
   output {

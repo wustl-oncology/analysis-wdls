@@ -9,7 +9,7 @@ task varscanGermline {
     File reference_dict
     Int strand_filter = 0
     Int min_coverage = 8
-    Float min_var_freq = 0.1
+    Float varscan_min_var_freq = 0.05
     Int min_reads = 2
     Float p_value = 0.99
     String sample_name
@@ -33,7 +33,7 @@ task varscanGermline {
     ~{reference} \
     ~{strand_filter} \
     ~{min_coverage} \
-    ~{min_var_freq} \
+    ~{varscan_min_var_freq} \
     ~{min_reads} \
     ~{p_value} \
     ~{sample_name} \
