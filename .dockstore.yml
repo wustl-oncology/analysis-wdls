@@ -1,8 +1,8 @@
 version: 1.2
 workflows:
  - subclass: WDL
-   primaryDescriptorPath: /definitions/immuno.wdl
-   name: immuno
+   primaryDescriptorPath: /definitions/soamtic_wgs.wdl
+   name: somatic_wgs
    authors:
     - orcid: 0000-0003-4266-6700 #chrisamiller
     - orcid: 0000-0002-6388-446X #malachig
