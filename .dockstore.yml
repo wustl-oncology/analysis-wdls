@@ -54,7 +54,7 @@ workflows:
     - name: Gue Su Chang #guesu, gschang
     - name: Irenaeus Chan #IrenaeusChan
     - name: Chad Tomlinson #chad388
-- subclass: WDL
+ - subclass: WDL
    primaryDescriptorPath: /definitions/detect_variants_wgs.wdl
    name: detect_variants_wgs
    authors:
