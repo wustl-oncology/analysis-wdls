@@ -29,7 +29,7 @@ task mutect {
     preemptible: 1
     maxRetries: 2
     docker: "broadinstitute/gatk:4.2.3.0"
-    memory: "2GB"
+    memory: "8GB"
     bootDiskSizeGb: space_needed_gb
     disks: "local-disk ~{space_needed_gb} HDD"
   }
