@@ -24,9 +24,9 @@ workflow detectVariantsWgs {
     File reference_fai
     File reference_dict
     File tumor_cram
-    File tumor_cram_bai
+    File tumor_cram_index
     File normal_cram
-    File normal_cram_bai
+    File normal_cram_index
     File roi_intervals
     Boolean strelka_exome_mode
     Int strelka_cpu_reserved = 8
