@@ -77,7 +77,7 @@ workflow detectVariantsWgs {
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
-    cram=tumor_cram
+    cram=tumor_cram,
     cram_index=tumor_cram_index
     
   }
@@ -87,7 +87,7 @@ workflow detectVariantsWgs {
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
-    cram=normal_cram
+    cram=normal_cram,
     cram_index=normal_cram_index
     
   }
