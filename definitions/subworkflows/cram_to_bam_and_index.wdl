@@ -17,7 +17,7 @@ workflow cramTobamAndIndex{
         cram=cram,
         cram_index=cram_index,
         reference=reference,
-        reference_fai=reference_index,
+        reference_index=reference_index,
         reference_dict=reference_dict
     }
 
