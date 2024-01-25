@@ -75,7 +75,7 @@ workflow detectVariantsWgs {
   call cb.cramTobamAndIndex as tumorConvert {
     input:
     reference=reference,
-    reference_fai=reference_fai,
+    reference_index=reference_fai,
     reference_dict=reference_dict,
     cram=tumor_cram,
     cram_index=tumor_cram_index
@@ -85,7 +85,7 @@ workflow detectVariantsWgs {
   call cb.cramTobamAndIndex as normalConvert {
     input:
     reference=reference,
-    reference_fai=reference_fai,
+    reference_index=reference_fai,
     reference_dict=reference_dict,
     cram=normal_cram,
     cram_index=normal_cram_index
