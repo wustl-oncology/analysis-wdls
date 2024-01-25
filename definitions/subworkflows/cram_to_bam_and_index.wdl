@@ -21,7 +21,7 @@ workflow cramTobamAndIndex{
         reference_dict=reference_dict
     }
 
-    call i.index_bam {
+    call i.indexBam {
         input:
         bam=cramToBam.bam
     }
