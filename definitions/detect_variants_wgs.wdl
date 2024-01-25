@@ -6,6 +6,7 @@ import "subworkflows/mutect.wdl" as m
 import "subworkflows/strelka_and_post_processing.wdl" as sapp
 import "subworkflows/varscan_pre_and_post_processing.wdl" as vpapp
 import "subworkflows/vcf_readcount_annotator.wdl" as vra
+import "subworkflows/cram_to_bam_and_index.wdl" as cb
 import "tools/add_vep_fields_to_table.wdl" as avftt
 import "tools/bam_readcount.wdl" as br
 import "tools/bgzip.wdl" as b
@@ -22,10 +23,10 @@ workflow detectVariantsWgs {
     File reference
     File reference_fai
     File reference_dict
-    File tumor_bam
-    File tumor_bam_bai
-    File normal_bam
-    File normal_bam_bai
+    File tumor_cram
+    File tumor_cram_bai
+    File normal_cram
+    File normal_cram_bai
     File roi_intervals
     Boolean strelka_exome_mode
     Int strelka_cpu_reserved = 8
@@ -54,13 +55,13 @@ workflow detectVariantsWgs {
 
     String gnomad_field_name = "gnomADe_AF"  # only change with gnomad_filter_annotation
     Float filter_gnomADe_maximum_population_allele_frequency = 0.001
-    Float filter_mapq0_threshold = 0.15
+    Float filter_mapq0_threshold = 0.10
     Int filter_minimum_depth = 1
     Float? filter_somatic_llr_threshold
     Float? filter_somatic_llr_tumor_purity
     Float? filter_somatic_llr_normal_contamination_rate
     Boolean cle_vcf_filter = false
-    Array[String] variants_to_table_fields = ["CHROM", "POS", "ID", "REF", "ALT", "set", "AC", "AF"]
+    Array[String] variants_to_table_fields = ["CHROM", "POS", "ID", "REF", "ALT", "set", "AC", "AF","LLR"]
     Array[String] variants_to_table_genotype_fields = ["GT", "AD"]
     Array[String] vep_to_table_fields = ["HGVSc", "HGVSp"]
     String tumor_sample_name
@@ -68,6 +69,27 @@ workflow detectVariantsWgs {
     Array[VepCustomAnnotation] vep_custom_annotations
     File? validated_variants
     File? validated_variants_tbi
+    String prefix # workflow final output prefix
+  }
+
+  call cb.cramTobamAndIndex as tumorConvert {
+    input:
+    reference=reference,
+    reference_fai=reference_fai,
+    reference_dict=reference_dict,
+    cram=tumor_cram
+    cram_index=tumor_cram_index
+    
+  }
+
+  call cb.cramTobamAndIndex as normalConvert {
+    input:
+    reference=reference,
+    reference_fai=reference_fai,
+    reference_dict=reference_dict,
+    cram=normal_cram
+    cram_index=normal_cram_index
+    
   }
 
   call m.mutect {
@@ -75,10 +97,10 @@ workflow detectVariantsWgs {
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
-    tumor_bam=tumor_bam,
-    tumor_bam_bai=tumor_bam_bai,
-    normal_bam=normal_bam,
-    normal_bam_bai=normal_bam_bai,
+    tumor_bam=tumorConvert.indexed_bam,
+    tumor_bam_bai=tumorConvert.indexed_bam_bai,
+    normal_bam=normalConvert.indexed_bam,
+    normal_bam_bai=normalConvert.indexed_bam_bai,
     interval_list=roi_intervals,
     scatter_count=scatter_count,
     tumor_sample_name=tumor_sample_name,
@@ -92,12 +114,12 @@ workflow detectVariantsWgs {
     reference_dict=reference_dict,
 
     tumor_sample_name=tumor_sample_name,
-    tumor_bam=tumor_bam,
-    tumor_bam_bai=tumor_bam_bai,
+    tumor_bam=tumorConvert.indexed_bam,
+    tumor_bam_bai=tumorConvert.indexed_bam_bai,
 
     normal_sample_name=normal_sample_name,
-    normal_bam=normal_bam,
-    normal_bam_bai=normal_bam_bai,
+    normal_bam=normalConvert.indexed_bam,
+    normal_bam_bai=normalConvert.indexed_bam_bai,
 
     interval_list=roi_intervals,
     exome_mode=strelka_exome_mode,
@@ -114,12 +136,12 @@ workflow detectVariantsWgs {
     reference_dict=reference_dict,
 
     tumor_sample_name=tumor_sample_name,
-    tumor_bam=tumor_bam,
-    tumor_bam_bai=tumor_bam_bai,
+    tumor_bam=tumorConvert.indexed_bam,
+    tumor_bam_bai=tumorConvert.indexed_bam_bai,
 
     normal_sample_name=normal_sample_name,
-    normal_bam=normal_bam,
-    normal_bam_bai=normal_bam_bai,
+    normal_bam=normalConvert.indexed_bam,
+    normal_bam_bai=normalConvert.indexed_bam_bai,
 
     interval_list=roi_intervals,
     scatter_count=scatter_count,
@@ -136,11 +158,11 @@ workflow detectVariantsWgs {
     reference_fai=reference_fai,
     reference_dict=reference_dict,
 
-    tumor_bam=tumor_bam,
-    tumor_bam_bai=tumor_bam_bai,
+    tumor_bam=tumorConvert.indexed_bam,
+    tumor_bam_bai=tumorConvert.indexed_bam_bai,
 
-    normal_bam=normal_bam,
-    normal_bam_bai=normal_bam_bai,
+    normal_bam=normalConvert.indexed_bam,
+    normal_bam_bai=normalConvert.indexed_bam_bai,
 
     interval_list=roi_intervals,
     docm_vcf=docm_vcf,
@@ -207,8 +229,8 @@ workflow detectVariantsWgs {
     reference_fai=reference_fai,
     reference_dict=reference_dict,
     sample=tumor_sample_name,
-    bam=tumor_bam,
-    bam_bai=tumor_bam_bai,
+    bam=tumorConvert.indexed_bam,
+    bam_bai=tumorConvert.indexed_bam_bai,
     min_base_quality=readcount_minimum_base_quality,
     min_mapping_quality=readcount_minimum_mapping_quality
   }
@@ -220,8 +242,8 @@ workflow detectVariantsWgs {
     reference_fai=reference_fai,
     reference_dict=reference_dict,
     sample=normal_sample_name,
-    bam=normal_bam,
-    bam_bai=normal_bam_bai,
+    bam=normalConvert.indexed_bam,
+    bam_bai=normalConvert.indexed_bam_bai,
     min_base_quality=readcount_minimum_base_quality,
     min_mapping_quality=readcount_minimum_mapping_quality
   }
@@ -258,8 +280,8 @@ workflow detectVariantsWgs {
     filter_somatic_llr_tumor_purity=filter_somatic_llr_tumor_purity,
     filter_somatic_llr_normal_contamination_rate=filter_somatic_llr_normal_contamination_rate,
     filter_minimum_depth=filter_minimum_depth,
-    tumor_bam=tumor_bam,
-    tumor_bam_bai=tumor_bam_bai,
+    tumor_bam=tumorConvert.indexed_bam,
+    tumor_bam_bai=tumorConvert.indexed_bam_bai,
     do_cle_vcf_filter=cle_vcf_filter,
     reference=reference,
     reference_fai=reference_fai,
@@ -294,7 +316,8 @@ workflow detectVariantsWgs {
     input:
     vcf=annotatedFilterIndex.indexed_vcf,
     tsv=variantsToTable.variants_tsv,
-    vep_fields=vep_to_table_fields
+    vep_fields=vep_to_table_fields,
+    prefix=prefix
   }
 
   output {
