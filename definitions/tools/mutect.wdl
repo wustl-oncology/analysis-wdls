@@ -16,10 +16,10 @@ task mutect {
   }
 
   parameter_meta {
-    tumor_bam: { localization_optional: true }
-    tumor_bam_bai: { localization_optional: true }
-    normal_bam: { localization_optional: true }
-    normal_bam_bai: { localization_optional: true }
+    tumor_bam: { localization_optional: false }
+    tumor_bam_bai: { localization_optional: false }
+    normal_bam: { localization_optional: false }
+    normal_bam_bai: { localization_optional: false }
   }
 
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
