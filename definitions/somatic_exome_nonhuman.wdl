@@ -190,27 +190,35 @@ workflow somaticExomeNonhuman {
 
   output {
     File tumor_cram = tumorIndexCram.indexed_cram
+    File tumor_cram_crai = tumorIndexCram.indexed_cram_crai
     File tumor_mark_duplicates_metrics = tumorAlignmentAndQc.mark_duplicates_metrics
     QCMetrics tumor_qc_metrics = tumorAlignmentAndQc.qc_metrics
+
     File normal_cram = normalIndexCram.indexed_cram
+    File normal_cram_crai = normalIndexCram.indexed_cram_crai
     File normal_mark_duplicates_metrics = normalAlignmentAndQc.mark_duplicates_metrics
     QCMetrics normal_qc_metrics = normalAlignmentAndQc.qc_metrics
+
     File mutect_unfiltered_vcf = detectVariants.mutect_unfiltered_vcf
     File mutect_unfiltered_vcf_tbi = detectVariants.mutect_unfiltered_vcf_tbi
     File mutect_filtered_vcf = detectVariants.mutect_filtered_vcf
     File mutect_filtered_vcf_tbi = detectVariants.mutect_filtered_vcf_tbi
+
     File strelka_unfiltered_vcf = detectVariants.strelka_unfiltered_vcf
     File strelka_unfiltered_vcf_tbi = detectVariants.strelka_unfiltered_vcf_tbi
     File strelka_filtered_vcf = detectVariants.strelka_filtered_vcf
     File strelka_filtered_vcf_tbi = detectVariants.strelka_filtered_vcf_tbi
+
     File varscan_unfiltered_vcf = detectVariants.varscan_unfiltered_vcf
     File varscan_unfiltered_vcf_tbi = detectVariants.varscan_unfiltered_vcf_tbi
     File varscan_filtered_vcf = detectVariants.varscan_filtered_vcf
     File varscan_filtered_vcf_tbi = detectVariants.varscan_filtered_vcf_tbi
+
     File final_vcf = detectVariants.final_vcf
     File final_vcf_tbi = detectVariants.final_vcf_tbi
     File final_filtered_vcf = detectVariants.final_filtered_vcf
     File final_filtered_vcf_tbi = detectVariants.final_filtered_vcf_tbi
+
     File final_tsv = detectVariants.final_tsv
     File vep_summary = detectVariants.vep_summary
     File tumor_snv_bam_readcount_tsv = detectVariants.tumor_snv_bam_readcount_tsv
