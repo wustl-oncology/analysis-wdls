@@ -21,7 +21,6 @@ task hisat2Align {
   Int cores = 16
   Float fastq_size_gb = size([fastq1, fastq2], "GB")
   Float reference_size_gb = size([
-    reference_index,
     reference_index_1ht2,
     reference_index_2ht2,
     reference_index_3ht2,
