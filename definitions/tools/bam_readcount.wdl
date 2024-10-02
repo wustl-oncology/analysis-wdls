@@ -65,9 +65,9 @@ task bamReadcount {
     sample_index = vcf_file.samples.index(sample)
 
     snv_region_fh = tempfile.NamedTemporaryFile("w", delete=False)
-    snv_region_writer = csv.writer(fh, delimiter="\t")
+    snv_region_writer = csv.writer(snv_region_fh, delimiter="\t")
     indel_region_fh = tempfile.NamedTemporaryFile("w", delete=False)
-    indel_region_writer = csv.writer(fh, delimiter="\t")
+    indel_region_writer = csv.writer(indel_region_fh, delimiter="\t")
     for variant in vcf_file:
         ref = variant.REF
         chr = variant.CHROM
