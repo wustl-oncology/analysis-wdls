@@ -97,7 +97,7 @@ task bamReadcount {
         open(output_file, "w").close()
 
     if os.path.getsize(indel_region_fh.name) > 0:
-        filter_sites_in_hash(indel_region_fh, bam_file, ref_fasta, prefixed_sample, output_dir, True, min_mapping_qual, min_base_qual)
+        filter_sites_in_hash(indel_region_fh.name, bam_file, ref_fasta, prefixed_sample, output_dir, True, min_mapping_qual, min_base_qual)
     else:
         output_file = os.path.join(output_dir, prefixed_sample + "_bam_readcount_indel.tsv")
         open(output_file, "w").close()
