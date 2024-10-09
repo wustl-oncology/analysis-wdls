@@ -254,7 +254,7 @@ task GatherBamFiles {
     Int preemptible_tries
   }
   Int command_mem_gb = ceil(mem_size_gb) - 1
-  Int space_needed_gb = 10 + round(bam_size * 2.5)
+  Int space_needed_gb = 10 + round(bam_size * 3.5)
   runtime {
     maxRetries: 2
     preemptible: preemptible_tries
