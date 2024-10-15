@@ -11,7 +11,7 @@ task strandednessCheck {
 
   Int space_needed_gb = 10 + round(2*size([reference_annotation, kallisto_index, cdna_fasta, reads1, reads2], "GB"))
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "16GB"
     bootDiskSizeGb: space_needed_gb  # default

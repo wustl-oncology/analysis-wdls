@@ -10,7 +10,7 @@ task annotateKnownVariants {
 
   Int space_needed_gb = 10 + round(size([vcf, vcf_tbi, validated_variants, validated_variants_tbi], "GB")*2)
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     docker: "mgibio/bcftools-cwl:1.12"
     memory: "8GB"

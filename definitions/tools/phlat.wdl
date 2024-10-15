@@ -14,7 +14,7 @@ task phlat {
 
   Int space_needed_gb = 10 + round(5*size([cram, cram_crai, reference, reference_fai], "GB"))
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "~{mem}GB"
     cpu: nthreads

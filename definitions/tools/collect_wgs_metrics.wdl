@@ -18,7 +18,7 @@ task collectWgsMetrics {
   Float intervals_size = size(intervals, "GB")
   Int space_needed_gb = 10 + round(bam_size + reference_size + intervals_size)
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "48GB"
     docker: "broadinstitute/picard:2.23.6"

@@ -14,7 +14,7 @@ task survivor {
 
   Int space_needed_gb = 10
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     docker: "mgibio/survivor-cwl:1.0.6.2"
     memory: "2GB"

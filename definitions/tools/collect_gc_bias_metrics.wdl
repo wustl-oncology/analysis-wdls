@@ -16,7 +16,7 @@ task collectGcBiasMetrics {
   Float reference_size_gb = size([reference, reference_fai, reference_dict], "GB")
   Int space_needed_gb = 10 + round(bam_size_gb + reference_size_gb)
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "48GB"
     docker: "broadinstitute/picard:2.23.6"

@@ -10,7 +10,7 @@ task annotsv {
 
   Int space_needed_gb = 10 + round(size(snps_vcf, "GB") + size(input_vcf, "GB"))
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "8GB"
     docker: "mgibio/annotsv-cwl:2.1"

@@ -8,7 +8,7 @@ task varscanProcessSomatic {
 
   Int space_needed_gb = 10 + round(size(variants, "GB")*2)
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "4GB"
     docker: "mgibio/varscan-cwl:v2.4.2-samtools1.16.1"

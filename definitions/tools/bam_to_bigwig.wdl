@@ -13,7 +13,7 @@ task bamToBigwig {
   Float reference_size_gb = size([reference, reference_fai, reference_dict], "GB")
   Int space_needed_gb = 10 + round(3*bam_size_gb + reference_size_gb)
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "32GB"
     docker: "quay.io/biocontainers/cgpbigwig:1.4.0--h93d22ca_0"

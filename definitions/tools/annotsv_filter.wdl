@@ -11,7 +11,7 @@ task annotsvFilter {
 
   Int space_needed_gb = 10 + round(2*size(annotsv_tsv, "GB"))
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "4GB"
     docker: "python:3"

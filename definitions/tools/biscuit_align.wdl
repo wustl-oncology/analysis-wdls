@@ -11,7 +11,7 @@ task biscuitAlign {
   Int cores = 12
   Int space_needed_gb = 10 + round(2*size([reference_index, fastq1, fastq2], "GB"))
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "32GB"
     cpu: cores

@@ -10,7 +10,7 @@ task bisulfiteVcf2bed {
 
   Int space_needed_gb = 10 + round(size([vcf, reference], "GB"))
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     docker: "mgibio/biscuit:0.3.8"
     memory: "16GB"

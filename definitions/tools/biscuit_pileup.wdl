@@ -10,7 +10,7 @@ task biscuitPileup {
 
   Int space_needed_gb = 10 + round(2*size([bam, reference], "GB"))
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "48GB"
     cpu: cores

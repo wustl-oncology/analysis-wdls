@@ -52,7 +52,7 @@ task pvacseq {
   Float phased_variants_size = size([phased_proximal_variants_vcf, phased_proximal_variants_vcf_tbi], "GB")
   Int space_needed_gb = 10 + round(input_size + phased_variants_size)
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "32GB"
     cpu: n_threads

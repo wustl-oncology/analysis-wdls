@@ -7,7 +7,7 @@ task bgzip {
 
   Int space_needed_gb = 10 + round(size(file, "GB")*2)
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "4GB"
     docker: "quay.io/biocontainers/samtools:1.11--h6270b1f_0"

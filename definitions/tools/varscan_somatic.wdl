@@ -23,7 +23,7 @@ task varscanSomatic {
   Float bam_size = size([tumor_bam, tumor_bam_bai, normal_bam, normal_bam_bai], "GB")
   Int space_needed_gb = 10 + ceil(reference_size + bam_size*2)
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
 
     memory: "12GB"

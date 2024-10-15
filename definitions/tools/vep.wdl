@@ -31,7 +31,7 @@ task vepTask {
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
   Int space_needed_gb = 20 + round(reference_size + vcf_size + cache_size + size(synonyms_file, "GB"))
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "64GB"
     bootDiskSizeGb: 30
@@ -86,7 +86,7 @@ task vepTask {
 task parseVepCustomAnnotationIntoArg {
   input { VepCustomAnnotation obj }
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2 
     docker: "python:3.10" 
   }

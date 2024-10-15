@@ -15,7 +15,7 @@ task pvacseqCombineVariants {
   Float vcf_size = size([germline_vcf, germline_vcf_tbi, somatic_vcf, somatic_vcf_tbi], "GB")
   Int space_needed_gb = 10 + round(reference_size + 2*vcf_size)
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "9GB"
     bootDiskSizeGb: 25

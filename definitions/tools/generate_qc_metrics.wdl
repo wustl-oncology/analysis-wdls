@@ -10,7 +10,7 @@ task generateQcMetrics {
 
   Int space_needed_gb = 10 + round(size([bam, refFlat, ribosomal_intervals], "GB"))
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "18GB"
     docker: "mgibio/rnaseq:1.0.0"

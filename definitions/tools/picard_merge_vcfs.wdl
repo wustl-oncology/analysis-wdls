@@ -9,7 +9,7 @@ task picardMergeVcfs {
 
   Int space_needed_gb = 10 + round(size(sequence_dictionary, "GB") + size(vcfs, "GB")*2)
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "40GB"
     docker: "broadinstitute/gatk:4.1.8.1"

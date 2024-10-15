@@ -8,7 +8,7 @@ task extractHlaAlleles {
 
   Int space_needed_gb = 10 + round(size(optitype_file, "GB"))
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "2GB"
     docker: "ubuntu:xenial"

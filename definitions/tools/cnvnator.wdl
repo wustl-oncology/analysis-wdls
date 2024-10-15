@@ -11,7 +11,7 @@ task cnvnator {
   }
 
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     docker: "mgibio/cnvnator-cwl:0.4"
     memory: "20GB"

@@ -8,7 +8,7 @@ task splitIntervalList {
 
   Int space_needed_gb = 10 + round(size(interval_list, "GB")*2)
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     docker: "broadinstitute/picard:2.24.2"
     memory: "6GB"

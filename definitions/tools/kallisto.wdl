@@ -10,7 +10,7 @@ task kallisto {
   Int cores = 8
   Int space_needed_gb = 10 + round(size(flatten(fastqs), "GB") + size(kallisto_index, "GB"))
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "32GB"
     cpu: cores

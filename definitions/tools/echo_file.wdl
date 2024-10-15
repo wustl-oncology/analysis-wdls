@@ -4,7 +4,7 @@ task echoFile {
   input {}
 
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     docker: "ubuntu:bionic"
   }

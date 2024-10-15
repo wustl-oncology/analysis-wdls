@@ -8,7 +8,7 @@ task transcriptToGene {
 
   Int space_needed_gb = 10 + round(size([transcript_table_h5, gene_transcript_lookup_table], "GB"))
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "2GB"
     cpu: 1

@@ -33,7 +33,7 @@ task pvacfuse {
 
   Int space_needed_gb = 10 + round(size([input_fusions_zip], "GB") * 3)
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     docker: "griffithlab/pvactools:4.4.1"
     memory: "32GB"

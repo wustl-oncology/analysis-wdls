@@ -8,7 +8,7 @@ task stagedRename {
 
   Int space_needed_gb = 10 + round(size(original, "GB")*2)
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "4GB"
     cpu: 1

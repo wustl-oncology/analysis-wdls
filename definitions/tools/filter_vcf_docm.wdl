@@ -10,7 +10,7 @@ task filterVcfDocm {
 
   Int space_needed_gb = 10 + round(size(docm_raw_variants, "GB")*2 + size([normal_bam, tumor_bam], "GB"))
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     docker: "mgibio/samtools-cwl:1.16.1"
     memory: "4GB"

@@ -9,7 +9,7 @@ task replaceVcfSampleName {
 
   Int space_needed_gb = 10 + round(size(input_vcf, "GB")*2)
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "8GB"
     docker: "mgibio/bcftools-cwl:1.12"

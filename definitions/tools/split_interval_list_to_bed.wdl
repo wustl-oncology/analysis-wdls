@@ -8,7 +8,7 @@ task splitIntervalListToBed {
 
   Int space_needed_gb = 10 + round(size(interval_list, "GB")*2)
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "6GB"
     docker: "mgibio/cle:v1.4.2"

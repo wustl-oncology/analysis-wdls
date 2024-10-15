@@ -9,7 +9,7 @@ task agfusion {
   }
 
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     docker: "mgibio/agfusion:1.3.11-ensembl-105"
     memory: "32GB"

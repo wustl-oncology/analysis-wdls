@@ -37,7 +37,7 @@ task starAlignFusion {
   Float fastq_size = size(flatten([fastq, fastq2]), "GB")
   Int space_needed_gb = 10 + round(2 * (zip_size + fastq_size))
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     cpu: cores
     memory: "64GB"

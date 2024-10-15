@@ -14,7 +14,7 @@ task trimFastq {
   Int cores = 4
   Int space_needed_gb = 10 + ceil(size(adapters, "GB") + 10*size([reads1, reads2], "GB"))
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "16GB"
     bootDiskSizeGb: 25

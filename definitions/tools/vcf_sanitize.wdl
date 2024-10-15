@@ -6,7 +6,7 @@ task vcfSanitize {
   }
 
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "4GB"
     cpu: 1

@@ -6,7 +6,7 @@ task freemix {
   }
 
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     docker: "python:3.10"
   }

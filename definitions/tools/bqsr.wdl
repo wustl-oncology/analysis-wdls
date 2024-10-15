@@ -13,7 +13,7 @@ workflow doBqsr {
     Array[File] known_sites
     Array[File] known_sites_tbi
     String output_name = "final"
-    Int preemptible_tries = 3
+    Int preemptible_tries = 0
   }
 
   Float bam_size = size([bam, bam_bai], "GB")
@@ -221,7 +221,7 @@ task applyBqsr {
 
   Int space_needed_gb = 10 + round(size([bqsr_table, reference, reference_fai, reference_dict], "GB") + size([bam, bam_bai], "GB") * 2)
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     docker: "broadinstitute/gatk:4.1.8.1"
     memory: "18GB"

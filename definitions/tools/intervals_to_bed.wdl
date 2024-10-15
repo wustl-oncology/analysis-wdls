@@ -6,7 +6,7 @@ task intervalsToBed {
   }
 
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     docker: "ubuntu:bionic"
     memory: "4GB"

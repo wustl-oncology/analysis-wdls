@@ -7,7 +7,7 @@ task indexVcf {
 
   Int space_needed_gb = 10 + round(3*size(vcf, "GB"))
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     docker: "quay.io/biocontainers/samtools:1.11--h6270b1f_0"
     memory: "4GB"

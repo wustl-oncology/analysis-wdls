@@ -18,7 +18,7 @@ task downsample {
   Float reference_size = size([reference, reference_fai, reference_dict], "GB")
   Int space_needed_gb = 10 + round(reference_size + size(sam, "GB") * 2)
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "18GB"
     docker: "broadinstitute/gatk:4.1.4.1"

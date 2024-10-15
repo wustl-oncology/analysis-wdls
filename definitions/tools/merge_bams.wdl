@@ -10,7 +10,7 @@ task mergeBams {
   Int cores = 4
   Int space_needed_gb = 10 + round(4*size(bams, "GB"))
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     docker: "mgibio/bam-merge:0.1"
     memory: "8GB"

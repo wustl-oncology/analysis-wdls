@@ -7,7 +7,7 @@ task xenosplit {
   }
 
   runtime {
-    preemptible: 1
+    preemptible: 0
     maxRetries: 2
     memory: "20GB"
     bootDiskSizeGb: 100
