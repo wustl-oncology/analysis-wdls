@@ -36,15 +36,6 @@ task bamReadcount {
     import csv
     from subprocess import Popen, PIPE
 
-    def generate_region_list(hash):
-        fh = tempfile.NamedTemporaryFile("w", delete=False)
-        writer = csv.writer(fh, delimiter="\t")
-        for chr, positions in hash.items():
-            for pos in sorted(positions.keys()):
-                writer.writerow([chr, pos, pos])
-        fh.close()
-        return fh.name
-
     def filter_sites_in_hash(region_list, bam_file, ref_fasta, prefixed_sample, output_dir, insertion_centric, map_qual, base_qual):
         bam_readcount_cmd = ["/usr/bin/bam-readcount", "-f", ref_fasta, "-l", region_list, "-w", "0", "-b", str(base_qual), "-q", str(map_qual)]
         if insertion_centric:
@@ -73,8 +64,10 @@ task bamReadcount {
     vcf_file = VCF(vcf_filename)
     sample_index = vcf_file.samples.index(sample)
 
-    rc_for_indel = {}
-    rc_for_snp   = {}
+    snv_region_fh = tempfile.NamedTemporaryFile("w", delete=False)
+    snv_region_writer = csv.writer(snv_region_fh, delimiter="\t")
+    indel_region_fh = tempfile.NamedTemporaryFile("w", delete=False)
+    indel_region_writer = csv.writer(indel_region_fh, delimiter="\t")
     for variant in vcf_file:
         ref = variant.REF
         chr = variant.CHROM
@@ -90,42 +83,27 @@ task bamReadcount {
                 elif len(ref) > len(var):
                     #it is a deletion
                     pos += 1
-                    unmodified_ref = ref
-                    ref = unmodified_ref[1]
-                    var = "-%s" % unmodified_ref[1:]
-                else:
-                    #it is an insertion
-                    var = "+%s" % var[1:]
-                if chr not in rc_for_indel:
-                    rc_for_indel[chr] = {}
-                if pos not in rc_for_indel[chr]:
-                    rc_for_indel[chr][pos] = {}
-                if ref not in rc_for_indel[chr][pos]:
-                    rc_for_indel[chr][pos][ref] = {}
-                rc_for_indel[chr][pos][ref] = variant
+                indel_region_writer.writerow([chr, pos, pos])
             else:
                 #it is a SNP
-                if chr not in rc_for_snp:
-                    rc_for_snp[chr] = {}
-                if pos not in rc_for_snp[chr]:
-                    rc_for_snp[chr][pos] = {}
-                if ref not in rc_for_snp[chr][pos]:
-                    rc_for_snp[chr][pos][ref] = {}
-                rc_for_snp[chr][pos][ref] = variant
+                snv_region_writer.writerow([chr, pos, pos])
+    snv_region_fh.close()
+    indel_region_fh.close()
 
-    if len(rc_for_snp.keys()) > 0:
-        region_file = generate_region_list(rc_for_snp)
-        filter_sites_in_hash(region_file, bam_file, ref_fasta, prefixed_sample, output_dir, False, min_mapping_qual, min_base_qual)
+    if os.path.getsize(snv_region_fh.name) > 0:
+        filter_sites_in_hash(snv_region_fh.name, bam_file, ref_fasta, prefixed_sample, output_dir, False, min_mapping_qual, min_base_qual)
     else:
         output_file = os.path.join(output_dir, prefixed_sample + "_bam_readcount_snv.tsv")
         open(output_file, "w").close()
 
-    if len(rc_for_indel.keys()) > 0:
-        region_file = generate_region_list(rc_for_indel)
-        filter_sites_in_hash(region_file, bam_file, ref_fasta, prefixed_sample, output_dir, True, min_mapping_qual, min_base_qual)
+    if os.path.getsize(indel_region_fh.name) > 0:
+        filter_sites_in_hash(indel_region_fh.name, bam_file, ref_fasta, prefixed_sample, output_dir, True, min_mapping_qual, min_base_qual)
     else:
         output_file = os.path.join(output_dir, prefixed_sample + "_bam_readcount_indel.tsv")
         open(output_file, "w").close()
+
+    os.remove(snv_region_fh.name)
+    os.remove(indel_region_fh.name)
     ' > ~{stdout_file}
   >>>
 
