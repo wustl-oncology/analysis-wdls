@@ -58,10 +58,12 @@ workflow pvacseq {
     Float? tumor_purity
     Boolean? allele_specific_binding_thresholds
     Int? aggregate_inclusion_binding_threshold
+    Int? aggregate_inclusion_count_limit
     Array[String]? problematic_amino_acids
     Boolean? allele_specific_anchors
     Float? anchor_contribution_threshold
     String? prefix = "pvacseq"
+    Array[String]? biotypes
   }
 
   call br.bamReadcount as tumorRnaBamReadcount {
@@ -146,9 +148,11 @@ workflow pvacseq {
     tumor_purity=tumor_purity,
     allele_specific_binding_thresholds=allele_specific_binding_thresholds,
     aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
+    aggregate_inclusion_count_limit=aggregate_inclusion_count_limit,
     problematic_amino_acids=problematic_amino_acids,
     allele_specific_anchors=allele_specific_anchors,
     anchor_contribution_threshold=anchor_contribution_threshold,
+    biotypes=biotypes
   }
 
   call vtt.variantsToTable {
