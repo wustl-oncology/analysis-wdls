@@ -31,6 +31,10 @@ workflow strelkaAndPostProcessing {
     File? call_regions_tbi
 
     Float? fp_min_var_freq
+    
+    Int? max_mm_qualsum_diff
+    Int? max_var_mm_qualsum
+
   }
 
   call s.strelka {
@@ -99,7 +103,9 @@ workflow strelkaAndPostProcessing {
     vcf_tbi=regionFilter.filtered_vcf_tbi,
     sample_name=tumor_sample_name,
     variant_caller="strelka",
-    fp_min_var_freq=fp_min_var_freq
+    fp_min_var_freq=fp_min_var_freq,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum    
   }
 
   output {

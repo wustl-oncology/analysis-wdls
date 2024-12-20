@@ -63,6 +63,9 @@ workflow detectVariantsNonhuman {
     Array[String] variants_to_table_fields = ["CHROM", "POS", "ID", "REF", "ALT", "set", "AC", "AF"]
     Array[String] variants_to_table_genotype_fields = ["GT", "AD"]
     Array[String] vep_to_table_fields = []
+
+    Int? max_mm_qualsum_diff
+    Int? max_var_mm_qualsum    
   }
 
   call m.mutect {
@@ -77,7 +80,9 @@ workflow detectVariantsNonhuman {
     normal_bam_bai=normal_bam_bai,
     interval_list=roi_intervals,
     scatter_count=scatter_count,
-    fp_min_var_freq=fp_min_var_freq
+    fp_min_var_freq=fp_min_var_freq,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum
   }
 
   call sapp.strelkaAndPostProcessing as strelka {
@@ -94,7 +99,9 @@ workflow detectVariantsNonhuman {
     cpu_reserved=strelka_cpu_reserved,
     normal_sample_name=normal_sample_name,
     tumor_sample_name=tumor_sample_name,
-    fp_min_var_freq=fp_min_var_freq
+    fp_min_var_freq=fp_min_var_freq,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum    
   }
 
   call vpapp.varscanPreAndPostProcessing as varscan {
@@ -114,7 +121,9 @@ workflow detectVariantsNonhuman {
     p_value=varscan_p_value,
     max_normal_freq=varscan_max_normal_freq,
     normal_sample_name=normal_sample_name,
-    tumor_sample_name=tumor_sample_name
+    tumor_sample_name=tumor_sample_name,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum    
   }
 
   call cv.combineVariants as combine {

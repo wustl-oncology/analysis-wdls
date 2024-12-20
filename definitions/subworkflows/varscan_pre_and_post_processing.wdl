@@ -32,6 +32,10 @@ workflow varscanPreAndPostProcessing {
     Float? p_value
     Float? max_normal_freq
     Int scatter_count = 50
+
+    Int? max_mm_qualsum_diff
+    Int? max_var_mm_qualsum
+
   }
 
   call sil.splitIntervalList {
@@ -156,6 +160,8 @@ workflow varscanPreAndPostProcessing {
     vcf_tbi=index.indexed_vcf_tbi,
     fp_min_var_freq=varscan_min_var_freq,
     sample_name=tumor_sample_name,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum,    
     variant_caller="varscan"
   }
 

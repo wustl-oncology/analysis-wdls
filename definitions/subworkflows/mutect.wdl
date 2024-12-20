@@ -23,6 +23,9 @@ workflow mutect {
     Int scatter_count
     String tumor_sample_name
     Float? fp_min_var_freq
+
+    Int? max_mm_qualsum_diff
+    Int? max_var_mm_qualsum    
   }
 
   call sil.splitIntervalList {
@@ -66,7 +69,9 @@ workflow mutect {
     vcf_tbi=indexVcf.indexed_vcf_tbi,
     variant_caller="mutect",
     sample_name=tumor_sample_name,
-    fp_min_var_freq=fp_min_var_freq
+    fp_min_var_freq=fp_min_var_freq,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum
   }
 
   output {

@@ -71,6 +71,9 @@ workflow somaticExomeNonhuman {
 
     String tumor_sample_name
     String normal_sample_name
+
+    Int? max_mm_qualsum_diff
+    Int? max_var_mm_qualsum    
   }
 
   call aen.alignmentExomeNonhuman as tumorAlignmentAndQc {
@@ -161,7 +164,9 @@ workflow somaticExomeNonhuman {
     vep_to_table_fields=vep_to_table_fields,
     tumor_sample_name=tumor_sample_name,
     normal_sample_name=normal_sample_name,
-    strelka_exome_mode=true
+    strelka_exome_mode=true,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum    
   }
 
   call btc.bamToCram as tumorBamToCram {
