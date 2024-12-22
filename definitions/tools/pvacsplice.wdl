@@ -5,10 +5,13 @@ task pvacsplice {
     Int n_threads = 8
     File input_vcf
     File input_vcf_tbi
+    File input_regtools_tsv
+    File input_reference_fasta
+    File input_reference_gtf 
     String sample_name
     Array[String] alleles
     Array[String] prediction_algorithms
-    File? peptide_fasta
+    File? peptide_fasta 
 
     Array[Int]? epitope_lengths_class_i
     Array[Int]? epitope_lengths_class_ii
@@ -22,11 +25,7 @@ task pvacsplice {
     Float? net_chop_threshold
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
-    Int? downstream_sequence_length
     Boolean exclude_nas = false
-    File? phased_proximal_variants_vcf
-    File? phased_proximal_variants_vcf_tbi
-    Float? minimum_fold_change
     Int? normal_cov
     Int? tdna_cov
     Int? trna_cov
@@ -37,26 +36,23 @@ task pvacsplice {
     Int? maximum_transcript_support_level  # enum [1, 2, 3, 4, 5]
     Int? aggregate_inclusion_binding_threshold
     Array[String]? problematic_amino_acids
-    Float? anchor_contribution_threshold
 
     Boolean allele_specific_binding_thresholds = false
     Boolean keep_tmp_files = false
     Boolean netmhc_stab = false
     Boolean run_reference_proteome_similarity = false
-    Boolean allele_specific_anchors = false
 
     Float? tumor_purity
   }
 
-  Float input_size = size([input_vcf, input_vcf_tbi], "GB")
-  Float phased_variants_size = size([phased_proximal_variants_vcf, phased_proximal_variants_vcf_tbi], "GB")
-  Int space_needed_gb = 10 + round(input_size + phased_variants_size)
+  Float input_size = size([input_vcf, input_vcf_tbi, input_regtools_tsv, input_reference_fasta,input_reference_gtf], "GB") #input files: annotated vcf, regtools tsv, reference fasta, reference gtf 
+  Int space_needed_gb = 10 + round(input_size) 
   runtime {
     preemptible: 1
     maxRetries: 2
     memory: "32GB"
     cpu: n_threads
-    docker: "griffithlab/pvactools:4.4.1"
+    docker: "griffithlab/pvactools:5.0.1"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
@@ -66,13 +62,12 @@ task pvacsplice {
   Array[String] problematic_aa = select_first([problematic_amino_acids, []])
   command <<<
     # touch each tbi to ensure they have a timestamp after the vcf
-    touch ~{phased_proximal_variants_vcf_tbi}
     touch ~{input_vcf_tbi}
 
     ln -s "$TMPDIR" /tmp/pvacsplice && export TMPDIR=/tmp/pvacsplice && \
     /usr/local/bin/pvacsplice run --iedb-install-directory /opt/iedb \
     --pass-only \
-    ~{if defined(tumor_purity) then "--tumor-purity " + select_first([tumor_purity]) else ""} \
+    #~{if defined(tumor_purity) then "--tumor-purity " + select_first([tumor_purity]) else ""} \
     ~{if length(epitope_i ) > 0 then "-e1 " else ""} ~{sep="," epitope_i} \
     ~{if length(epitope_ii) > 0 then "-e2 " else ""} ~{sep="," epitope_ii} \
     ~{if defined(binding_threshold) then "-b ~{binding_threshold}" else ""} \
@@ -88,12 +83,9 @@ task pvacsplice {
     ~{if defined(peptide_fasta) then "--peptide-fasta ~{peptide_fasta}" else ""} \
     ~{if defined(top_score_metric) then "-m ~{top_score_metric}" else ""} \
     ~{if defined(net_chop_threshold) then "--net-chop-threshold ~{net_chop_threshold}" else ""} \
-    ~{if defined(additional_report_columns) then "-m ~{additional_report_columns}" else ""} \
+    ~{if defined(additional_report_columns) then "-a ~{additional_report_columns}" else ""} \
     ~{if defined(fasta_size) then "-s ~{fasta_size}" else ""} \
-    ~{if defined(downstream_sequence_length) then "-d ~{downstream_sequence_length}" else ""} \
     ~{if exclude_nas then "--exclude-NAs" else ""} \
-    ~{if defined(phased_proximal_variants_vcf) then "-p ~{phased_proximal_variants_vcf}" else ""} \
-    ~{if defined(minimum_fold_change) then "-c ~{minimum_fold_change}" else ""} \
     ~{if defined(normal_cov) then "--normal-cov ~{normal_cov}" else ""} \
     ~{if defined(tdna_cov) then "--tdna-cov ~{tdna_cov}" else ""} \
     ~{if defined(trna_cov) then "--trna-cov ~{trna_cov}" else ""} \
@@ -101,10 +93,10 @@ task pvacsplice {
     ~{if defined(tdna_vaf) then "--tdna-vaf ~{tdna_vaf}" else ""} \
     ~{if defined(trna_vaf) then "--trna-vaf ~{trna_vaf}" else ""} \
     ~{if defined(expn_val) then "--expn-val ~{expn_val}" else ""} \
-    ~{if defined(maximum_transcript_support_level) then "--maximum-transcript-support-level ~{maximum_transcript_support_level}" else ""} \
-    ~{if length(problematic_aa) > 0 then "--problematic-amino-acids" else ""} ~{sep="," problematic_aa} \
-    ~{if allele_specific_anchors then "--allele-specific-anchors" else ""} \
-    ~{if defined(anchor_contribution_threshold) then "--anchor-contribution-threshold ~{anchor_contribution_threshold}" else ""} \
+    #~{if defined(maximum_transcript_support_level) then "--maximum-transcript-support-level ~{maximum_transcript_support_level}" else ""} \
+    #~{if length(problematic_aa) > 0 then "--problematic-amino-acids" else ""} ~{sep="," problematic_aa} \
+    #~{if allele_specific_anchors then "--allele-specific-anchors" else ""} \
+    #~{if defined(anchor_contribution_threshold) then "--anchor-contribution-threshold ~{anchor_contribution_threshold}" else ""} \
     --n-threads ~{n_threads} \
     ~{input_vcf} ~{sample_name} ~{sep="," alleles} ~{sep=" " prediction_algorithms} \
     pvacsplice_predictions
@@ -132,7 +124,7 @@ task pvacsplice {
 
   }
 }
-
+############################### may delete these######
 workflow wf {
   input {
     Int? n_threads
