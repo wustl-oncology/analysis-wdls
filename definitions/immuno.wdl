@@ -213,8 +213,11 @@ workflow immuno {
     Array[String]? clinical_mhc_classI_alleles
     Array[String]? clinical_mhc_classII_alleles
 
-    # --------- PVACseq Inputs -----------------------------------------
+    # --------- HLA Consensus Inputs -----------------------------------
+
     String hla_source_mode
+
+    # --------- PVACseq Inputs -----------------------------------------
     Int? readcount_minimum_base_quality
     Int? readcount_minimum_mapping_quality
     Array[String] prediction_algorithms
@@ -498,6 +501,7 @@ workflow immuno {
     run_reference_proteome_similarity=run_reference_proteome_similarity,
     peptide_fasta=peptide_fasta,
     n_threads=pvacseq_threads,
+    iedb_retries=iedb_retries,
     variants_to_table_fields=variants_to_table_fields,
     variants_to_table_genotype_fields=variants_to_table_genotype_fields,
     vep_to_table_fields=vep_to_table_fields,
@@ -521,7 +525,6 @@ workflow immuno {
     epitope_lengths_class_ii=epitope_lengths_class_ii,
     binding_threshold=binding_threshold,
     percentile_threshold=percentile_threshold,
-    iedb_retries=iedb_retries,
     keep_tmp_files=pvacfuse_keep_tmp_files,
     net_chop_method=net_chop_method,
     netmhc_stab=netmhc_stab,
@@ -534,6 +537,7 @@ workflow immuno {
     downstream_sequence_length=downstream_sequence_length,
     exclude_nas=exclude_nas,
     n_threads=pvacseq_threads,
+    iedb_retries=iedb_retries,
     read_support=pvacfuse_read_support,
     expn_val=pvacfuse_expn_val,
     allele_specific_binding_thresholds=allele_specific_binding_thresholds,

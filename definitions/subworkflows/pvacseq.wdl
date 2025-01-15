@@ -52,6 +52,7 @@ workflow pvacseq {
     Boolean? netmhc_stab
     Boolean? run_reference_proteome_similarity
     Int? n_threads
+    Int? iedb_retries
     Array[String] variants_to_table_fields = ["CHROM", "POS", "ID", "REF", "ALT"]
     Array[String] variants_to_table_genotype_fields = ["GT", "AD", "AF", "DP", "RAD", "RAF", "RDP", "GX", "TX"]
     Array[String] vep_to_table_fields = ["HGVSc", "HGVSp"]
@@ -143,6 +144,7 @@ workflow pvacseq {
     run_reference_proteome_similarity=run_reference_proteome_similarity,
     peptide_fasta=peptide_fasta,
     n_threads=n_threads,
+    iedb_retries=iedb_retries,
     tumor_purity=tumor_purity,
     allele_specific_binding_thresholds=allele_specific_binding_thresholds,
     aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
