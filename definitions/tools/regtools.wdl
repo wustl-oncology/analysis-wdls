@@ -3,8 +3,8 @@ version 1.0
 task regtools {
   input {
     String output_filename_tsv = "splice_junction.tsv"
-    String? output_filename_vcf = "splice_junction.vcf"
-    String? output_filename_bed = "splice_junction.bed"
+    String? output_filename_vcf = "splice_variant.vcf"
+    String? output_filename_bed = "splice_variant.bed"
 
     String strand # enum [XS, RF, FR]
     Int? window_size
@@ -29,7 +29,7 @@ task regtools {
   runtime {
     preemptible: 1
     maxRetries: 2
-    memory: "32GB"
+    memory: "44GB"
     cpu: n_threads
     docker: "griffithlab/regtools:release-1.0.0"
     disks: "local-disk ~{space_needed_gb} HDD"
@@ -53,7 +53,8 @@ task regtools {
   >>>
 
   output {
-    File? output_splice_junction_tsv = output_filename_tsv
+    File output_splice_junction_tsv = output_filename_tsv
+    File? output_splice_variant_vcf = output_filename_vcf
   }
 }
 
