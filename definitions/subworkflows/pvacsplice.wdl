@@ -70,7 +70,7 @@ workflow pvacsplice {
     Boolean? allele_specific_binding_thresholds
     Int? aggregate_inclusion_binding_threshold
     Array[String]? problematic_amino_acids
-    Array[String] biotypes_list
+    Array[String]? biotypes
     Int? aggregate_inclusion_count_limit
     Int? juction_score
     Int? variant_distance
@@ -144,7 +144,7 @@ workflow pvacsplice {
     input_reference_gtf=reference_annotation
   }
 
-  pspl.pvacsplice as runpvacsplice {
+  call pspl.pvacsplice as runpvacsplice {
     input:
     n_threads=n_threads,
     input_vcf=index.indexed_vcf,
@@ -178,7 +178,7 @@ workflow pvacsplice {
     maximum_transcript_support_level=maximum_transcript_support_level,
     aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
     problematic_amino_acids=problematic_amino_acids,
-    biotypes_list=biotypes_list,
+    biotypes=biotypes,
     aggregate_inclusion_count_limit=aggregate_inclusion_count_limit,
     juction_score=juction_score,
     variant_distance=variant_distance,
@@ -200,5 +200,8 @@ workflow pvacsplice {
     Array[File] mhc_i = runpvacsplice.mhc_i
     Array[File] mhc_ii = runpvacsplice.mhc_ii
     Array[File] combined = runpvacsplice.combined
+    File? splice_transcript_combined_report = runpvacsplice.splice_transcript_combined_report
+    File? splice_fasta = runpvacsplice.splice_fasta
+    File? splice_fasta_fai = runpvacsplice.splice_fasta_fai
   }
 }

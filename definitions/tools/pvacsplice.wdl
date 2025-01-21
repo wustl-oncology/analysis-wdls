@@ -36,7 +36,7 @@ task pvacsplice {
     Int? maximum_transcript_support_level  # enum [1, 2, 3, 4, 5]
     Int? aggregate_inclusion_binding_threshold
     Array[String]? problematic_amino_acids
-    Array[String] biotypes_list = select_first([biotypes, []])
+    Array[String]? biotypes
     Int? aggregate_inclusion_count_limit
     
     Int? juction_score
@@ -67,6 +67,8 @@ task pvacsplice {
   Array[Int] epitope_i = select_first([epitope_lengths_class_i, []])
   Array[Int] epitope_ii = select_first([epitope_lengths_class_ii, []])
   Array[String] problematic_aa = select_first([problematic_amino_acids, []])
+  Array[String] biotypes_list = select_first([biotypes, []])
+  Array[String] junction_anchor_types_list = select_first([junction_anchor_types,[]])
   command <<<
     # touch each tbi to ensure they have a timestamp after the vcf
     touch ~{input_vcf_tbi}
@@ -107,7 +109,7 @@ task pvacsplice {
     ~{if defined(juction_score) then "--junction-score ~{junction_score}" else ""} \
     ~{if defined(variant_distance) then "--variant-distance ~{variant_distance}" else ""} \
     ~{if save_gtf then "-g" else ""} \
-    ~{if length(junction_anchor_types) > 0 then "--anchor-types" else ""} ~{sep="," junction_anchor_types}
+    ~{if length(junction_anchor_types_list) > 0 then "--anchor-types" else ""} ~{sep="," junction_anchor_types_list}
     --n-threads ~{n_threads} \
     ~{input_regtools_tsv} ~{sample_name} ~{sep="," alleles} ~{sep=" " prediction_algorithms} \
     pvacsplice_predictions ~{input_vcf} ~{input_reference_dna_fasta} ~{input_reference_gtf} 
@@ -123,6 +125,10 @@ task pvacsplice {
     File? combined_all_epitopes = "pvacsplice_predictions/combined/~{sample_name}.all_epitopes.tsv"
     File? combined_aggregated_report = "pvacsplice_predictions/combined/~{sample_name}.all_epitopes.aggregated.tsv"
     File? combined_filtered_epitopes = "pvacsplice_predictions/combined/~{sample_name}.filtered.tsv"
+    File? splice_transcript_combined_report = "pvacsplice_predictions/~{sample_name}_combined.tsv"
+    File? splice_gtf = "pvacsplice_predictions/~{sample_name}_gtf.tsv"
+    File? splice_fasta = "pvacsplice_predictions/~{sample_name}_.transcripts.fa"
+    File? splice_fasta_fai = "pvacsplice_predictions/~{sample_name}_.transcripts.fa.fai"
     
     # glob documentations
     # https://github.com/openwdl/wdl/blob/main/versions/1.0/SPEC.md#globs
