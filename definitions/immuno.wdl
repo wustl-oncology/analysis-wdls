@@ -589,7 +589,7 @@ workflow immuno {
     netmhc_stab=netmhc_stab,
     run_reference_proteome_similarity=run_reference_proteome_similarity,
     n_threads=pvacsplice_threads,
-    tumor_purity=tumor_purity
+    tumor_purity=tumor_purity,
     allele_specific_binding_thresholds=allele_specific_binding_thresholds,
     aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
     problematic_amino_acids=problematic_amino_acids,
