@@ -30,7 +30,6 @@ task regtools {
     preemptible: 1
     maxRetries: 2
     memory: "44GB"
-    cpu: n_threads
     docker: "griffithlab/regtools:release-1.0.0"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
