@@ -248,11 +248,13 @@ workflow immuno {
     Float? tumor_purity
     Boolean? allele_specific_binding_thresholds
     Int? aggregate_inclusion_binding_threshold
+    Int? aggregate_inclusion_count_limit
     Array[String]? problematic_amino_acids
     Boolean? allele_specific_anchors
     Float? anchor_contribution_threshold
     Int? pvacfuse_read_support
     Float? pvacfuse_expn_val
+    Array[String]? biotypes
 
     # --------- PVACsplice Inputs -----------------------------------------
     # Note: variables similar to PVACseq Inputs or other sections Inputs won't be listed here. 
