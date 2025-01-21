@@ -72,7 +72,7 @@ workflow pvacsplice {
     Array[String]? problematic_amino_acids
     Array[String]? biotypes
     Int? aggregate_inclusion_count_limit
-    Int? juction_score
+    Int? junction_score
     Int? variant_distance
     Boolean? save_gtf 
     Array[String]? junction_anchor_types
@@ -180,7 +180,7 @@ workflow pvacsplice {
     problematic_amino_acids=problematic_amino_acids,
     biotypes=biotypes,
     aggregate_inclusion_count_limit=aggregate_inclusion_count_limit,
-    juction_score=juction_score,
+    junction_score=junction_score,
     variant_distance=variant_distance,
     save_gtf=save_gtf,
     junction_anchor_types=junction_anchor_types,

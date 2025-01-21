@@ -39,7 +39,7 @@ task pvacsplice {
     Array[String]? biotypes
     Int? aggregate_inclusion_count_limit
     
-    Int? juction_score
+    Int? junction_score
     Int? variant_distance
     Boolean save_gtf = false
     Array[String]? junction_anchor_types
@@ -106,7 +106,7 @@ task pvacsplice {
     ~{if defined(maximum_transcript_support_level) then "--maximum-transcript-support-level ~{maximum_transcript_support_level}" else ""} \
     ~{if length(problematic_aa) > 0 then "--problematic-amino-acids" else ""} ~{sep="," problematic_aa} \
     ~{if length(biotypes_list) > 0 then "--biotypes" else ""} ~{sep="," biotypes_list} \
-    ~{if defined(juction_score) then "--junction-score ~{junction_score}" else ""} \
+    ~{if defined(junction_score) then "--junction-score ~{junction_score}" else ""} \
     ~{if defined(variant_distance) then "--variant-distance ~{variant_distance}" else ""} \
     ~{if save_gtf then "-g" else ""} \
     ~{if length(junction_anchor_types_list) > 0 then "--anchor-types" else ""} ~{sep="," junction_anchor_types_list}
