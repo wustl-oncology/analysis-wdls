@@ -30,7 +30,7 @@ workflow pvacsplice {
     String output_filename_tsv
     String? output_filename_vcf
     String? output_filename_bed
-    String strand
+    String? strand
     Int? window_size
     Int? max_distance_exon 
     Int? max_distance_intron
