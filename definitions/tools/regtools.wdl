@@ -6,7 +6,7 @@ task regtools {
     String? output_filename_vcf = "splice_variant.vcf"
     String? output_filename_bed = "splice_variant.bed"
 
-    String strand = "unstranded" # [first, second, unstranded]
+    String? strand # [first, second, unstranded]
     Int? window_size
     Int? max_distance_exon # max distance from exon/intron boundary to annotate a variant in exonic region as splicing variant
     Int? max_distance_intron
@@ -34,6 +34,8 @@ task regtools {
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
+  String input_strand = select_first([strand, "unstranded"])
+
   Map[String, String] strandness = {
     "first": "RF",
     "second": "FR",
@@ -45,7 +47,7 @@ task regtools {
     -o ~{output_filename_tsv} \
     ~{if defined(output_filename_vcf) then "-v ~{output_filename_vcf}" else ""} \
     ~{if defined(output_filename_bed) then "-j ~{output_filename_bed}" else ""} \
-    -s ~{strandness[strand]} \
+    -s ~{strandness[input_strand]} \
     ~{if defined(window_size) then "-w ~{window_size}" else ""} \
     ~{if defined(max_distance_exon) then "-e ~{max_distance_exon}" else ""} \
     ~{if defined(max_distance_intron) then "-i ~{max_distance_intron}" else ""} \
