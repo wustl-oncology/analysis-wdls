@@ -6,7 +6,7 @@ task regtools {
     String? output_filename_vcf = "splice_variant.vcf"
     String? output_filename_bed = "splice_variant.bed"
 
-    String strand # enum [XS, RF, FR]
+    String strand = "unstranded" # [first, second, unstranded]
     Int? window_size
     Int? max_distance_exon # max distance from exon/intron boundary to annotate a variant in exonic region as splicing variant
     Int? max_distance_intron
@@ -34,12 +34,18 @@ task regtools {
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
+  Map[String, String] strandness = {
+    "first": "RF",
+    "second": "FR",
+    "unstranded": "XS"
+  }
+
   command <<<
     /regtools/build/regtools cis-splice-effects identify \
     -o ~{output_filename_tsv} \
     ~{if defined(output_filename_vcf) then "-v ~{output_filename_vcf}" else ""} \
     ~{if defined(output_filename_bed) then "-j ~{output_filename_bed}" else ""} \
-    -s ~{strand} \
+    -s ~{strandness[strand]} \
     ~{if defined(window_size) then "-w ~{window_size}" else ""} \
     ~{if defined(max_distance_exon) then "-e ~{max_distance_exon}" else ""} \
     ~{if defined(max_distance_intron) then "-i ~{max_distance_intron}" else ""} \
