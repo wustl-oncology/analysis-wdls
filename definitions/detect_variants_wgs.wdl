@@ -68,6 +68,8 @@ workflow detectVariantsWgs {
     Array[VepCustomAnnotation] vep_custom_annotations
     File? validated_variants
     File? validated_variants_tbi
+    Int? max_mm_qualsum_diff
+    Int? max_var_mm_qualsum
   }
 
   call m.mutect {
@@ -82,7 +84,9 @@ workflow detectVariantsWgs {
     interval_list=roi_intervals,
     scatter_count=scatter_count,
     tumor_sample_name=tumor_sample_name,
-    fp_min_var_freq=fp_min_var_freq
+    fp_min_var_freq=fp_min_var_freq,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum
   }
 
   call sapp.strelkaAndPostProcessing as strelka {
@@ -104,7 +108,9 @@ workflow detectVariantsWgs {
     cpu_reserved=strelka_cpu_reserved,
     call_regions=strelka_call_regions,
     call_regions_tbi=strelka_call_regions_tbi,
-    fp_min_var_freq=fp_min_var_freq
+    fp_min_var_freq=fp_min_var_freq,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum
   }
 
   call vpapp.varscanPreAndPostProcessing as varscan {
@@ -127,7 +133,9 @@ workflow detectVariantsWgs {
     min_coverage=varscan_min_coverage,
     varscan_min_var_freq=varscan_min_var_freq,
     p_value=varscan_p_value,
-    max_normal_freq=varscan_max_normal_freq
+    max_normal_freq=varscan_max_normal_freq,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum
   }
 
   call dc.docmCle as docm {

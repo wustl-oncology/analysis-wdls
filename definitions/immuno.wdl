@@ -200,6 +200,9 @@ workflow immuno {
     File? validated_variants
     File? validated_variants_tbi
 
+    Int? max_mm_qualsum_diff
+    Int? max_var_mm_qualsum
+
     # --------- Germline Inputs ----------------------------------------
 
     Array[String] gvcf_gq_bands
@@ -370,7 +373,9 @@ workflow immuno {
     tumor_sample_name=tumor_sample_name,
     normal_sample_name=normal_sample_name,
     validated_variants=validated_variants,
-    validated_variants_tbi=validated_variants_tbi
+    validated_variants_tbi=validated_variants_tbi,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum
   }
 
   call geht.germlineExomeHlaTyping as germlineExome {

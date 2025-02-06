@@ -100,6 +100,9 @@ workflow somaticExome {
     File? validated_variants_tbi
 
     Int? cnvkit_target_average_size
+
+    Int? max_mm_qualsum_diff
+    Int? max_var_mm_qualsum    
   }
 
   call s2b.sequenceToBqsr as tumorAlignment {
@@ -234,7 +237,9 @@ workflow somaticExome {
     normal_sample_name=normal_sample_name,
     vep_custom_annotations=vep_custom_annotations,
     validated_variants=validated_variants,
-    strelka_exome_mode=true
+    strelka_exome_mode=true,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum
   }
 
   call cb.cnvkitBatch as cnvkit {

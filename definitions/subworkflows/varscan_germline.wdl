@@ -19,6 +19,8 @@ workflow varscanGermline {
     Int? min_reads
     Float? p_value
     String sample_name
+    Int? max_mm_qualsum_diff
+    Int? max_var_mm_qualsum    
   }
 
   call itb.intervalsToBed {
@@ -39,7 +41,9 @@ workflow varscanGermline {
     varscan_min_var_freq=varscan_min_var_freq,
     min_reads=min_reads,
     p_value=p_value,
-    sample_name=sample_name
+    sample_name=sample_name,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum
   }
 
   call bi.bgzipAndIndex {
