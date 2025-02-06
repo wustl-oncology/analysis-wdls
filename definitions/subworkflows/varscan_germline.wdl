@@ -41,9 +41,7 @@ workflow varscanGermline {
     varscan_min_var_freq=varscan_min_var_freq,
     min_reads=min_reads,
     p_value=p_value,
-    sample_name=sample_name,
-    max_mm_qualsum_diff=max_mm_qualsum_diff,
-    max_var_mm_qualsum=max_var_mm_qualsum
+    sample_name=sample_name
   }
 
   call bi.bgzipAndIndex {
@@ -62,7 +60,9 @@ workflow varscanGermline {
     vcf_tbi=bgzipAndIndex.indexed_vcf_tbi,
     variant_caller="varscan",
     sample_name=sample_name,
-    fp_min_var_freq=varscan_min_var_freq
+    fp_min_var_freq=varscan_min_var_freq,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum
   }
 
   output {
