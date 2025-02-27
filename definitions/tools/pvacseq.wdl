@@ -36,8 +36,10 @@ task pvacseq {
     Float? expn_val
     Int? maximum_transcript_support_level  # enum [1, 2, 3, 4, 5]
     Int? aggregate_inclusion_binding_threshold
+    Int? aggregate_inclusion_count_limit
     Array[String]? problematic_amino_acids
     Float? anchor_contribution_threshold
+    Array[String]? biotypes
 
     Boolean allele_specific_binding_thresholds = false
     Boolean keep_tmp_files = false
@@ -56,7 +58,7 @@ task pvacseq {
     maxRetries: 2
     memory: "32GB"
     cpu: n_threads
-    docker: "griffithlab/pvactools:4.4.1"
+    docker: "griffithlab/pvactools:5.2.0"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
@@ -64,6 +66,7 @@ task pvacseq {
   Array[Int] epitope_i = select_first([epitope_lengths_class_i, []])
   Array[Int] epitope_ii = select_first([epitope_lengths_class_ii, []])
   Array[String] problematic_aa = select_first([problematic_amino_acids, []])
+  Array[String] biotypes_list = select_first([biotypes, []])
   command <<<
     # touch each tbi to ensure they have a timestamp after the vcf
     touch ~{phased_proximal_variants_vcf_tbi}
@@ -79,6 +82,7 @@ task pvacseq {
     ~{if defined(percentile_threshold) then "--percentile-threshold ~{percentile_threshold}" else ""} \
     ~{if allele_specific_binding_thresholds then "--allele-specific-binding-thresholds" else ""} \
     ~{if defined(aggregate_inclusion_binding_threshold) then "--aggregate-inclusion-binding-threshold ~{aggregate_inclusion_binding_threshold}" else ""} \
+    ~{if defined(aggregate_inclusion_count_limit) then "--aggregate-inclusion-count-limit ~{aggregate_inclusion_count_limit}" else ""} \
     ~{if defined(iedb_retries) then "-r ~{iedb_retries}" else ""} \
     ~{if keep_tmp_files then "-k" else ""} \
     ~{if defined(normal_sample_name) then "--normal-sample-name ~{normal_sample_name}" else ""} \
@@ -105,6 +109,7 @@ task pvacseq {
     ~{if length(problematic_aa) > 0 then "--problematic-amino-acids" else ""} ~{sep="," problematic_aa} \
     ~{if allele_specific_anchors then "--allele-specific-anchors" else ""} \
     ~{if defined(anchor_contribution_threshold) then "--anchor-contribution-threshold ~{anchor_contribution_threshold}" else ""} \
+    ~{if length(biotypes_list) > 0 then "--biotypes" else ""} ~{sep="," biotypes_list} \
     --n-threads ~{n_threads} \
     ~{input_vcf} ~{sample_name} ~{sep="," alleles} ~{sep=" " prediction_algorithms} \
     pvacseq_predictions

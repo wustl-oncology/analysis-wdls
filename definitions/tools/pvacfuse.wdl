@@ -25,6 +25,7 @@ task pvacfuse {
     Int n_threads = 8
     Boolean allele_specific_binding_thresholds = false
     Int? aggregate_inclusion_binding_threshold
+    Int? aggregate_inclusion_count_limit
     Array[String]? problematic_amino_acids
     File? star_fusion_file
     Int? read_support
@@ -35,7 +36,7 @@ task pvacfuse {
   runtime {
     preemptible: 1
     maxRetries: 2
-    docker: "griffithlab/pvactools:4.4.1"
+    docker: "griffithlab/pvactools:5.2.0"
     memory: "32GB"
     cpu: n_threads
     disks: "local-disk ~{space_needed_gb} HDD"
@@ -60,6 +61,7 @@ task pvacfuse {
     ~{if defined(percentile_threshold) then "--percentile-threshold ~{percentile_threshold}" else ""} \
     ~{if allele_specific_binding_thresholds then "--allele-specific-binding-thresholds" else ""} \
     ~{if defined(aggregate_inclusion_binding_threshold) then "--aggregate-inclusion-binding-threshold ~{aggregate_inclusion_binding_threshold}" else ""} \
+    ~{if defined(aggregate_inclusion_count_limit) then "--aggregate-inclusion-count-limit ~{aggregate_inclusion_count_limit}" else ""} \
     ~{if defined(iedb_retries) then "-r ~{iedb_retries}" else ""} \
     ~{if keep_tmp_files then "-k" else ""} \
     ~{if defined(net_chop_method) then "--net-chop-method ~{net_chop_method}" else ""} \
