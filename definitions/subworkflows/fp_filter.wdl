@@ -20,6 +20,8 @@ workflow fpFilter {
     String variant_caller
     String? sample_name
     Float? fp_min_var_freq
+    Int? max_mm_qualsum_diff
+    Int? max_var_mm_qualsum    
   }
 
   call vs.vcfSanitize as sanitizeVcf {
@@ -54,6 +56,8 @@ workflow fpFilter {
     vcf=index.indexed_vcf,
     sample_name=sample_name,
     fp_min_var_freq=fp_min_var_freq,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum,
     output_vcf_basename = variant_caller + "_full"
   }
 

@@ -86,6 +86,9 @@ workflow somaticWgs {
 
     #approximate size of split target bins for CNVkit; if not set a suitable window size will be set by CNVkit automatically
     Int? cnvkit_target_average_size
+
+    Int? max_mm_qualsum_diff
+    Int? max_var_mm_qualsum    
   }
 
 
@@ -214,7 +217,9 @@ workflow somaticWgs {
     normal_sample_name=normal_sample_name,
     vep_custom_annotations=vep_custom_annotations,
     validated_variants=validated_variants,
-    validated_variants_tbi=validated_variants_tbi
+    validated_variants_tbi=validated_variants_tbi,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum
   }
 
   call ms.mantaSomatic as manta {

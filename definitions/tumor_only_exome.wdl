@@ -60,6 +60,8 @@ workflow tumorOnlyExome {
     Int? qc_minimum_base_quality
     Int? readcount_minimum_mapping_quality
     Int? readcount_minimum_base_quality
+    Int? max_mm_qualsum_diff
+    Int? max_var_mm_qualsum    
   }
 
   call ae.alignmentExome as alignmentAndQc {
@@ -123,7 +125,9 @@ workflow tumorOnlyExome {
     docm_vcf_tbi=docm_vcf_tbi,
     vep_custom_annotations=vep_custom_annotations,
     readcount_minimum_mapping_quality=readcount_minimum_mapping_quality,
-    readcount_minimum_base_quality=readcount_minimum_base_quality
+    readcount_minimum_base_quality=readcount_minimum_base_quality,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum
   }
 
   call btc.bamToCram {

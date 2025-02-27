@@ -78,6 +78,8 @@ workflow somaticExomeCle {
     String disclaimer_version
     String tumor_sample_name
     String normal_sample_name
+    Int? max_mm_qualsum_diff
+    Int? max_var_mm_qualsum    
   }
 
   call ae.alignmentExome as tumorAlignmentAndQc {
@@ -194,6 +196,8 @@ workflow somaticExomeCle {
     tumor_sample_name=tumor_sample_name,
     normal_sample_name=normal_sample_name,
     vep_custom_annotations=vep_custom_annotations,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum
   }
 
   call asal.addStringAtLine as addDisclaimerToFinalTsv {
