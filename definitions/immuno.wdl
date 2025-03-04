@@ -84,7 +84,9 @@ struct Germline {
 
 struct MHC {
   Array[File] mhc_i
+  File? mhc_i_log
   Array[File] mhc_ii
+  File? mhc_ii_log
   Array[File] combined
   Array[File]? phase_vcf
 }
@@ -750,14 +752,18 @@ workflow immuno {
 
     MHC pVACseq = object {
       mhc_i: pvacseq.mhc_i,
+      mhc_i_log: pvacseq.mhc_i_log,
       mhc_ii: pvacseq.mhc_ii,
+      mhc_ii_log: pvacseq.mhc_ii_log,
       combined: pvacseq.combined,
       phase_vcf: [phaseVcf.phased_vcf, phaseVcf.phased_vcf_tbi]
     }
 
     MHC pVACfuse = object {
       mhc_i: pvacfuse.mhc_i,
+      mhc_i_log: pvacfuse.mhc_i_log,
       mhc_ii: pvacfuse.mhc_ii,
+      mhc_ii_log: pvacfuse.mhc_ii_log,
       combined: pvacfuse.combined
     }
 

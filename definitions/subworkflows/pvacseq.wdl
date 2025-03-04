@@ -181,7 +181,9 @@ workflow pvacseq {
     File annotated_vcf_tbi = index.indexed_vcf_tbi
     File annotated_tsv = addVepFieldsToTable.annotated_variants_tsv
     Array[File] mhc_i = ps.mhc_i
+    File? mhc_i_log = ps.mhc_i_log
     Array[File] mhc_ii = ps.mhc_ii
+    File? mhc_ii_log = ps.mhc_ii_log
     Array[File] combined = ps.combined
   }
 }
