@@ -11,7 +11,7 @@ task filterVcfCustomAlleleFreq {
   runtime {
     preemptible: 1
     maxRetries: 2
-    docker: "mgibio/vep_helper-cwl:vep_105.0_v1"
+    docker: "mgibio/vep_helper-cwl:vep_113.3_v1"
     memory: "4GB"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
