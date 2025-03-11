@@ -16,7 +16,7 @@ task splitNCigarReads {
     preemptible: 1
     maxRetries: 2
     docker: "broadinstitute/gatk:4.6.1.0"
-    memory: "32GB"
+    memory: "8GB"
     bootDiskSizeGb: 25
     disks: "local-disk ~{space_needed_gb} HDD"
   }
@@ -24,7 +24,7 @@ task splitNCigarReads {
   String outfile = "~{output_bam_basename}.bam"
 
   command <<<
-    /gatk/gatk --java-options -Xmx28g SplitNCigarReads -O ~{outfile} \
+    /gatk/gatk --java-options -Xmx6g SplitNCigarReads -O ~{outfile} \
     -R ~{reference} \
     -I ~{bam}
   >>>
