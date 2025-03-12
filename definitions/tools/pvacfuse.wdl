@@ -80,17 +80,20 @@ task pvacfuse {
     ~{if defined(read_support) then "--read-support ~{read_support}" else ""} \
     ~{if defined(expn_val) then "--expn-val ~{expn_val}" else ""} \
     --n-threads ~{n_threads}
+
+    if [[ -e pvacfuse_predictions/MHC_Class_I/log/inputs.yml ]]; then; cp pvacfuse_predictions/MHC_Class_I/log/inputs.yml inputs_class_I.yml; fi
+    if [[ -e pvacfuse_predictions/MHC_Class_II/log/inputs.yml ]]; then; cp pvacfuse_predictions/MHC_Class_II/log/inputs.yml inputs_class_II.yml; fi
   >>>
 
   output {
     File? mhc_i_all_epitopes = "pvacfuse_predictions/MHC_Class_I/~{sample_name}.all_epitopes.tsv"
     File? mhc_i_aggregated_report = "pvacfuse_predictions/MHC_Class_I/~{sample_name}.all_epitopes.aggregated.tsv"
     File? mhc_i_filtered_epitopes = "pvacfuse_predictions/MHC_Class_I/~{sample_name}.filtered.tsv"
-    File? mhc_i_log = "pvacfuse_predictions/MHC_Class_I/log/inputs.yml"
+    File? mhc_i_log = "inputs_class_I.yml"
     File? mhc_ii_all_epitopes = "pvacfuse_predictions/MHC_Class_II/~{sample_name}.all_epitopes.tsv"
     File? mhc_ii_aggregated_report = "pvacfuse_predictions/MHC_Class_II/~{sample_name}.all_epitopes.aggregated.tsv"
     File? mhc_ii_filtered_epitopes = "pvacfuse_predictions/MHC_Class_II/~{sample_name}.filtered.tsv"
-    File? mhc_ii_log = "pvacfuse_predictions/MHC_Class_II/log/inputs.yml"
+    File? mhc_ii_log = "inputs_class_II.yml"
     File? combined_all_epitopes = "pvacfuse_predictions/combined/~{sample_name}.all_epitopes.tsv"
     File? combined_aggregated_report = "pvacfuse_predictions/combined/~{sample_name}.all_epitopes.aggregated.tsv"
     File? combined_filtered_epitopes = "pvacfuse_predictions/combined/~{sample_name}.filtered.tsv"

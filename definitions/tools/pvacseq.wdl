@@ -113,6 +113,9 @@ task pvacseq {
     --n-threads ~{n_threads} \
     ~{input_vcf} ~{sample_name} ~{sep="," alleles} ~{sep=" " prediction_algorithms} \
     pvacseq_predictions
+
+    if [[ -e pvacseq_predictions/MHC_Class_I/log/inputs.yml ]]; then; cp pvacseq_predictions/MHC_Class_I/log/inputs.yml inputs_class_I.yml; fi
+    if [[ -e pvacseq_predictions/MHC_Class_II/log/inputs.yml ]]; then; cp pvacseq_predictions/MHC_Class_II/log/inputs.yml inputs_class_II.yml; fi
   >>>
 
   output {
@@ -120,12 +123,12 @@ task pvacseq {
     File? mhc_i_aggregated_report = "pvacseq_predictions/MHC_Class_I/~{sample_name}.all_epitopes.aggregated.tsv"
     File? mhc_i_filtered_epitopes = "pvacseq_predictions/MHC_Class_I/~{sample_name}.filtered.tsv"
     File? mhc_i_aggregated_metrics_file = "pvacseq_predictions/MHC_Class_I/" + sample_name + ".all_epitopes.aggregated.metrics.json"
-    File? mhc_i_log = "pvacseq_predictions/MHC_Class_I/log/inputs.yml"
+    File? mhc_i_log = "inputs_class_I.yml"
     File? mhc_ii_all_epitopes = "pvacseq_predictions/MHC_Class_II/~{sample_name}.all_epitopes.tsv"
     File? mhc_ii_aggregated_report = "pvacseq_predictions/MHC_Class_II/~{sample_name}.all_epitopes.aggregated.tsv"
     File? mhc_ii_filtered_epitopes = "pvacseq_predictions/MHC_Class_II/~{sample_name}.filtered.tsv"
     File? mhc_ii_aggregated_metrics_file = "pvacseq_predictions/MHC_Class_II/" + sample_name + ".all_epitopes.aggregated.metrics.json"
-    File? mhc_ii_log = "pvacseq_predictions/MHC_Class_II/log/inputs.yml"
+    File? mhc_ii_log = "inputs_class_II.yml"
     File? combined_all_epitopes = "pvacseq_predictions/combined/~{sample_name}.all_epitopes.tsv"
     File? combined_aggregated_report = "pvacseq_predictions/combined/~{sample_name}.all_epitopes.aggregated.tsv"
     File? combined_filtered_epitopes = "pvacseq_predictions/combined/~{sample_name}.filtered.tsv"
