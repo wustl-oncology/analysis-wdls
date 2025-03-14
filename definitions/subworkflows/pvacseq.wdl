@@ -76,6 +76,8 @@ workflow pvacseq {
     reference_dict=reference_dict,
     bam=rnaseq_bam,
     bam_bai=rnaseq_bam_bai,
+    vcf=detect_variants_vcf,
+    vcf_tbi=detect_variants_vcf_tbi,
     output_bam_basename="split_n_cigar"
   }
 

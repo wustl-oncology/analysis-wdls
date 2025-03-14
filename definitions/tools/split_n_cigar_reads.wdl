@@ -9,6 +9,9 @@ task splitNCigarReads {
     File bam
     File bam_bai
 
+    File vcf
+    File vcf_tbi
+
     String output_bam_basename = "split_n_cigar"
   }
 
@@ -29,6 +32,7 @@ task splitNCigarReads {
     /gatk/gatk --java-options -Xmx6g SplitNCigarReads -O ~{outfile_bam} \
     -R ~{reference} \
     -I ~{bam} \
+    -L ~{vcf} \
     --create-output-bam-index
   >>>
 
@@ -45,6 +49,8 @@ workflow wf {
     File reference_dict
     File bam
     File bam_bai
+    File vcf
+    File vcf_tbi
     String output_bam_basename = "split_n_cigar"
   }
 
@@ -55,6 +61,8 @@ workflow wf {
     reference_dict=reference_dict,
     bam=bam,
     bam_bai=bam_bai,
+    vcf=vcf,
+    vcf_tbi=vcf_tbi,
     output_bam_basename=output_bam_basename,
   }
 }
