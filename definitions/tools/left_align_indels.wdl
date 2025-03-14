@@ -23,7 +23,7 @@ task leftAlignIndels {
   }
 
   String outfile_bam = "~{output_bam_basename}.bam"
-  String outfile_bam_bai = "~{output_bam_basename}.bam.bai"
+  String outfile_bam_bai = "~{output_bam_basename}.bai"
 
   command <<<
     /gatk/gatk --java-options -Xmx6g LeftAlignIndels -O ~{outfile_bam} \
