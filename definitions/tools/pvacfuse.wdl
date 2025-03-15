@@ -11,6 +11,7 @@ task pvacfuse {
     Array[Int]? epitope_lengths_class_ii
     Int? binding_threshold
     Int? percentile_threshold
+    String? percentile_threshold_strategy
     Int? iedb_retries
     Boolean keep_tmp_files = false
     String? net_chop_method  # enum [cterm 20s]
@@ -59,6 +60,7 @@ task pvacfuse {
     ~{if length(epitope_ii) > 0 then "-e2 " else ""} ~{sep="," epitope_ii} \
     ~{if defined(binding_threshold) then "-b ~{binding_threshold}" else ""} \
     ~{if defined(percentile_threshold) then "--percentile-threshold ~{percentile_threshold}" else ""} \
+    ~{if defined(percentile_threshold_strategy) then "--percentile-threshold-strategy ~{percentile_threshold_strategy}" else ""} \
     ~{if allele_specific_binding_thresholds then "--allele-specific-binding-thresholds" else ""} \
     ~{if defined(aggregate_inclusion_binding_threshold) then "--aggregate-inclusion-binding-threshold ~{aggregate_inclusion_binding_threshold}" else ""} \
     ~{if defined(aggregate_inclusion_count_limit) then "--aggregate-inclusion-count-limit ~{aggregate_inclusion_count_limit}" else ""} \
