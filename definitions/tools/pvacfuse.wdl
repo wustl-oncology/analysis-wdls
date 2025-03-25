@@ -40,6 +40,7 @@ task pvacfuse {
     memory: "32GB"
     cpu: n_threads
     disks: "local-disk ~{space_needed_gb} HDD"
+    bootDiskSizeGb: 50
   }
 
   # explicit typing required, don't inline
@@ -47,6 +48,8 @@ task pvacfuse {
   Array[Int] epitope_ii = select_first([epitope_lengths_class_ii, []])
   Array[String] problematic_aa = select_first([problematic_amino_acids, []])
   command <<<
+    set -eou pipefail
+
     mkdir agfusion_dir && unzip -qq ~{input_fusions_zip} -d agfusion_dir
 
     ln -s "$TMPDIR" /tmp/pvacfuse && export TMPDIR=/tmp/pvacfuse && \
@@ -81,8 +84,8 @@ task pvacfuse {
     ~{if defined(expn_val) then "--expn-val ~{expn_val}" else ""} \
     --n-threads ~{n_threads}
 
-    if [[ -e pvacfuse_predictions/MHC_Class_I/log/inputs.yml ]]; then; cp pvacfuse_predictions/MHC_Class_I/log/inputs.yml inputs_class_I.yml; fi
-    if [[ -e pvacfuse_predictions/MHC_Class_II/log/inputs.yml ]]; then; cp pvacfuse_predictions/MHC_Class_II/log/inputs.yml inputs_class_II.yml; fi
+    if [[ -e pvacfuse_predictions/MHC_Class_I/log/inputs.yml ]]; then cp pvacfuse_predictions/MHC_Class_I/log/inputs.yml inputs_class_I.yml; fi
+    if [[ -e pvacfuse_predictions/MHC_Class_II/log/inputs.yml ]]; then cp pvacfuse_predictions/MHC_Class_II/log/inputs.yml inputs_class_II.yml; fi
   >>>
 
   output {

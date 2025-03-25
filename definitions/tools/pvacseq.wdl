@@ -60,6 +60,7 @@ task pvacseq {
     cpu: n_threads
     docker: "griffithlab/pvactools:5.2.0"
     disks: "local-disk ~{space_needed_gb} HDD"
+    bootDiskSizeGb: 50
   }
 
   # explicit typing required, don't inline
@@ -68,6 +69,8 @@ task pvacseq {
   Array[String] problematic_aa = select_first([problematic_amino_acids, []])
   Array[String] biotypes_list = select_first([biotypes, []])
   command <<<
+    set -eou pipefail
+
     # touch each tbi to ensure they have a timestamp after the vcf
     touch ~{phased_proximal_variants_vcf_tbi}
     touch ~{input_vcf_tbi}
@@ -114,8 +117,8 @@ task pvacseq {
     ~{input_vcf} ~{sample_name} ~{sep="," alleles} ~{sep=" " prediction_algorithms} \
     pvacseq_predictions
 
-    if [[ -e pvacseq_predictions/MHC_Class_I/log/inputs.yml ]]; then; cp pvacseq_predictions/MHC_Class_I/log/inputs.yml inputs_class_I.yml; fi
-    if [[ -e pvacseq_predictions/MHC_Class_II/log/inputs.yml ]]; then; cp pvacseq_predictions/MHC_Class_II/log/inputs.yml inputs_class_II.yml; fi
+    if [[ -e pvacseq_predictions/MHC_Class_I/log/inputs.yml ]]; then cp pvacseq_predictions/MHC_Class_I/log/inputs.yml inputs_class_I.yml; fi
+    if [[ -e pvacseq_predictions/MHC_Class_II/log/inputs.yml ]]; then cp pvacseq_predictions/MHC_Class_II/log/inputs.yml inputs_class_II.yml; fi
   >>>
 
   output {
