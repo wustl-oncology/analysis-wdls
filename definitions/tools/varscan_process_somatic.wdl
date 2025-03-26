@@ -17,6 +17,7 @@ task varscanProcessSomatic {
 
   String variantsBase = basename(variants, ".vcf")
   command <<<
+    set -euo pipefail
     mv ~{variants} ~{basename(variants)}
     java -jar /opt/varscan/VarScan.jar processSomatic \
     ~{basename(variants)} ~{if defined(max_normal_freq) then "--max-normal-freq {max_normal_freq}" else ""}

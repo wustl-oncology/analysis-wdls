@@ -16,6 +16,7 @@ task vtDecompose {
   }
 
   command <<<
+    set -euo pipefail
     vt decompose -s -o decomposed.vcf.gz ~{vcf}
   >>>
 

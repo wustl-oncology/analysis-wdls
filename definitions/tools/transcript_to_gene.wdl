@@ -17,7 +17,7 @@ task transcriptToGene {
   }
 
   command <<<
-    
+    set -euo pipefail   
     /usr/local/bin/Rscript /usr/src/transcript_to_gene.R \
         ~{gene_transcript_lookup_table} ~{transcript_table_h5}
 

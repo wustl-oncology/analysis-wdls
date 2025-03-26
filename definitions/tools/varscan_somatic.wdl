@@ -33,7 +33,7 @@ task varscanSomatic {
   }
 
   command <<<
- 
+    set -euo pipefail
     ACCESS_TOKEN=$(wget -O - --header "Metadata-Flavor: Google" http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token?alt=text 2> /dev/null | grep access_token)
     if [[ "$ACCESS_TOKEN" == "access_token"* ]]; then
        # When the BAMs aren't localized in GCP, samtools needs this token to access them via gs:// URLs.

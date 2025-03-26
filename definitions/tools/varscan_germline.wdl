@@ -28,6 +28,7 @@ task varscanGermline {
 
   String outfile = "output.vcf"
   command <<<
+    set -euo pipefail
     /usr/bin/varscan_germline_helper.sh \
     ~{bam} \
     ~{reference} \

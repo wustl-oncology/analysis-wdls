@@ -16,6 +16,7 @@ task unalignedSeqFdaStats {
 
   String output_file = output_name + "_unaligned_metrics" + suffix + ".txt"
   command <<<
+    set -euo pipefail
     /usr/bin/perl - ~{sep=" " files} > "~{output_file}" <<'EOF'
         #!/usr/bin/perl
 

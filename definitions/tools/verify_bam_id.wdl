@@ -19,6 +19,7 @@ task verifyBamId {
   String bamroot = basename(bam, ".bam")
   String outroot = "~{bamroot}.VerifyBamId"
   command <<<
+    set -euo pipefail
     /usr/local/bin/verifyBamID --out ~{outroot} --vcf ~{vcf} --bam ~{bam} --bai ~{bam_bai}
   >>>
 

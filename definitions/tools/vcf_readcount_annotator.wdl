@@ -20,6 +20,7 @@ task vcfReadcountAnnotator {
 
   String outfile = "annotated.bam_readcount.vcf.gz"
   command <<<
+    set -euo pipefail
     vcf-readcount-annotator -o ~{outfile} \
     ~{vcf} ~{bam_readcount_tsv} ~{data_type} \
     ~{if defined(variant_type) then "-t ~{variant_type}" else ""} \

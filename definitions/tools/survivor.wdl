@@ -23,6 +23,7 @@ task survivor {
   }
 
   command <<<
+    set -euo pipefail
     /bin/bash /usr/bin/survivor_merge_helper.sh \
     ~{sep="," vcfs} ~{max_distance_to_merge} ~{minimum_sv_calls} \
     ~{true="1" false="0" same_type} \
