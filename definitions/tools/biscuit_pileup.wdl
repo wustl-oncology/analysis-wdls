@@ -20,7 +20,7 @@ task biscuitPileup {
   }
 
   command <<<
-    set -eo pipefail
+    set -euo pipefail
     /usr/bin/biscuit pileup -q ~{cores} -w pileup_stats.txt  "~{reference}" "~{bam}" | /opt/htslib/bin/bgzip > out.vcf
   >>>
 

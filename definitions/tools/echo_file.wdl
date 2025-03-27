@@ -10,6 +10,7 @@ task echoFile {
   }
 
   command <<<
+    set -euo pipefail
     echo "TEST" > outfile.txt
   >>>
 

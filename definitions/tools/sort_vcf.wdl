@@ -17,6 +17,7 @@ task sortVcf {
 
   String outfile = "sorted.vcf"
   command <<<
+    set -euo pipefail
     /usr/bin/java -Xmx16g -jar /usr/picard/picard.jar SortVcf \
     O=~{outfile} \
     I=~{vcf} \

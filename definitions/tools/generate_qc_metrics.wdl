@@ -26,6 +26,7 @@ task generateQcMetrics {
     "unstranded": "NONE"
   }
   command <<<
+    set -euo pipefail
     /usr/bin/java -Xmx16g -jar /opt/picard/picard.jar CollectRnaSeqMetrics \
     O=rna_metrics.txt CHART=rna_coverage_by_transcript_position.pdf REF_FLAT=~{refFlat} \
     ~{if (defined(ribosomal_intervals)) then "RIBOSOMAL_INTERVALS=~{select_first([ribosomal_intervals])}" else ""} \

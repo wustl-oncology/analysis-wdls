@@ -16,6 +16,7 @@ task addStrelkaGt {
 
   String outfile = "add_gt.vcf"
   command <<<
+    set -euo pipefail
     /usr/bin/perl -e '
     use strict;
     use warnings;

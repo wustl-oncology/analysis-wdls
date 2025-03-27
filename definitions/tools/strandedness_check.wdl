@@ -22,6 +22,7 @@ task strandednessCheck {
 
   String outfile = basename(reads1, ".fastq") + "strandness_check.txt"
   command <<<
+    set -euo pipefail
     check_strandedness --print_commands \
         --gtf ~{reference_annotation} --kallisto_index ~{kallisto_index} --transcripts ~{cdna_fasta} \
         --reads_1 ~{reads1} --reads_2 ~{reads2} -n 100000 > ~{outfile}

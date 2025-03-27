@@ -18,7 +18,7 @@ task replaceVcfSampleName {
 
   String basen = "renamed." + basename(input_vcf)
   command <<< #!/bin/bash
-    set -eou pipefail
+    set -euo pipefail
     #escape spaces, otherwise bcftools will try to use them as a delimiter
     #triple backslash to escape within backticks and then again within sed
     old_name=$(echo "~{sample_to_replace}" | sed 's/ /\\\ /g')

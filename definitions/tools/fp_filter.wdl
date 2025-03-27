@@ -28,6 +28,7 @@ task fpFilter {
 
   String output_vcf = output_vcf_basename + ".vcf"
   command <<<
+    set -euo pipefail
     /usr/bin/perl /usr/bin/fpfilter.pl \
     --bam-readcount /usr/bin/bam-readcount \
     --samtools /opt/samtools/bin/samtools \

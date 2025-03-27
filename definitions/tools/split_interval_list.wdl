@@ -16,6 +16,7 @@ task splitIntervalList {
   }
 
   command <<<
+    set -euo pipefail
     /usr/bin/perl -e '
     use File::Copy;
     use warnings;

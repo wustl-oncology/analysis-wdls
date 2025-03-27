@@ -19,7 +19,7 @@ task biscuitMarkdup {
   }
 
   command <<<
-    set -eou pipefail
+    set -euo pipefail
     /usr/bin/biscuit markdup "~{bam}" /dev/stdout | /usr/bin/sambamba sort -t ~{cores} -m 15G -o "markdup.bam" /dev/stdin
   >>>
 

@@ -20,6 +20,7 @@ task normalizeVariants {
   }
 
   command <<<
+    set -euo pipefail
     /gatk/gatk --java-options -Xmx8g LeftAlignAndTrimVariants -O normalized.vcf.gz -R ~{reference} -V ~{vcf}
   >>>
 

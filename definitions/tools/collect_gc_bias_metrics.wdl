@@ -27,6 +27,7 @@ task collectGcBiasMetrics {
   String bias_metrics_summary = sample_name + ".GcBiasMetricsSummary.txt"
   String bias_metrics_chart = sample_name + ".GcBiasMetricsChart.pdf"
   command <<<
+    set -euo pipefail
     /usr/bin/java -Xmx32g -jar /usr/picard/picard.jar CollectGcBiasMetrics \
     O=~{bias_metrics} \
     CHART=~{bias_metrics_chart} \

@@ -18,6 +18,7 @@ task filterVcfCustomAlleleFreq {
 
   String outfile = "annotated.af_filtered.vcf"
   command <<<
+    set -euo pipefail
     /usr/bin/perl /usr/bin/vcf_check.pl ~{vcf} ~{outfile} \
     /usr/bin/perl /opt/vep/src/ensembl-vep/filter_vep --format vcf -o ~{outfile} -i ~{vcf} \
     --filter "~{field_name} < ~{maximum_population_allele_frequency} or not ~{field_name}"

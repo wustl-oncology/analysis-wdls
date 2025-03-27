@@ -18,6 +18,7 @@ task pindelSomaticFilter {
   }
 
   command <<<
+    set -euo pipefail
     /usr/bin/perl /usr/bin/write_pindel_filter_config.pl ~{pindel_output_summary} ~{reference} "$PWD"
     /usr/bin/perl /usr/bin/somatic_indelfilter.pl filter.config
   >>>

@@ -14,6 +14,7 @@ task md5sum {
   }
 
   command <<<
+    set -euo pipefail
     md5sum ~{sep=" " files} > "~{output_name}.md5"
   >>>
 

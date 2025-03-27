@@ -15,6 +15,7 @@ task catAll {
   }
 
   command <<<
+    set -euo pipefail
     /bin/grep "ChrID" ~{sep=" " region_pindel_outs} > all_region_pindel.head
   >>>
 

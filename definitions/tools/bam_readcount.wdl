@@ -26,6 +26,7 @@ task bamReadcount {
   String stdout_file = sample + "_bam_readcount.tsv"
   String prefixed_sample = (if prefix == "NOPREFIX" then "" else (prefix + "_")) + sample
   command <<<
+    set -euo pipefail
     mv ~{bam} ~{basename(bam)}; mv ~{bam_bai} ~{basename(bam_bai)}
 
     /usr/bin/python -c '

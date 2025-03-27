@@ -12,6 +12,7 @@ task freemix {
   }
 
   command <<<
+    set -euo pipefail
     python <<CODE
     with open("~{verify_bam_id_metrics}", "r") as f:
         header = f.readline().split("\t")

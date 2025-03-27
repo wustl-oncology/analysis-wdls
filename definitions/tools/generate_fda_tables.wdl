@@ -39,6 +39,7 @@ task generateFdaTables {
   }
 
   command <<<
+    set -euo pipefail
     python - \
       ~{"--table_file_name '" + table_file_name + "'"} \
       ~{"--table '" + table_num + "'"} \

@@ -19,6 +19,7 @@ task annotsvFilter {
   }
 
   command <<<
+    set -euo pipefail
     python -c '
     import csv
     import sys

@@ -21,6 +21,7 @@ task collectAlignmentSummaryMetrics {
   String bamroot = basename(bam, ".bam")
   String summary_metrics = "~{bamroot}.AlignmentSummaryMetrics.txt"
   command <<<
+    set -euo pipefail
     /usr/bin/java -Xmx32g -jar /usr/picard/picard.jar CollectAlignmentSummaryMetrics INPUT=~{bam} OUTPUT=~{summary_metrics} REFERENCE_SEQUENCE=~{reference} METRIC_ACCUMULATION_LEVEL=~{metric_accumulation_level}
   >>>
 

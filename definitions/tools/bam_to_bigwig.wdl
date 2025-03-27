@@ -22,6 +22,7 @@ task bamToBigwig {
 
   String output_bw = basename(bam, ".bam") + ".bw"
   command <<<
+    set -euo pipefail
     bam2bw -a -F 1024 -o ~{output_bw} -i ~{bam} -r ~{reference}
   >>>
 

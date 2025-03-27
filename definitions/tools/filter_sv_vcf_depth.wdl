@@ -19,7 +19,7 @@ task filterSvVcfDepth {
   }
 
   command <<<
-    set -eou pipefail
+    set -euo pipefail
 
     DEL_DEPTH="~{deletion_depth}"
     DUP_DEPTH="~{duplication_depth}"

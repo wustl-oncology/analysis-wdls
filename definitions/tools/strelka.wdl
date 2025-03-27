@@ -30,6 +30,7 @@ task strelka {
   }
 
   command <<<
+    set -euo pipefail
     # Ensure bam and bai have same paths, bai timestamp after bam timestamp
     mv ~{tumor_bam} ~{basename(tumor_bam)}; mv ~{tumor_bam_bai} ~{basename(tumor_bam_bai)}
     mv ~{normal_bam} ~{basename(normal_bam)}; mv ~{normal_bam_bai} ~{basename(normal_bam_bai)}

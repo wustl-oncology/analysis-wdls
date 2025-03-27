@@ -22,6 +22,7 @@ task filterVcfMapq0 {
 
   String outfile = "mapq_filtered.vcf.gz"
   command <<<
+    set -euo pipefail
     /bin/bash /usr/bin/mapq0_vcf_filter.sh `pwd` ~{vcf} ~{tumor_bam} ~{threshold} ~{sample_name}
   >>>
 

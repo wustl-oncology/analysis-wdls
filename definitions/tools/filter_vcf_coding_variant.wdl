@@ -16,6 +16,7 @@ task filterVcfCodingVariant {
 
   String outfile = "annotated.coding_variant_filtered"
   command <<<
+    set -euo pipefail
     /usr/bin/perl /usr/bin/vcf_check.pl ~{vcf} ~{outfile} \
     /usr/bin/perl /opt/vep/src/ensembl-vep/filter_vep \
     --format vcf \

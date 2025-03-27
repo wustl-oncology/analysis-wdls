@@ -25,6 +25,7 @@ task setFilterStatus {
 
   String outfile = "output.vcf.gz"
   command <<<
+    set -euo pipefail
     /usr/bin/java -Xmx4g -jar /opt/GenomeAnalysisTK.jar -T VariantFiltration \
     --maskName processSomatic --filterNotInMask -o ~{outfile} \
     -R ~{reference} --variant ~{vcf} --mask ~{filtered_vcf}

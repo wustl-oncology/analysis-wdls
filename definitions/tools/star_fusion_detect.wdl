@@ -40,6 +40,7 @@ task starFusionDetect {
     # https://github.com/STAR-Fusion/STAR-Fusion/issues/175#issuecomment-567913451
   String genome_lib_dir = "`pwd`/" + basename(star_fusion_genome_dir_zip, ".zip")
   command <<<
+    set -euo pipefail
     mkdir ~{genome_lib_dir} && unzip -qq ~{star_fusion_genome_dir_zip} -d ~{genome_lib_dir}
     /usr/local/src/STAR-Fusion/STAR-Fusion --CPU ~{cores} \
         --genome_lib_dir ~{genome_lib_dir} \

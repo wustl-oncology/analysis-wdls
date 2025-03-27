@@ -21,7 +21,7 @@ task biscuitAlign {
   }
 
   command <<<
-    set -eou pipefail
+    set -euo pipefail
     /usr/bin/biscuit align -t ~{cores} -M -R "~{read_group_id}" "~{reference_index}" "~{fastq1}" "~{fastq2}" \
     | /usr/bin/sambamba view -S -f bam -l 0 /dev/stdin \
     | /usr/bin/sambamba sort -t ~{cores} -m 8G -o "aligned.bam" /dev/stdin

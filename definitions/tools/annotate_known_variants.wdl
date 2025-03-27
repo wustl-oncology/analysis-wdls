@@ -19,7 +19,7 @@ task annotateKnownVariants {
 
   String outfile = "validated_annotated_pipeline_variants.vcf.gz"
   command <<<
-    set -eou pipefail
+    set -euo pipefail
 
     PIPELINE_VCF=~{vcf}
     VALIDATED_VCF=~{if defined(validated_variants) then validated_variants else ""}

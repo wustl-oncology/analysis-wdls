@@ -18,8 +18,7 @@ task filterSvVcfBlocklistBedpe {
   }
 
   command <<<
-    set -eou pipefail
-    set -o errexit
+    set -euo pipefail
 
     INPUT_VCF="~{input_vcf}"
     SLOPE="~{slope}"

@@ -22,6 +22,7 @@ task duphold {
   }
 
   command <<<
+    set -euo pipefail
     /usr/bin/duphold --threads ~{cores} \
     --bam ~{bam} \
     --output ~{output_vcf_name} \

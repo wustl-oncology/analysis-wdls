@@ -31,6 +31,7 @@ task mantaSomatic {
   }
 
   command <<<
+    set -euo pipefail
     /usr/bin/python /usr/bin/manta/bin/configManta.py \
     ~{if non_wgs then "--exome" else ""} \
     ~{if output_contigs then "--outputContig" else ""} \

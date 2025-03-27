@@ -18,6 +18,7 @@ task nameSort {
   }
 
   command <<<
+    set -euo pipefail
     /usr/bin/sambamba sort "~{bam}" -t ~{cores} -m "22GB" -n -o "~{outfile}"
   >>>
 

@@ -23,6 +23,7 @@ task optitypeDna {
   }
 
   command <<<
+    set -euo pipefail
     /bin/bash /usr/bin/optitype_script_wdl.sh /tmp . \
     ~{optitype_name} ~{cram} ~{reference} ~{threads} ~{mem}
   >>>

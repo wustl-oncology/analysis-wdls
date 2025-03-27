@@ -24,6 +24,7 @@ task smoove {
   }
 
   command <<<
+    set -euo pipefail
     /usr/bin/smoove call --processes ~{cores} -F \
     --genotype ~{sep=" " bams} \
     --name ~{cohort_name} --fasta ~{reference} \

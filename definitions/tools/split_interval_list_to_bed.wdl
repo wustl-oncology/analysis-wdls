@@ -16,6 +16,7 @@ task splitIntervalListToBed {
   }
 
   command <<<
+    set -euo pipefail
     /usr/bin/perl /usr/bin/split_interval_list_to_bed_helper.pl OUTPUT="$PWD" INPUT=~{interval_list} SCATTER_COUNT=~{scatter_count}
   >>>
 

@@ -27,6 +27,7 @@ task collectWgsMetrics {
 
   String outname = sample_name + ".WgsMetrics.txt"
   command <<<
+    set -euo pipefail
     /usr/bin/java -Xmx32g -jar /usr/picard/picard.jar CollectWgsMetrics \
     O=~{outname} \
     I=~{bam} R=~{reference} \

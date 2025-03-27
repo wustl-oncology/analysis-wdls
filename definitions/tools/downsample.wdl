@@ -27,6 +27,7 @@ task downsample {
 
   String outfile = basename(basename(sam, ".sam"), ".cram")
   command <<<
+    set -euo pipefail
     /gatk/gatk --java-options -Xmx16g DownsampleSam \
     --OUTPUT=~{outfile}.bam --CREATE_INDEX --CREATE_MD5_FILE \
     --INPUT="~{sam}" --PROBABILITY=~{probability} --REFERENCE_SEQUENCE="~{reference}" \

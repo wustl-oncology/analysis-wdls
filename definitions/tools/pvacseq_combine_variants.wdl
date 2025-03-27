@@ -25,6 +25,7 @@ task pvacseqCombineVariants {
 
   String outfile = "combined_somatic_plus_germline.vcf"
   command <<<
+    set -euo pipefail
     /usr/bin/java -Xmx8g -jar /opt/GenomeAnalysisTK.jar -T CombineVariants \
     --assumeIdenticalSamples -o ~{outfile} \
     -R ~{reference} \

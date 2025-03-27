@@ -15,6 +15,7 @@ task indexVcf {
   }
 
   command <<<
+    set -euo pipefail
     cp ~{vcf} ~{basename(vcf)}
     /usr/local/bin/tabix -p vcf ~{basename(vcf)}
   >>>

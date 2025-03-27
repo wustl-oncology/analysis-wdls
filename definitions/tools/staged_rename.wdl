@@ -17,6 +17,7 @@ task stagedRename {
   }
 
   command <<<
+    set -euo pipefail
     /bin/mv ~{original} ~{name}
   >>>
 

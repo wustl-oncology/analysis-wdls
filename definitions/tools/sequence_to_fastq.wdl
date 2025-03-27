@@ -23,9 +23,7 @@ task sequenceToFastq {
 
   String outdir = "outdir"
   command <<<
-    set -o pipefail
-    set -o errexit
-    set -o nounset
+    set -euo pipefail
 
     UNZIP=~{unzip_fastqs}
     OUTDIR=~{outdir}

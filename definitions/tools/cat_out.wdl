@@ -15,6 +15,7 @@ task catOut {
   }
 
   command <<<
+    set -euo pipefail
     /bin/cat ~{sep=" " pindel_outs} > "per_chromosome_pindel.out"
   >>>
 

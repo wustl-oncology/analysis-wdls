@@ -19,7 +19,7 @@ task intersectKnownVariants {
 
   String outfile = "pass_filtered_validated_variants.vcf.gz"
   command <<<
-    set -eou
+    set -euo pipefail
 
     if [ ~{defined(validated_variants)} = true ]; then
         #filter the validated vcf to ensure there are only passing variants, then re-index

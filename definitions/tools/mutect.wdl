@@ -36,7 +36,7 @@ task mutect {
 
   String output_vcf = "mutect.filtered.vcf.gz"
   command <<<
-    set -o pipefail
+    set -euo pipefail
 
     if [[ `curl metadata.google.internal -i 2> /dev/null | grep 'Metadata-Flavor:'` == "Metadata-Flavor: Google"* ]]; then
        # When the BAMs aren't localized in GCP, samtools needs this token to access them via gs:// URLs.

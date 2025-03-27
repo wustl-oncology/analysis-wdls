@@ -13,6 +13,7 @@ task intervalsToBed {
   }
 
   command <<<
+    set -euo pipefail
     /usr/bin/perl -e '
     use feature qw(say);
 

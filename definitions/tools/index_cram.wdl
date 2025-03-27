@@ -13,6 +13,7 @@ task indexCram {
   }
 
   command <<<
+    set -euo pipefail
     mv ~{cram} ~{basename(cram)}
     /usr/local/bin/samtools index ~{basename(cram)} ~{basename(cram)}.crai
   >>>

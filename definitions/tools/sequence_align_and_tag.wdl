@@ -39,9 +39,7 @@ task sequenceAlignAndTag {
 
   String outname = "refAligned.bam"
   command <<<
-    set -o pipefail
-    set -o errexit
-    set -o nounset
+    set -euo pipefail
 
     # destructure unaligned
     MODE=~{if defined(unaligned.sequence.bam) then "bam" else "fastq" }

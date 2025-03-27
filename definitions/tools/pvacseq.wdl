@@ -68,6 +68,7 @@ task pvacseq {
   Array[String] problematic_aa = select_first([problematic_amino_acids, []])
   Array[String] biotypes_list = select_first([biotypes, []])
   command <<<
+    set -euo pipefail
     # touch each tbi to ensure they have a timestamp after the vcf
     touch ~{phased_proximal_variants_vcf_tbi}
     touch ~{input_vcf_tbi}
