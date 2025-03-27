@@ -6,6 +6,7 @@ task addVepFieldsToTable {
     Array[String] vep_fields = ["Consequence", "SYMBOL", "Feature", "HGVSc", "HGVSp"]
     File? tsv
     String prefix = "variants"
+    File? preferred_transcripts_tsv
   }
 
   Int space_needed_gb = 10 + round(size([vcf, tsv], "GB")*2)
@@ -13,14 +14,15 @@ task addVepFieldsToTable {
     preemptible: 1
     maxRetries: 2
     memory: "4GB"
-    docker: "griffithlab/vatools:5.1.0"
+    docker: "griffithlab/vatools:5.2.0"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<
     vep-annotation-reporter -o ~{prefix}.annotated.tsv \
     ~{vcf} ~{sep=" " vep_fields} \
-    ~{if defined(tsv) then "-t ~{tsv}" else ""}
+    ~{if defined(tsv) then "-t ~{tsv}" else ""} \
+    ~{if defined(preferred_transcripts_tsv) then "-p ~{preferred_transcripts_tsv}" else ""}
   >>>
 
   output {
@@ -34,6 +36,7 @@ workflow wf {
     Array[String]? vep_fields
     File? tsv
     String? prefix
+    File? preferred_transcripts_tsv
   }
 
   call addVepFieldsToTable {
@@ -41,6 +44,7 @@ workflow wf {
     vcf=vcf,
     vep_fields=vep_fields,
     tsv=tsv,
-    prefix=prefix
+    prefix=prefix,
+    preferred_transcripts_tsv=preferred_transcripts_tsv
   }
 }
