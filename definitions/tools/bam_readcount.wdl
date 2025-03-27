@@ -18,7 +18,7 @@ task bamReadcount {
   runtime {
     preemptible: 1
     maxRetries: 2
-    docker: "mgibio/bam_readcount_helper-cwl:1.1.1"
+    docker: "mgibio/bam_readcount_helper-cwl:1.2.1"
     memory: "16GB"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
