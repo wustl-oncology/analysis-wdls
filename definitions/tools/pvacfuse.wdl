@@ -40,6 +40,7 @@ task pvacfuse {
     memory: "32GB"
     cpu: n_threads
     disks: "local-disk ~{space_needed_gb} HDD"
+    bootDiskSizeGb: 50
   }
 
   # explicit typing required, don't inline
@@ -47,6 +48,8 @@ task pvacfuse {
   Array[Int] epitope_ii = select_first([epitope_lengths_class_ii, []])
   Array[String] problematic_aa = select_first([problematic_amino_acids, []])
   command <<<
+    set -eou pipefail
+
     mkdir agfusion_dir && unzip -qq ~{input_fusions_zip} -d agfusion_dir
 
     ln -s "$TMPDIR" /tmp/pvacfuse && export TMPDIR=/tmp/pvacfuse && \
@@ -67,7 +70,6 @@ task pvacfuse {
     ~{if defined(net_chop_method) then "--net-chop-method ~{net_chop_method}" else ""} \
     ~{if netmhc_stab then "--netmhc-stab" else ""} \
     ~{if defined(top_score_metric) then "-m ~{top_score_metric}" else ""} \
-    ~{if defined(top_score_metric) then "-m ~{top_score_metric}" else ""} \
     ~{if defined(net_chop_threshold) then "--net-chop-threshold ~{net_chop_threshold}" else ""} \
     ~{if run_reference_proteome_similarity then "--run-reference-proteome-similarity" else ""} \
     ~{if defined(peptide_fasta) then "--peptide-fasta ~{peptide_fasta}" else ""} \
@@ -80,15 +82,38 @@ task pvacfuse {
     ~{if defined(read_support) then "--read-support ~{read_support}" else ""} \
     ~{if defined(expn_val) then "--expn-val ~{expn_val}" else ""} \
     --n-threads ~{n_threads}
+
+    #concatenate the pvacfuse log files produced for each length together to produce one class I and one class II log
+    shopt -s nullglob
+
+    class_I_ymls=(pvacfuse_predictions/MHC_Class_I/*/log/inputs.yml)
+    if [[ ${#class_I_ymls[@]} -gt 0 ]]; then
+      for file in pvacfuse_predictions/MHC_Class_I/*/log/inputs.yml; do
+        printf "==> %s <==\n" "$file" >> inputs_class_I.yml
+        cat "$file" >> inputs_class_I.yml
+        echo >> inputs_class_I.yml
+      done
+    fi
+
+    class_II_ymls=(pvacfuse_predictions/MHC_Class_II/*/log/inputs.yml)
+    if [[ ${#class_II_ymls[@]} -gt 0 ]]; then
+      for file in pvacfuse_predictions/MHC_Class_II/*/log/inputs.yml; do
+        printf "==> %s <==\n" "$file" >> inputs_class_II.yml
+        cat "$file" >> inputs_class_II.yml
+        echo >> inputs_class_II.yml
+      done
+    fi
   >>>
 
   output {
     File? mhc_i_all_epitopes = "pvacfuse_predictions/MHC_Class_I/~{sample_name}.all_epitopes.tsv"
     File? mhc_i_aggregated_report = "pvacfuse_predictions/MHC_Class_I/~{sample_name}.all_epitopes.aggregated.tsv"
     File? mhc_i_filtered_epitopes = "pvacfuse_predictions/MHC_Class_I/~{sample_name}.filtered.tsv"
+    File? mhc_i_log = "inputs_class_I.yml"
     File? mhc_ii_all_epitopes = "pvacfuse_predictions/MHC_Class_II/~{sample_name}.all_epitopes.tsv"
     File? mhc_ii_aggregated_report = "pvacfuse_predictions/MHC_Class_II/~{sample_name}.all_epitopes.aggregated.tsv"
     File? mhc_ii_filtered_epitopes = "pvacfuse_predictions/MHC_Class_II/~{sample_name}.filtered.tsv"
+    File? mhc_ii_log = "inputs_class_II.yml"
     File? combined_all_epitopes = "pvacfuse_predictions/combined/~{sample_name}.all_epitopes.tsv"
     File? combined_aggregated_report = "pvacfuse_predictions/combined/~{sample_name}.all_epitopes.aggregated.tsv"
     File? combined_filtered_epitopes = "pvacfuse_predictions/combined/~{sample_name}.filtered.tsv"
