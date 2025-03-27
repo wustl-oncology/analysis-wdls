@@ -33,6 +33,7 @@ task gatkHaplotypeCaller {
 
   Array[String] pref_bands = prefix("-GQB ", gvcf_gq_bands)
   command <<<
+    set -euo pipefail
     # requires .bai not .bam.bai
     mv ~{bam} ~{basename(bam)}
     mv ~{bai} ~{basename(basename(bai, ".bai"), ".bam") + ".bai"}

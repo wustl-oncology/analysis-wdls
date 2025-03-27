@@ -28,6 +28,7 @@ task concordance {
   }
 
   command <<<
+    set -euo pipefail
     /usr/bin/somalier -o concordance -s ~{vcf} -f ~{reference} ~{bam_1} ~{bam_2} ~{bam_3}
   >>>
 

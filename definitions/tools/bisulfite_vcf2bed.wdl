@@ -20,7 +20,7 @@ task bisulfiteVcf2bed {
   }
 
   command <<<
-    set -eou pipefail
+    set -euo pipefail
     if [[ "~{assay_non_cpg_sites}" == "false" ]]
     then
         #Creates a gzipped bed and a bedgraph that leaves out MT, random, GL contigs, etc

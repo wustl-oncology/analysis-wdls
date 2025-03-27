@@ -20,6 +20,7 @@ task vcfExpressionAnnotator {
 
   String outfile = "annotated.expression.vcf.gz"
   command <<<
+    set -euo pipefail
     vcf-expression-annotator -o ~{outfile} \
     ~{vcf} \
     ~{expression_file} \

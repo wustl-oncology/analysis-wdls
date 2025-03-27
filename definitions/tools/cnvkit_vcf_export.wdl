@@ -19,6 +19,7 @@ task cnvkitVcfExport {
   }
 
   command <<<
+    set -euo pipefail
     /usr/bin/python /usr/local/bin/cnvkit.py call \
     ~{if(defined(segment_filter)) then "--filter " + segment_filter else ""} \
     ~{cns_file} \

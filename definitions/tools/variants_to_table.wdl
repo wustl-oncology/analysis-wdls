@@ -30,6 +30,7 @@ task variantsToTable {
 
   String outfile = "variants.tsv"
   command <<<
+    set -euo pipefail
     /gatk/gatk --java-options -Xmx4g VariantsToTable -O ~{outfile} \
     -R ~{reference} --variant ~{vcf} \
     ~{sep=" " prefix("-F ", fields)} ~{sep=" " prefix("-GF ", genotype_fields)}

@@ -17,6 +17,7 @@ task agfusion {
   }
 
   command <<<
+    set -euo pipefail
     /usr/local/bin/agfusion batch -a starfusion --middlestar \
     -f ~{fusion_predictions} -db ~{agfusion_database} \
     ~{true="--noncanonical" false="" annotate_noncanonical} \

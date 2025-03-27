@@ -16,6 +16,7 @@ task bgzip {
 
   String outfile = basename(file) + ".gz"
   command <<<
+    set -euo pipefail
     /usr/local/bin/bgzip -c ~{file} > ~{outfile}
   >>>
 

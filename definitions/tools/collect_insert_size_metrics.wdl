@@ -23,6 +23,7 @@ task collectInsertSizeMetrics {
   String size_metrics = "~{bamroot}.InsertSizeMetrics.txt"
   String size_histogram = "~{bamroot}.InsertSizeHistogram.pdf"
   command <<<
+    set -euo pipefail
     /usr/bin/java -Xmx32g -jar /usr/picard/picard.jar CollectInsertSizeMetrics O=~{size_metrics} H=~{size_histogram} I=~{bam} REFERENCE_SEQUENCE=~{reference} METRIC_ACCUMULATION_LEVEL=~{metric_accumulation_level}
   >>>
 

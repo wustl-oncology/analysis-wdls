@@ -32,6 +32,7 @@ task docmGatkHaplotypeCaller {
   }
 
   command <<<
+    set -euo pipefail
     # Extracting the header from the interval_list
     grep '^@' ~{interval_list} > docm.interval_list
     # Extracting the docm regions with a 100bp flanking region on both directions

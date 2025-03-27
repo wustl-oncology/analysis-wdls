@@ -33,6 +33,7 @@ task collectHsMetrics {
   String per_target_txt = "~{bamroot}.~{output_prefix}-PerTargetCoverage.txt"
   String per_base_txt = "~{bamroot}.~{output_prefix}-PerBaseCoverage.txt"
   command <<<
+    set -euo pipefail
     /usr/bin/java -Xmx48g -jar /usr/picard/picard.jar CollectHsMetrics \
     O=~{hs_txt} \
     I=~{bam} \

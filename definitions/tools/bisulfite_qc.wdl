@@ -21,6 +21,7 @@ task bisulfiteQc {
   }
 
   command <<<
+    set -euo pipefail
     /bin/bash /opt/biscuit/scripts/Bisulfite_QC_bisulfiteconversion.sh ~{vcf} ~{bam} ~{reference} ~{QCannotation}
     /bin/bash /opt/biscuit/scripts/Bisulfite_QC_mappingsummary.sh ~{vcf} ~{bam} ~{reference} ~{QCannotation}
     /bin/bash /opt/biscuit/scripts/Bisulfite_QC_CpGretentiondistribution.sh ~{vcf} ~{bam} ~{reference} ~{QCannotation}

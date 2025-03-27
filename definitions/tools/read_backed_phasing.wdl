@@ -23,6 +23,7 @@ task readBackedPhasing {
 
   String outfile = "phased.vcf"
   command <<<
+    set -euo pipefail
     echo "~{bam_index}"
     head -n 1 ~{bam_index}
     /usr/bin/java -Xmx8g -jar /opt/GenomeAnalysisTK.jar -T ReadBackedPhasing \

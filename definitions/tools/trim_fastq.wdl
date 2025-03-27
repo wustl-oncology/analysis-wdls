@@ -24,6 +24,7 @@ task trimFastq {
   }
 
   command <<<
+    set -euo pipefail
     /opt/flexbar/flexbar --target trimmed_read --threads ~{cores} \
         --adapters ~{adapters} \
         --adapter-trim-end ~{adapter_trim_end} \

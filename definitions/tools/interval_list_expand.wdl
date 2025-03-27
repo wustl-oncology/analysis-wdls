@@ -17,6 +17,7 @@ task intervalListExpand {
 
   String output_file = basename(interval_list, ".interval_list") + ".expanded.interval_list"
   command <<<
+    set -euo pipefail
     /usr/bin/java -Xmx3g -jar /usr/picard/picard.jar IntervalListTools OUTPUT=~{output_file} UNIQUE=TRUE INPUT=~{interval_list} PADDING=~{roi_padding}
   >>>
 

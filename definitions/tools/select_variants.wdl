@@ -36,6 +36,7 @@ task selectVariants {
   String outfile = "~{output_vcf_basename}.vcf.gz"
   Array[String] samples = if defined(samples_to_include) then prefix("--sample-name ", select_first([samples_to_include])) else []
   command <<<
+    set -euo pipefail
     /gatk/gatk --java-options -Xmx4g SelectVariants -O ~{outfile} \
     -R ~{reference} \
     --variant ~{vcf} \

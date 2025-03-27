@@ -16,6 +16,7 @@ task bamToFastq {
   }
 
   command <<<
+    set -euo pipefail
     /usr/bin/java -Xmx4g -jar /opt/picard/picard.jar SamToFastq VALIDATION_STRINGENCY=SILENT \
         F=read1.fastq F2=read2.fastq I=~{bam}
   >>>

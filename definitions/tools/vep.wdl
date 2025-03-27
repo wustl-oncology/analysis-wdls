@@ -44,6 +44,7 @@ task vepTask {
   String cache_dir = basename(cache_dir_zip, ".zip")
 
   command <<<
+    set -euo pipefail
     mkdir ~{cache_dir} && unzip -qq ~{cache_dir_zip} -d ~{cache_dir}
     #custom vep inputs (required files) get localized and we have to define this variable
     #pointing to their current path so that the custom string works as expected
@@ -91,6 +92,7 @@ task parseVepCustomAnnotationIntoArg {
     docker: "python:3.10" 
   }
   command <<<
+    set -euo pipefail
     python <<CODE
     check_existing = "~{true="--check_existing" false="" obj.annotation.check_existing}"
     custom = ",".join([

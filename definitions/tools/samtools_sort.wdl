@@ -18,6 +18,7 @@ task samtoolsSort {
   }
 
   command <<<
+    set -euo pipefail
     /usr/local/bin/samtools sort -o ~{output_filename} -@ ~{cores} ~{input_bam}
   >>>
 

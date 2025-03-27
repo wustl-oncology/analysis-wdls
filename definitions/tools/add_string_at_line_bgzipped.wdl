@@ -19,6 +19,7 @@ task addStringAtLineBgzipped {
   }
 
   command <<<
+    set -euo pipefail
     zcat ~{input_file} | awk -v n=~{line_number} -v s="~{some_text}" 'NR == n {print s} {print}' | /opt/htslib/bin/bgzip
   >>>
 

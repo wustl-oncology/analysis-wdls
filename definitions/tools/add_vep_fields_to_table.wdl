@@ -18,6 +18,7 @@ task addVepFieldsToTable {
   }
 
   command <<<
+    set -euo pipefail
     vep-annotation-reporter -o ~{prefix}.annotated.tsv \
     ~{vcf} ~{sep=" " vep_fields} \
     ~{if defined(tsv) then "-t ~{tsv}" else ""}

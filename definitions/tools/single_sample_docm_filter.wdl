@@ -15,6 +15,7 @@ task singleSampleDocmFilter {
   }
 
   command <<<
+    set -euo pipefail
     /usr/bin/perl /usr/bin/single_sample_docm_filter.pl ~{docm_out} "$PWD"
   >>>
 

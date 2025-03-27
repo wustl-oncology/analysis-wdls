@@ -17,6 +17,7 @@ task removeEndTags {
 
   String outfile = "pindel.noend.vcf.gz"
   command <<<
+    set -euo pipefail
     /opt/bcftools/bin/bcftools annotate -x INFO/END -Oz -o ~{outfile} ~{vcf}
   >>>
 

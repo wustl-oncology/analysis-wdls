@@ -25,6 +25,7 @@ task germlineCombineVariants {
 
   String outfile = "combined.vcf.gz"
   command <<<
+    set -euo pipefail
     /usr/bin/java -Xmx8g -jar /opt/GenomeAnalysisTK.jar -T CombineVariants \
     -genotypeMergeOptions PRIORITIZE \
     --rod_priority_list varscan,docm \

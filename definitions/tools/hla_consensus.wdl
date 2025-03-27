@@ -17,6 +17,7 @@ task hlaConsensus {
 
   String clinical_exists = if defined(clinical_mhc_classI_alleles) || defined(clinical_mhc_classII_alleles) then "True" else "False"
   command <<<
+    set -euo pipefail
     python -c '
     #This script produces 2-4 files depending on inputs and their contents
     #All are packaged together into a folder called hla_calls for convenience

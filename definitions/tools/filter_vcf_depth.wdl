@@ -18,6 +18,7 @@ task filterVcfDepth {
 
   String outfile = "depth_filtered.vcf"
   command <<<
+    set -euo pipefail
     /opt/conda/bin/python3 /usr/bin/depth_filter.py \
     --minimum_depth ~{minimum_depth} \
     ~{vcf} ~{sep="," sample_names} \

@@ -17,6 +17,7 @@ task filterVcfCle {
 
   String do_filtering = if filter then "filter" else "0"
   command <<<
+    set -euo pipefail
     /usr/bin/perl - "~{vcf}" "$PWD" "~{do_filtering}" <<'EOF'
 #! /usr/bin/perl
 

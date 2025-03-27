@@ -25,6 +25,7 @@ task stringtie {
     "first": "--rf", "second": "--fr", "unstranded": ""
   }
   command <<<
+    set -euo pipefail
     /usr/local/bin/stringtie -o ~{transcripts} -A ~{expression} \
     -p ~{cores} -e ~{strandness[strand]} -G ~{reference_annotation} \
     -l ~{sample_name} ~{bam}

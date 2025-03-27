@@ -21,6 +21,7 @@ task filterVcfSomaticLlr {
 
   String outfile = "somatic_llr_filtered.vcf"
   command <<<
+    set -euo pipefail
     /opt/conda/bin/python3 /usr/bin/somatic_llr_filter.py \
     --normal-contamination-rate ~{normal_contamination_rate} \
     --tumor-purity ~{tumor_purity} \

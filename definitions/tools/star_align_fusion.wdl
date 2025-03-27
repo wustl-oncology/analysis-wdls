@@ -47,6 +47,7 @@ task starAlignFusion {
 
   String genome_dir = basename(star_genome_dir_zip, ".zip")
   command <<<
+    set -euo pipefail
     mkdir ~{genome_dir} && unzip -qq ~{star_genome_dir_zip} -d ~{genome_dir}
     /usr/local/bin/STAR --runThreadN ~{cores} \
     --runMode ~{run_mode} \

@@ -12,6 +12,7 @@ task indexBam {
     disks: "local-disk ~{space_needed_gb} HDD"
   }
   command <<<
+    set -euo pipefail
     mv ~{bam} ~{basename(bam)}
     /usr/local/bin/samtools index ~{basename(bam)} ~{basename(bam)}.bai
     cp ~{basename(bam)}.bai ~{basename(bam, ".bam")}.bai

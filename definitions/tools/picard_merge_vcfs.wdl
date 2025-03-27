@@ -17,6 +17,7 @@ task picardMergeVcfs {
   }
 
   command <<<
+    set -euo pipefail
     /usr/bin/java -Xmx38g -jar /gatk/gatk.jar MergeVcfs -O ~{merged_vcf_basename}.vcf.gz \
     ~{if defined(sequence_dictionary) then "-D ~{sequence_dictionary}" else ""} \
     ~{sep=" " prefix("-I ", vcfs)}

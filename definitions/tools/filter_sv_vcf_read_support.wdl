@@ -20,7 +20,7 @@ task filterSvVcfReadSupport {
   }
 
   command <<<
-    set -eou pipefail
+    set -euo pipefail
 
     abundance=~{abundance_percentage}
     paired_count=~{paired_count}

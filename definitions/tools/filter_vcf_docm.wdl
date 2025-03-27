@@ -20,6 +20,7 @@ task filterVcfDocm {
   String output_vcf_file = "docm_filtered_variants.vcf"
   String set_filter_flag = if filter_docm_variants then "1" else "0"
   command <<<
+    set -euo pipefail
     /usr/bin/perl -e '
     use strict;
     use warnings;

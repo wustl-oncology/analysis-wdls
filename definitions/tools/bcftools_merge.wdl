@@ -20,6 +20,7 @@ task bcftoolsMerge {
   }
 
   command <<<
+    set -euo pipefail
     /opt/bcftools/bin/bcftools merge \
     --force-samples ~{force_merge} \
     --merge ~{merge_method} \

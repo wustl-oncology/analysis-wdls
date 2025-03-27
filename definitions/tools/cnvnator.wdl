@@ -19,6 +19,7 @@ task cnvnator {
   }
 
   command <<<
+    set -euo pipefail
     #set up the environment
     source /opt/root/bin/thisroot.sh
     set -eou pipefail

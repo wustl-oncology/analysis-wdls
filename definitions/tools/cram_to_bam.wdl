@@ -19,6 +19,7 @@ task cramToBam {
   String outfile = basename(cram, ".cram") + ".bam"
 
   command <<<
+    set -euo pipefail
     /usr/local/bin/samtools view -b -o "~{outfile}" -T "~{reference}" "~{cram}"
   >>>
 

@@ -23,8 +23,7 @@ task markDuplicatesAndSort {
   }
 
   command <<<
-    set -o pipefail
-    set -o errexit
+    set -euo pipefail
     sambamba markdup -t 8 ~{bam} /dev/stdout 2>~{metrics_file_name} \
         | sambamba sort -t 8 -m 16G -o ~{output_name} /dev/stdin
   >>>

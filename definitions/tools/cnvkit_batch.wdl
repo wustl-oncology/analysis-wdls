@@ -32,6 +32,7 @@ task cnvkitBatch {
   }
 
   command <<<
+    set -euo pipefail
     # touch each bai to ensure they have a timestamp after the bam
     # Avoids a reindex which has thrown exceptions
     # this is why we need root privileges

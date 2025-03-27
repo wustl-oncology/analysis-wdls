@@ -15,7 +15,7 @@ task vcfSanitize {
 
   String outbase = basename(basename(vcf, ".gz"), ".vcf")
   command <<<
-    set -eou pipefail
+    set -euo pipefail
 
     # 1) removes lines containing non ACTGN bases, as they conflict with the VCF spec
     # and cause GATK to choke

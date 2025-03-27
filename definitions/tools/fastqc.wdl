@@ -14,6 +14,7 @@ task fastqc {
   }
 
   command <<<
+    set -euo pipefail
     mkdir outputs
     /usr/bin/perl /usr/local/bin/FastQC/fastqc -q -o outputs ~{sep=" " files}
   >>>

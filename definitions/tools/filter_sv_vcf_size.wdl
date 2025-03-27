@@ -18,7 +18,7 @@ task filterSvVcfSize {
   }
 
   command <<<
-    set -eou pipefail
+    set -euo pipefail
 
     SV_SIZE=~{sv_size}
     FILTER_METHOD="~{size_method}"

@@ -15,8 +15,7 @@ task xenosplit {
   }
 
   command <<<
-    set -o pipefail
-    set -o errexit
+    set -euo pipefail
 
     # Filtering the bam files and preparing them for xenosplit
     /opt/samtools/bin/samtools view -h -F 256 -F 2048 ~{graftbam} | /opt/samtools/bin/samtools sort -n -o graftbam_accepted.bam

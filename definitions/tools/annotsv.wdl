@@ -18,6 +18,7 @@ task annotsv {
   }
 
   command <<<
+    set -euo pipefail
     /opt/AnnotSV_2.1/bin/AnnotSV -bedtools /usr/bin/bedtools -outputDir "$PWD" \
     -genomeBuild ~{genome_build} \
     -SVinputFile ~{input_vcf} \

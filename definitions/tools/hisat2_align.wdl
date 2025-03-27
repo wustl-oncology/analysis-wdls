@@ -49,6 +49,7 @@ task hisat2Align {
   }
 
   command <<<
+    set -euo pipefail
     /usr/local/bin/hisat2 \
             ~{strandness[strand]} \
             --rg-id ~{read_group_id} \

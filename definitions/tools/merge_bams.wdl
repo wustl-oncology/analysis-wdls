@@ -20,6 +20,7 @@ task mergeBams {
 
   String outname = name + ".bam"
   command <<<
+    set -euo pipefail
     perl <<'CODE'
     #!/usr/bin/perl
     use strict;

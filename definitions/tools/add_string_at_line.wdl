@@ -18,6 +18,7 @@ task addStringAtLine {
   }
 
   command <<<
+    set -euo pipefail
     awk -v n=~{line_number} -v s="~{some_text}" 'NR == n {print s} {print}' > ~{output_name}
   >>>
 

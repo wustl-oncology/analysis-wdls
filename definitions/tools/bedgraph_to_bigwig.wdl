@@ -17,7 +17,7 @@ task bedgraphToBigwig {
   }
 
   command <<<
-    set -eou pipefail
+    set -euo pipefail
     BEDGRAPHS=(~{sep=" " methylation_bedgraph})
     for FILE in "${BEDGRAPHS[@]}"
     do
