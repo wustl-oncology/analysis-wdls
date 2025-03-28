@@ -32,6 +32,7 @@ workflow pvacseq {
     Array[Int]? epitope_lengths_class_ii
     Int? binding_threshold
     Int? percentile_threshold
+    String? percentile_threshold_strategy
     Float? minimum_fold_change
     String? top_score_metric  # enum [lowest, median]
     String? additional_report_columns  # enum [sample_name]
@@ -124,6 +125,7 @@ workflow pvacseq {
     epitope_lengths_class_ii=epitope_lengths_class_ii,
     binding_threshold=binding_threshold,
     percentile_threshold=percentile_threshold,
+    percentile_threshold_strategy=percentile_threshold_strategy,
     normal_sample_name=normal_sample_name,
     minimum_fold_change=minimum_fold_change,
     top_score_metric=top_score_metric,

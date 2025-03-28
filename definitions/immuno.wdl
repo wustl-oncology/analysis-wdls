@@ -230,6 +230,7 @@ workflow immuno {
     Array[Int]? epitope_lengths_class_ii
     Int? binding_threshold
     Int? percentile_threshold
+    String? percentile_threshold_strategy
     Float? minimum_fold_change
     String? top_score_metric  # enum [lowest, median]
     String? additional_report_columns  # enum [sample_name]
@@ -488,6 +489,7 @@ workflow immuno {
     epitope_lengths_class_ii=epitope_lengths_class_ii,
     binding_threshold=binding_threshold,
     percentile_threshold=percentile_threshold,
+    percentile_threshold_strategy=percentile_threshold_strategy,
     minimum_fold_change=minimum_fold_change,
     top_score_metric=top_score_metric,
     additional_report_columns=additional_report_columns,
@@ -536,6 +538,7 @@ workflow immuno {
     epitope_lengths_class_ii=epitope_lengths_class_ii,
     binding_threshold=binding_threshold,
     percentile_threshold=percentile_threshold,
+    percentile_threshold_strategy=percentile_threshold_strategy,
     keep_tmp_files=pvacfuse_keep_tmp_files,
     net_chop_method=net_chop_method,
     netmhc_stab=netmhc_stab,
