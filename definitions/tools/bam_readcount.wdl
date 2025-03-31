@@ -12,9 +12,11 @@ task bamReadcount {
     Int min_mapping_quality = 0
     Int min_base_quality = 20
     String prefix = "NOPREFIX"
+    File? bam_for_indel_counting
+    File? bam_for_indel_counting_bai
   }
 
-  Int space_needed_gb = 10 + round(size([bam, bam_bai, reference, reference_fai, reference_dict, vcf], "GB"))
+  Int space_needed_gb = 15 + round(size([bam, bam_bai, reference, reference_fai, reference_dict, vcf], "GB"))
   runtime {
     preemptible: 1
     maxRetries: 2
@@ -27,6 +29,8 @@ task bamReadcount {
   String prefixed_sample = (if prefix == "NOPREFIX" then "" else (prefix + "_")) + sample
   command <<<
     mv ~{bam} ~{basename(bam)}; mv ~{bam_bai} ~{basename(bam_bai)}
+    if defined(~{bam_for_indel_counting}) then mv ~{bam_for_indel_counting} ~{basename(bam_for_indel_counting)} else ''
+    if defined(~{bam_for_indel_counting_bai}) then mv ~{bam_for_indel_counting_bai} ~{basename(bam_for_indel_counting_bai)} else ''
 
     /usr/bin/python -c '
     import sys
