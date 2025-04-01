@@ -28,7 +28,10 @@ task bamReadcount {
   String stdout_file = sample + "_bam_readcount.tsv"
   String prefixed_sample = (if prefix == "NOPREFIX" then "" else (prefix + "_")) + sample
   command <<<
-    #mv ~{bam} ~{basename(bam)}; mv ~{bam_bai} ~{basename(bam_bai)}
+    #move bam and bai files to ensure they are beside each other
+    mv ~{bam} ~{basename(bam)}; mv ~{bam_bai} ~{basename(bam_bai)}
+    ~{if defined(indel_counting_bam) then 'mv ' + select_first([indel_counting_bam]) + ' ' + basename(select_first([indel_counting_bam])) else ''}
+    ~{if defined(indel_counting_bai) then 'mv ' + select_first([indel_counting_bai]) + ' ' + basename(select_first([indel_counting_bai])) else ''}
 
     /usr/bin/python -c '
     import sys
@@ -69,12 +72,12 @@ task bamReadcount {
     output_dir = os.environ["PWD"]
     sample = "~{sample}"
     ref_fasta = "~{reference}"
-    #bam_file = "~{basename(bam)}"
-    bam_file = "~{bam}"
+    bam_file = "~{basename(bam)}"
     prefixed_sample = "~{prefixed_sample}"
     vcf_filename = "~{vcf}"
-    indel_counting_bam_file = "~{indel_counting_bam}"
-    indel_counting_bai_file = "~{indel_counting_bai}"
+
+    indel_counting_bam_file = "~{basename(select_first([indel_counting_bam]))}"
+    indel_counting_bai_file = "~{basename(select_first([indel_counting_bai]))}"
 
     vcf_file = VCF(vcf_filename)
     sample_index = vcf_file.samples.index(sample)
