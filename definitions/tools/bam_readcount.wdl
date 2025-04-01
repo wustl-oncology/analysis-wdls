@@ -12,8 +12,8 @@ task bamReadcount {
     Int min_mapping_quality = 0
     Int min_base_quality = 20
     String prefix = "NOPREFIX"
-    File? bam_for_indel_counting
-    File? bam_for_indel_counting_bai
+    File? indel_counting_bam
+    File? indel_counting_bai
   }
 
   Int space_needed_gb = 15 + round(size([bam, bam_bai, reference, reference_fai, reference_dict, vcf], "GB"))
@@ -28,14 +28,12 @@ task bamReadcount {
   String stdout_file = sample + "_bam_readcount.tsv"
   String prefixed_sample = (if prefix == "NOPREFIX" then "" else (prefix + "_")) + sample
   command <<<
-    #move input files from long paths to current working directory
-    mv ~{bam} ~{basename(bam)}; mv ~{bam_bai} ~{basename(bam_bai)}
-    ~{if defined(bam_for_indel_counting) then 'mv ' + bam_for_indel_counting + ' ' + basename(bam_for_indel_counting) else ''}
-    ~{if defined(bam_for_indel_counting_bai) then 'mv ' + bam_for_indel_counting_bai + ' ' + basename(bam_for_indel_counting_bai) else ''}
+    #mv ~{bam} ~{basename(bam)}; mv ~{bam_bai} ~{basename(bam_bai)}
 
     /usr/bin/python -c '
     import sys
     import os
+    import shutil
     from cyvcf2 import VCF
     import tempfile
     import csv
@@ -71,10 +69,12 @@ task bamReadcount {
     output_dir = os.environ["PWD"]
     sample = "~{sample}"
     ref_fasta = "~{reference}"
-    bam_file = "~{basename(bam)}"
+    #bam_file = "~{basename(bam)}"
+    bam_file = "~{bam}"
     prefixed_sample = "~{prefixed_sample}"
     vcf_filename = "~{vcf}"
-    bam_for_indel_counting_file = "~{basename(bam_for_indel_counting)}"
+    indel_counting_bam_file = "~{indel_counting_bam}"
+    indel_counting_bai_file = "~{indel_counting_bai}"
 
     vcf_file = VCF(vcf_filename)
     sample_index = vcf_file.samples.index(sample)
@@ -128,8 +128,10 @@ task bamReadcount {
 
     if len(rc_for_indel.keys()) > 0:
         region_file = generate_region_list(rc_for_indel)
-        if os.path.isfile(bam_for_indel_counting_file):
-            filter_sites_in_hash(region_file, bam_for_indel_counting_file, ref_fasta, prefixed_sample, output_dir, True, min_mapping_qual, min_base_qual)
+        if os.path.isfile(indel_counting_bam_file):
+            new_bai_file_name = indel_counting_bai_file.replace(".bai", ".bam.bai")
+            shutil.copy(indel_counting_bai_file, new_bai_file_name)
+            filter_sites_in_hash(region_file, indel_counting_bam_file, ref_fasta, prefixed_sample, output_dir, True, min_mapping_qual, min_base_qual)
         else:
             filter_sites_in_hash(region_file, bam_file, ref_fasta, prefixed_sample, output_dir, True, min_mapping_qual, min_base_qual)
     else:
@@ -156,8 +158,8 @@ workflow wf {
     Int? min_mapping_quality
     Int? min_base_quality
     String? prefix
-    File? bam_for_indel_counting
-    File? bam_for_indel_counting_bai
+    File? indel_counting_bam
+    File? indel_counting_bai
   }
 
   call bamReadcount {
@@ -172,7 +174,7 @@ workflow wf {
     min_mapping_quality=min_mapping_quality,
     min_base_quality=min_base_quality,
     prefix=prefix,
-    bam_for_indel_counting=bam_for_indel_counting,
-    bam_for_indel_counting_bai=bam_for_indel_counting_bai
+    indel_counting_bam=indel_counting_bam,
+    indel_counting_bai=indel_counting_bai
   }
 }

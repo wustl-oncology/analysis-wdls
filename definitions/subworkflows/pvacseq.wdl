@@ -99,10 +99,12 @@ workflow pvacseq {
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
-    bam=tumorRnaLeftAlignIndels.left_align_indels_bam,
-    bam_bai=tumorRnaLeftAlignIndels.left_align_indels_bam_bai,
+    bam=rnaseq_bam,
+    bam_bai=rnaseq_bam_bai,
     min_base_quality=readcount_minimum_base_quality,
-    min_mapping_quality=readcount_minimum_mapping_quality
+    min_mapping_quality=readcount_minimum_mapping_quality,
+    indel_counting_bam=tumorRnaLeftAlignIndels.left_align_indels_bam,
+    indel_counting_bai=tumorRnaLeftAlignIndels.left_align_indels_bam_bai
   }
 
   call vra.vcfReadcountAnnotator as addTumorRnaBamReadcountToVcf {
