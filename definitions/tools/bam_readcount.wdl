@@ -25,7 +25,7 @@ task bamReadcount {
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
-  String stdout_file = sample + "_bam_readcount.tsv"
+  String stdout_file = sample + "_bam_readcount.stdout"
   String prefixed_sample = (if prefix == "NOPREFIX" then "" else (prefix + "_")) + sample
   command <<<
     #move bam and bai files to ensure they are beside each other
@@ -59,6 +59,10 @@ task bamReadcount {
         else:
             output_file = os.path.join(output_dir, prefixed_sample + "_bam_readcount_snv.tsv")
         bam_readcount_cmd.append(bam_file)
+        
+        # Print the final command before execution
+        print("Final bam_readcount_cmd:", bam_readcount_cmd)
+
         execution = Popen(bam_readcount_cmd, stdout=PIPE, stderr=PIPE)
         stdout, stderr = execution.communicate()
         if execution.returncode == 0:
@@ -76,8 +80,8 @@ task bamReadcount {
     prefixed_sample = "~{prefixed_sample}"
     vcf_filename = "~{vcf}"
 
-    indel_counting_bam_file = "~{basename(select_first([indel_counting_bam]))}"
-    indel_counting_bai_file = "~{basename(select_first([indel_counting_bai]))}"
+    indel_counting_bam_file = ~{if defined(indel_counting_bam) then "\"basename(select_first([indel_counting_bam]))\"" else "None"}
+    indel_counting_bai_file = ~{if defined(indel_counting_bai) then "\"basename(select_first([indel_counting_bai]))\"" else "None"}
 
     vcf_file = VCF(vcf_filename)
     sample_index = vcf_file.samples.index(sample)
@@ -131,7 +135,7 @@ task bamReadcount {
 
     if len(rc_for_indel.keys()) > 0:
         region_file = generate_region_list(rc_for_indel)
-        if os.path.isfile(indel_counting_bam_file):
+        if indel_counting_bam_file and os.path.isfile(indel_counting_bam_file):
             new_bai_file_name = indel_counting_bai_file.replace(".bai", ".bam.bai")
             shutil.copy(indel_counting_bai_file, new_bai_file_name)
             filter_sites_in_hash(region_file, indel_counting_bam_file, ref_fasta, prefixed_sample, output_dir, True, min_mapping_qual, min_base_qual)
