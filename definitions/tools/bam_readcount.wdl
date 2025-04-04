@@ -27,11 +27,14 @@ task bamReadcount {
 
   String stdout_file = sample + "_bam_readcount.stdout"
   String prefixed_sample = (if prefix == "NOPREFIX" then "" else (prefix + "_")) + sample
+  File indel_bam_to_use = select_first([indel_counting_bam, bam])
+  File indel_bai_to_use = select_first([indel_counting_bai, bam_bai])
+
   command <<<
     #move bam and bai files to ensure they are beside each other
     mv ~{bam} ~{basename(bam)}; mv ~{bam_bai} ~{basename(bam_bai)}
-    ~{if defined(indel_counting_bam) then 'mv ' + select_first([indel_counting_bam]) + ' ' + basename(select_first([indel_counting_bam])) else ''}
-    ~{if defined(indel_counting_bai) then 'mv ' + select_first([indel_counting_bai]) + ' ' + basename(select_first([indel_counting_bai])) else ''}
+    mv ~{indel_bam_to_use} ~{basename(indel_bam_to_use)} || true
+    mv ~{indel_bai_to_use} ~{basename(indel_bai_to_use)} || true
 
     /usr/bin/python -c '
     import sys
@@ -80,8 +83,11 @@ task bamReadcount {
     prefixed_sample = "~{prefixed_sample}"
     vcf_filename = "~{vcf}"
 
-    indel_counting_bam_file = ~{if defined(indel_counting_bam) then "\"basename(select_first([indel_counting_bam]))\"" else "None"}
-    indel_counting_bai_file = ~{if defined(indel_counting_bai) then "\"basename(select_first([indel_counting_bai]))\"" else "None"}
+    indel_counting_bam_file = "~{basename(indel_bam_to_use)}"
+    indel_counting_bai_file = "~{basename(indel_bai_to_use)}"
+
+    print("indel_counting_bam_file:", indel_counting_bam_file)
+    print("indel_counting_bai_file:", indel_counting_bai_file)
 
     vcf_file = VCF(vcf_filename)
     sample_index = vcf_file.samples.index(sample)
@@ -135,12 +141,9 @@ task bamReadcount {
 
     if len(rc_for_indel.keys()) > 0:
         region_file = generate_region_list(rc_for_indel)
-        if indel_counting_bam_file and os.path.isfile(indel_counting_bam_file):
-            new_bai_file_name = indel_counting_bai_file.replace(".bai", ".bam.bai")
-            shutil.copy(indel_counting_bai_file, new_bai_file_name)
-            filter_sites_in_hash(region_file, indel_counting_bam_file, ref_fasta, prefixed_sample, output_dir, True, min_mapping_qual, min_base_qual)
-        else:
-            filter_sites_in_hash(region_file, bam_file, ref_fasta, prefixed_sample, output_dir, True, min_mapping_qual, min_base_qual)
+        new_bai_file_name = indel_counting_bai_file.replace(".bai", ".bam.bai")
+        shutil.copy(indel_counting_bai_file, new_bai_file_name)
+        filter_sites_in_hash(region_file, indel_counting_bam_file, ref_fasta, prefixed_sample, output_dir, True, min_mapping_qual, min_base_qual)
     else:
         output_file = os.path.join(output_dir, prefixed_sample + "_bam_readcount_indel.tsv")
         open(output_file, "w").close()
