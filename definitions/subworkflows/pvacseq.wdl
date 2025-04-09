@@ -1,5 +1,7 @@
 version 1.0
 
+import "../tools/split_n_cigar_reads.wdl" as sncr
+import "../tools/left_align_indels.wdl" as lai
 import "../subworkflows/bam_readcount.wdl" as br
 import "../subworkflows/vcf_readcount_annotator.wdl" as vra
 import "../tools/vcf_expression_annotator.wdl" as vea
@@ -69,6 +71,28 @@ workflow pvacseq {
     Array[String]? biotypes
   }
 
+  call sncr.splitNCigarReads as tumorRnaSplitNCigarReads{
+    input:
+    reference=reference,
+    reference_fai=reference_fai,
+    reference_dict=reference_dict,
+    bam=rnaseq_bam,
+    bam_bai=rnaseq_bam_bai,
+    vcf=detect_variants_vcf,
+    vcf_tbi=detect_variants_vcf_tbi,
+    output_bam_basename="split_n_cigar"
+  }
+
+  call lai.leftAlignIndels as tumorRnaLeftAlignIndels{
+    input:
+    reference=reference,
+    reference_fai=reference_fai,
+    reference_dict=reference_dict,
+    bam=tumorRnaSplitNCigarReads.split_n_cigar_bam,
+    bam_bai=tumorRnaSplitNCigarReads.split_n_cigar_bam_bai,
+    output_bam_basename="left_align_indels"
+  }
+
   call br.bamReadcount as tumorRnaBamReadcount {
     input:
     vcf=detect_variants_vcf,
@@ -80,7 +104,9 @@ workflow pvacseq {
     bam=rnaseq_bam,
     bam_bai=rnaseq_bam_bai,
     min_base_quality=readcount_minimum_base_quality,
-    min_mapping_quality=readcount_minimum_mapping_quality
+    min_mapping_quality=readcount_minimum_mapping_quality,
+    indel_counting_bam=tumorRnaLeftAlignIndels.left_align_indels_bam,
+    indel_counting_bai=tumorRnaLeftAlignIndels.left_align_indels_bam_bai
   }
 
   call vra.vcfReadcountAnnotator as addTumorRnaBamReadcountToVcf {
@@ -194,5 +220,7 @@ workflow pvacseq {
     Array[File] mhc_ii = ps.mhc_ii
     File? mhc_ii_log = ps.mhc_ii_log
     Array[File] combined = ps.combined
+    File indel_counting_bam = tumorRnaLeftAlignIndels.left_align_indels_bam
+    File indel_counting_bai = tumorRnaLeftAlignIndels.left_align_indels_bam_bai
   }
 }
