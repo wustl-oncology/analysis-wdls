@@ -213,11 +213,10 @@ workflow immuno {
 
     # --------- Phase VCF Inputs ---------------------------------------
 
-    Array[String]? clinical_mhc_classI_alleles
-    Array[String]? clinical_mhc_classII_alleles
 
     # --------- HLA Consensus Inputs -----------------------------------
-
+    Array[String]? clinical_mhc_classI_alleles
+    Array[String]? clinical_mhc_classII_alleles
     String hla_source_mode
 
     # --------- PVACseq Inputs -----------------------------------------
@@ -606,7 +605,9 @@ workflow immuno {
     Rnaseq rnaseq = object {
       alignments: [
         rna.final_bam,
-        rna.final_bam_bai
+        rna.final_bam_bai,
+        pvacseq.indel_counting_bam,
+        pvacseq.indel_counting_bai
       ],
       stringtie_expression: [
         rna.stringtie_transcript_gtf,
@@ -632,7 +633,7 @@ workflow immuno {
       fusioninspector_evidence: rna.fusioninspector_evidence
     }
 
-    # -------- Somatic Outputs -----------------------------------------
+    # -------- QC Outputs -----------------------------------------
 
     Qc qc =  object {
       tumor_rna: flatten([
@@ -656,6 +657,8 @@ workflow immuno {
         aligned_tumor_rna: generateFdaMetrics.aligned_tumor_rna_metrics
       }
     }
+
+    # -------- Somatic Outputs -----------------------------------------
 
     File tumor_cram = somaticExome.tumor_cram
     File tumor_cram_crai = somaticExome.tumor_cram_crai
@@ -746,7 +749,7 @@ workflow immuno {
     ])
 
 
-    # --------- Other Outputs ------------------------------------------
+    # --------- pVACtools Outputs ------------------------------------------
 
     MHC pVACseq = object {
       mhc_i: pvacseq.mhc_i,

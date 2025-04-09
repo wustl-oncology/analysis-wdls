@@ -209,5 +209,7 @@ workflow pvacseq {
     Array[File] mhc_i = ps.mhc_i
     Array[File] mhc_ii = ps.mhc_ii
     Array[File] combined = ps.combined
+    File indel_counting_bam = tumorRnaLeftAlignIndels.left_align_indels_bam
+    File indel_counting_bai = tumorRnaLeftAlignIndels.left_align_indels_bam_bai
   }
 }
