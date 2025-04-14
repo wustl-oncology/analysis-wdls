@@ -12,9 +12,11 @@ task bamReadcount {
     Int min_mapping_quality = 0
     Int min_base_quality = 20
     String prefix = "NOPREFIX"
+    File? indel_counting_bam
+    File? indel_counting_bai
   }
 
-  Int space_needed_gb = 10 + round(size([bam, bam_bai, reference, reference_fai, reference_dict, vcf], "GB"))
+  Int space_needed_gb = 15 + round(size([bam, bam_bai, reference, reference_fai, reference_dict, vcf], "GB"))
   runtime {
     preemptible: 1
     maxRetries: 2
@@ -23,14 +25,21 @@ task bamReadcount {
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
-  String stdout_file = sample + "_bam_readcount.tsv"
+  String stdout_file = sample + "_bam_readcount.stdout"
   String prefixed_sample = (if prefix == "NOPREFIX" then "" else (prefix + "_")) + sample
+  File indel_bam_to_use = select_first([indel_counting_bam, bam])
+  File indel_bai_to_use = select_first([indel_counting_bai, bam_bai])
+
   command <<<
+    #move bam and bai files to ensure they are beside each other
     mv ~{bam} ~{basename(bam)}; mv ~{bam_bai} ~{basename(bam_bai)}
+    mv ~{indel_bam_to_use} ~{basename(indel_bam_to_use)} || true
+    mv ~{indel_bai_to_use} ~{basename(indel_bai_to_use)} || true
 
     /usr/bin/python -c '
     import sys
     import os
+    import shutil
     from cyvcf2 import VCF
     import tempfile
     import csv
@@ -53,6 +62,10 @@ task bamReadcount {
         else:
             output_file = os.path.join(output_dir, prefixed_sample + "_bam_readcount_snv.tsv")
         bam_readcount_cmd.append(bam_file)
+        
+        # Print the final command before execution
+        print("Final bam_readcount_cmd:", bam_readcount_cmd)
+
         execution = Popen(bam_readcount_cmd, stdout=PIPE, stderr=PIPE)
         stdout, stderr = execution.communicate()
         if execution.returncode == 0:
@@ -69,6 +82,12 @@ task bamReadcount {
     bam_file = "~{basename(bam)}"
     prefixed_sample = "~{prefixed_sample}"
     vcf_filename = "~{vcf}"
+
+    indel_counting_bam_file = "~{basename(indel_bam_to_use)}"
+    indel_counting_bai_file = "~{basename(indel_bai_to_use)}"
+
+    print("indel_counting_bam_file:", indel_counting_bam_file)
+    print("indel_counting_bai_file:", indel_counting_bai_file)
 
     vcf_file = VCF(vcf_filename)
     sample_index = vcf_file.samples.index(sample)
@@ -122,7 +141,9 @@ task bamReadcount {
 
     if len(rc_for_indel.keys()) > 0:
         region_file = generate_region_list(rc_for_indel)
-        filter_sites_in_hash(region_file, bam_file, ref_fasta, prefixed_sample, output_dir, True, min_mapping_qual, min_base_qual)
+        new_bai_file_name = indel_counting_bai_file.replace(".bai", ".bam.bai")
+        shutil.copy(indel_counting_bai_file, new_bai_file_name)
+        filter_sites_in_hash(region_file, indel_counting_bam_file, ref_fasta, prefixed_sample, output_dir, True, min_mapping_qual, min_base_qual)
     else:
         output_file = os.path.join(output_dir, prefixed_sample + "_bam_readcount_indel.tsv")
         open(output_file, "w").close()
@@ -147,6 +168,8 @@ workflow wf {
     Int? min_mapping_quality
     Int? min_base_quality
     String? prefix
+    File? indel_counting_bam
+    File? indel_counting_bai
   }
 
   call bamReadcount {
@@ -160,6 +183,8 @@ workflow wf {
     vcf=vcf,
     min_mapping_quality=min_mapping_quality,
     min_base_quality=min_base_quality,
-    prefix=prefix
+    prefix=prefix,
+    indel_counting_bam=indel_counting_bam,
+    indel_counting_bai=indel_counting_bai
   }
 }
