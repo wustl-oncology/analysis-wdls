@@ -1,12 +1,15 @@
 version 1.0
 
-import "../subworkflows/bam_readcount.wdl" as br
-import "../subworkflows/vcf_readcount_annotator.wdl" as vra
-import "../tools/vcf_expression_annotator.wdl" as vea
-import "../tools/index_vcf.wdl" as iv
-import "../tools/pvacseq.wdl" as p
-import "../tools/variants_to_table.wdl" as vtt
-import "../tools/add_vep_fields_to_table.wdl" as avftt
+import "./tools/split_n_cigar_reads.wdl" as sncr
+import "./tools/left_align_indels.wdl" as lai
+import "./subworkflows/bam_readcount.wdl" as br
+import "./subworkflows/vcf_readcount_annotator.wdl" as vra
+import "./tools/vcf_expression_annotator.wdl" as vea
+import "./tools/index_vcf.wdl" as iv
+import "./tools/pvacseq.wdl" as p
+import "./tools/pvacseq_aggregated_report_to_preferred_transcripts_list.wdl" as ptl
+import "./tools/variants_to_table.wdl" as vtt
+import "./tools/add_vep_fields_to_table.wdl" as avftt
 
 workflow pvacseq {
   input {
@@ -31,6 +34,7 @@ workflow pvacseq {
     Array[Int]? epitope_lengths_class_ii
     Int? binding_threshold
     Int? percentile_threshold
+    String? percentile_threshold_strategy
     Float? minimum_fold_change
     String? top_score_metric  # enum [lowest, median]
     String? additional_report_columns  # enum [sample_name]
@@ -52,16 +56,41 @@ workflow pvacseq {
     Boolean? netmhc_stab
     Boolean? run_reference_proteome_similarity
     Int? n_threads
+    Int? iedb_retries
     Array[String] variants_to_table_fields = ["CHROM", "POS", "ID", "REF", "ALT"]
     Array[String] variants_to_table_genotype_fields = ["GT", "AD", "AF", "DP", "RAD", "RAF", "RDP", "GX", "TX"]
     Array[String] vep_to_table_fields = ["HGVSc", "HGVSp"]
     Float? tumor_purity
     Boolean? allele_specific_binding_thresholds
     Int? aggregate_inclusion_binding_threshold
+    Int? aggregate_inclusion_count_limit
     Array[String]? problematic_amino_acids
     Boolean? allele_specific_anchors
     Float? anchor_contribution_threshold
     String? prefix = "pvacseq"
+    Array[String]? biotypes
+  }
+
+  call sncr.splitNCigarReads as tumorRnaSplitNCigarReads{
+    input:
+    reference=reference,
+    reference_fai=reference_fai,
+    reference_dict=reference_dict,
+    bam=rnaseq_bam,
+    bam_bai=rnaseq_bam_bai,
+    vcf=detect_variants_vcf,
+    vcf_tbi=detect_variants_vcf_tbi,
+    output_bam_basename="split_n_cigar"
+  }
+
+  call lai.leftAlignIndels as tumorRnaLeftAlignIndels{
+    input:
+    reference=reference,
+    reference_fai=reference_fai,
+    reference_dict=reference_dict,
+    bam=tumorRnaSplitNCigarReads.split_n_cigar_bam,
+    bam_bai=tumorRnaSplitNCigarReads.split_n_cigar_bam_bai,
+    output_bam_basename="left_align_indels"
   }
 
   call br.bamReadcount as tumorRnaBamReadcount {
@@ -75,7 +104,9 @@ workflow pvacseq {
     bam=rnaseq_bam,
     bam_bai=rnaseq_bam_bai,
     min_base_quality=readcount_minimum_base_quality,
-    min_mapping_quality=readcount_minimum_mapping_quality
+    min_mapping_quality=readcount_minimum_mapping_quality,
+    indel_counting_bam=tumorRnaLeftAlignIndels.left_align_indels_bam,
+    indel_counting_bai=tumorRnaLeftAlignIndels.left_align_indels_bam_bai
   }
 
   call vra.vcfReadcountAnnotator as addTumorRnaBamReadcountToVcf {
@@ -120,6 +151,7 @@ workflow pvacseq {
     epitope_lengths_class_ii=epitope_lengths_class_ii,
     binding_threshold=binding_threshold,
     percentile_threshold=percentile_threshold,
+    percentile_threshold_strategy=percentile_threshold_strategy,
     normal_sample_name=normal_sample_name,
     minimum_fold_change=minimum_fold_change,
     top_score_metric=top_score_metric,
@@ -143,12 +175,20 @@ workflow pvacseq {
     run_reference_proteome_similarity=run_reference_proteome_similarity,
     peptide_fasta=peptide_fasta,
     n_threads=n_threads,
+    iedb_retries=iedb_retries,
     tumor_purity=tumor_purity,
     allele_specific_binding_thresholds=allele_specific_binding_thresholds,
     aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
+    aggregate_inclusion_count_limit=aggregate_inclusion_count_limit,
     problematic_amino_acids=problematic_amino_acids,
     allele_specific_anchors=allele_specific_anchors,
     anchor_contribution_threshold=anchor_contribution_threshold,
+    biotypes=biotypes
+  }
+
+  call ptl.pvacseqAggregatedReportToPreferredTranscriptsList as pvacseqAggregatedReportToPreferredTranscriptsList {
+    input:
+    pvacseq_aggregated_report=select_first([ps.mhc_i_aggregated_report, ps.mhc_ii_aggregated_report])
   }
 
   call vtt.variantsToTable {
@@ -167,7 +207,8 @@ workflow pvacseq {
     vcf=index.indexed_vcf,
     vep_fields=vep_to_table_fields,
     tsv=variantsToTable.variants_tsv,
-    prefix=prefix
+    prefix=prefix,
+    preferred_transcripts_tsv=pvacseqAggregatedReportToPreferredTranscriptsList.preferred_transcripts_tsv
   }
 
   output {
@@ -175,7 +216,11 @@ workflow pvacseq {
     File annotated_vcf_tbi = index.indexed_vcf_tbi
     File annotated_tsv = addVepFieldsToTable.annotated_variants_tsv
     Array[File] mhc_i = ps.mhc_i
+    File? mhc_i_log = ps.mhc_i_log
     Array[File] mhc_ii = ps.mhc_ii
+    File? mhc_ii_log = ps.mhc_ii_log
     Array[File] combined = ps.combined
+    File indel_counting_bam = tumorRnaLeftAlignIndels.left_align_indels_bam
+    File indel_counting_bai = tumorRnaLeftAlignIndels.left_align_indels_bam_bai
   }
 }
