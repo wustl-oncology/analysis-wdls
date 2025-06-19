@@ -15,6 +15,7 @@ import "tools/pvacfuse.wdl" as pf
 import "types.wdl"  # !UnusedImport
 import "tools/optitype_dna.wdl" as od
 import "tools/phlat.wdl" as ph
+import "tools/concordance.wdl" as c
 
 #
 # These structs are needed only because MiniWDL, used by some of our
