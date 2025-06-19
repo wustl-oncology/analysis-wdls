@@ -53,6 +53,7 @@ struct Qc {
   QCMetrics tumor_dna
   QCMetrics normal_dna
   Array[File?] concordance
+  Array[File?] concordanceThreeway
   FdaMetricBundle fda_metrics
 }
 
@@ -421,6 +422,20 @@ workflow immuno {
     germline_filter_gnomAD_maximum_population_allele_frequency=germline_filter_gnomAD_maximum_population_allele_frequency
   }
 
+  call c.concordance as concordanceThreeway {
+    input:
+      reference = reference,
+      reference_fai = reference_fai,
+      reference_dict = reference_dict,
+      vcf = somalier_vcf,
+      bam_1 = somaticExome.tumor_cram,
+      bam_1_bai = somaticExome.tumor_cram_crai,
+      bam_2 = somaticExome.normal_cram,
+      bam_2_bai = somaticExome.normal_cram_crai,
+      bam_3 = rna.final_bam,
+      bam_3_bai = rna.final_bam_bai
+  }
+
   call od.optitypeDna as optitype {
     input: 
     optitype_name="optitype_tumor",
@@ -653,6 +668,10 @@ workflow immuno {
         somaticExome.somalier_concordance_metrics,
         somaticExome.somalier_concordance_statistics
       ],
+      concordanceThreeway: [
+        concordanceThreeway.somalier_pairs,
+        concordanceThreeway.somalier_samples
+      ],  
       fda_metrics: object {
         unaligned_normal_dna: generateFdaMetrics.unaligned_normal_dna_metrics,
         unaligned_tumor_dna: generateFdaMetrics.unaligned_tumor_dna_metrics,

@@ -23,17 +23,20 @@ task concordance {
     cpu: 1
     memory: "8GB"
     bootDiskSizeGb: 10
-    docker: "brentp/somalier:v0.1.5"
+    docker: "brentp/somalier:v0.2.19"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
   command <<<
-    /usr/bin/somalier -o concordance -s ~{vcf} -f ~{reference} ~{bam_1} ~{bam_2} ~{bam_3}
+    /usr/bin/somalier extract -d extracted/ -s ~{vcf} -f ~{reference} ~{bam_1} 
+    /usr/bin/somalier extract -d extracted/ -s ~{vcf} -f ~{reference} ~{bam_2} 
+    /usr/bin/somalier extract -d extracted/ -s ~{vcf} -f ~{reference} ~{bam_3} 
+    /usr/bin/somalier relate -o concordance extracted/*.somalier
   >>>
 
   output {
-    File somalier_pairs = "concordance.somalier.pairs.tsv"
-    File somalier_samples = "concordance.somalier.samples.tsv"
+    File somalier_pairs = "concordance.pairs.tsv"
+    File somalier_samples = "concordance.samples.tsv"
   }
 }
 
