@@ -32,11 +32,14 @@ task concordance {
     /usr/bin/somalier extract -d extracted/ -s ~{vcf} -f ~{reference} ~{bam_2} 
     /usr/bin/somalier extract -d extracted/ -s ~{vcf} -f ~{reference} ~{bam_3} 
     /usr/bin/somalier relate -o concordance extracted/*.somalier
+
+    mv concordance.pairs.tsv concordance.somalier.pairs.tsv
+    mv concordance.samples.tsv concordance.somalier.samples.tsv
   >>>
 
   output {
-    File somalier_pairs = "concordance.pairs.tsv"
-    File somalier_samples = "concordance.samples.tsv"
+    File somalier_pairs = "concordance.somalier.pairs.tsv"
+    File somalier_samples = "concordance.somalier.samples.tsv"
   }
 }
 
