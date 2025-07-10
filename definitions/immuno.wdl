@@ -429,12 +429,8 @@ workflow immuno {
       reference_fai = reference_fai,
       reference_dict = reference_dict,
       vcf = somalier_vcf,
-      bam_1 = somaticExome.tumor_cram,
-      bam_1_bai = somaticExome.tumor_cram_crai,
-      bam_2 = somaticExome.normal_cram,
-      bam_2_bai = somaticExome.normal_cram_crai,
-      bam_3 = rna.final_bam,
-      bam_3_bai = rna.final_bam_bai
+      bams = [somaticExome.tumor_cram, somaticExome.normal_cram, rna.final_bam],
+      bais = [somaticExome.tumor_cram_crai, somaticExome.normal_cram_crai, rna.final_bam_bai]
   }
 
   call od.optitypeDna as optitype {
