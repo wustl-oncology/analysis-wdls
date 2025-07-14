@@ -57,11 +57,7 @@ workflow nonhuman_immuno {
         Int? readcount_minimum_base_quality
         Int? readcount_minimum_mapping_quality
         # File gene_expression_file
-<<<<<<< HEAD
-        File transcript_expression_file
-=======
         # File transcript_expression_file
->>>>>>> origin/main
         String expression_tool = "kallisto"
         Array[String] alleles
         Array[String] prediction_algorithms
@@ -255,13 +251,8 @@ workflow nonhuman_immuno {
     }
     call pvacseq.pvacseq as pvs {
         input:
-<<<<<<< HEAD
-        detect_variants_vcf=somat.final_vcf,
-        detect_variants_vcf_tbi=somat.final_vcf_tbi,
-=======
         detect_variants_vcf=somat.final_filtered_vcf,
         detect_variants_vcf_tbi=somat.final_filtered_vcf_tbi,
->>>>>>> origin/main
         sample_name=sample_name,
         normal_sample_name=normal_sample_name,
         rnaseq_bam=rns.final_bam,
@@ -273,7 +264,7 @@ workflow nonhuman_immuno {
         readcount_minimum_base_quality=readcount_minimum_base_quality,
         readcount_minimum_mapping_quality=readcount_minimum_mapping_quality,
         gene_expression_file=rns.kallisto_gene_abundance,
-        transcript_expression_file=rns.kallisto_transcript_abundance_tsv, # If this is wrong, rns.stringtie_transcript_expression_tsv
+        transcript_expression_file=rns.kallisto_transcript_abundance_tsv,
         expression_tool=expression_tool,
         alleles=alleles,
         prediction_algorithms=prediction_algorithms,
