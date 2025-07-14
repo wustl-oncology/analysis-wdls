@@ -7,7 +7,7 @@ import "rnaseq_star_fusion.wdl" as rsf
 import "somatic_exome.wdl" as se
 # others
 import "subworkflows/phase_vcf.wdl" as pv
-import "subworkflows/pvacseq.wdl" as p
+import "pvacseq.wdl" as p
 import "subworkflows/generate_fda_metrics.wdl" as generate_fda_metrics
 import "tools/extract_hla_alleles.wdl" as eha
 import "tools/hla_consensus.wdl" as hc
