@@ -15,6 +15,7 @@ import "tools/pvacfuse.wdl" as pf
 import "types.wdl"  # !UnusedImport
 import "tools/optitype_dna.wdl" as od
 import "tools/phlat.wdl" as ph
+import "tools/concordance.wdl" as c
 
 #
 # These structs are needed only because MiniWDL, used by some of our
@@ -53,6 +54,7 @@ struct Qc {
   QCMetrics tumor_dna
   QCMetrics normal_dna
   Array[File?] concordance
+  Array[File?] concordanceThreeway
   FdaMetricBundle fda_metrics
 }
 
@@ -421,6 +423,16 @@ workflow immuno {
     germline_filter_gnomAD_maximum_population_allele_frequency=germline_filter_gnomAD_maximum_population_allele_frequency
   }
 
+  call c.concordance as concordanceThreeway {
+    input:
+      reference = reference,
+      reference_fai = reference_fai,
+      reference_dict = reference_dict,
+      vcf = somalier_vcf,
+      bams = [somaticExome.tumor_cram, somaticExome.normal_cram, rna.final_bam],
+      bais = [somaticExome.tumor_cram_crai, somaticExome.normal_cram_crai, rna.final_bam_bai]
+  }
+
   call od.optitypeDna as optitype {
     input: 
     optitype_name="optitype_tumor",
@@ -653,6 +665,10 @@ workflow immuno {
         somaticExome.somalier_concordance_metrics,
         somaticExome.somalier_concordance_statistics
       ],
+      concordanceThreeway: [
+        concordanceThreeway.somalier_pairs,
+        concordanceThreeway.somalier_samples
+      ],  
       fda_metrics: object {
         unaligned_normal_dna: generateFdaMetrics.unaligned_normal_dna_metrics,
         unaligned_tumor_dna: generateFdaMetrics.unaligned_tumor_dna_metrics,

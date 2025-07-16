@@ -183,10 +183,8 @@ workflow somaticExome {
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
-    bam_1=tumorAlignment.final_bam,
-    bam_1_bai=tumorAlignment.final_bam_bai,
-    bam_2=normalAlignment.final_bam,
-    bam_2_bai=normalAlignment.final_bam_bai,
+    bams = [tumorAlignment.final_bam, normalAlignment.final_bam],
+    bais = [tumorAlignment.final_bam_bai, normalAlignment.final_bam_bai],
     vcf=somalier_vcf
   }
 
