@@ -141,10 +141,8 @@ workflow somaticExomeCle {
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,
-    bam_1=tumorAlignmentAndQc.bam,
-    bam_1_bai=tumorAlignmentAndQc.bam_bai,
-    bam_2=normalAlignmentAndQc.bam,
-    bam_2_bai=normalAlignmentAndQc.bam_bai,
+    bams = [tumorAlignmentAndQc.bam, normalAlignmentAndQc.bam],
+    bais = [tumorAlignmentAndQc.bam_bai, normalAlignmentAndQc.bam_bai],
     vcf=somalier_vcf
   }
 
