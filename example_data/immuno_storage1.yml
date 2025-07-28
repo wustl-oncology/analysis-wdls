@@ -223,8 +223,8 @@ immuno.allele_specific_anchors: true
 #- C
 
 #pvacseq v5 modifications
-percentile_threshold_strategy: "exploratory"
-percentile_threshold: 1
+immuno.percentile_threshold_strategy: "exploratory"
+immuno.percentile_threshold: 1
 
 # ------------------ If you have clinical or otherwise known HLA typing, include here and it will be integrated with HLA calls from the sequence data  ---------------
 #immuno.clinical_mhc_classI_alleles:
