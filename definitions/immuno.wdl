@@ -234,6 +234,7 @@ workflow immuno {
     String? percentile_threshold_strategy
     Float? minimum_fold_change
     String? top_score_metric  # enum [lowest, median]
+    String? top_score_metric2  # enum [ic50, percentile]
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
     Int? downstream_sequence_length
@@ -503,6 +504,7 @@ workflow immuno {
     percentile_threshold_strategy=percentile_threshold_strategy,
     minimum_fold_change=minimum_fold_change,
     top_score_metric=top_score_metric,
+    top_score_metric2=top_score_metric2,
     additional_report_columns=additional_report_columns,
     fasta_size=fasta_size,
     downstream_sequence_length=downstream_sequence_length,
@@ -554,6 +556,7 @@ workflow immuno {
     net_chop_method=net_chop_method,
     netmhc_stab=netmhc_stab,
     top_score_metric=top_score_metric,
+    top_score_metric2=top_score_metric2,
     net_chop_threshold=net_chop_threshold,
     run_reference_proteome_similarity=run_reference_proteome_similarity,
     peptide_fasta=peptide_fasta,
