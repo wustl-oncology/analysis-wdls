@@ -54,7 +54,7 @@ workflow wf {
   call extractHlaAlleles { 
     input: 
     optitype_file=optitype_file,
-    phlat_file=phlat_file ,
+    phlat_file=phlat_file,
     hlahd_file=hlahd_file,
   }
 }
