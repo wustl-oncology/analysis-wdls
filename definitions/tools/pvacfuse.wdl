@@ -17,6 +17,7 @@ task pvacfuse {
     String? net_chop_method  # enum [cterm 20s]
     Boolean netmhc_stab = false
     String? top_score_metric  # enum [lowest, median]
+    String? top_score_metric2  # enum [ic50, percentile]
     Float? net_chop_threshold
     Boolean run_reference_proteome_similarity = false
     String? additional_report_columns  # enum [sample_name]
@@ -37,7 +38,7 @@ task pvacfuse {
   runtime {
     preemptible: 1
     maxRetries: 2
-    docker: "griffithlab/pvactools:5.4.2"
+    docker: "griffithlab/pvactools:5.5.0"
     memory: "32GB"
     cpu: n_threads
     disks: "local-disk ~{space_needed_gb} HDD"
@@ -72,6 +73,7 @@ task pvacfuse {
     ~{if defined(net_chop_method) then "--net-chop-method ~{net_chop_method}" else ""} \
     ~{if netmhc_stab then "--netmhc-stab" else ""} \
     ~{if defined(top_score_metric) then "-m ~{top_score_metric}" else ""} \
+    ~{if defined(top_score_metric2) then "--top-score-metric2 ~{top_score_metric2}" else ""} \
     ~{if defined(net_chop_threshold) then "--net-chop-threshold ~{net_chop_threshold}" else ""} \
     ~{if run_reference_proteome_similarity then "--run-reference-proteome-similarity" else ""} \
     ~{if defined(peptide_fasta) then "--peptide-fasta ~{peptide_fasta}" else ""} \
