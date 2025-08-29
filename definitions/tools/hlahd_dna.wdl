@@ -17,7 +17,7 @@ task hlahdDna {
     maxRetries: 2
     memory: "~{mem}GB"
     cpu: threads 
-    docker: "jinglunli/hlahd:1.2"
+    docker: "griffithlab/hlahd:1.0"
     disks: "local-disk ~{space_needed_gb} HDD"
     bootDiskSizeGb: 3*space_needed_gb
   }
