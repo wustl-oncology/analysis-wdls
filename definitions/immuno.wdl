@@ -783,8 +783,6 @@ workflow immuno {
        hlahd.hlahd_result_txt,
        germlineExome.hlahd_result_txt,
        germlineExome.phlat_summary,
-       germlineExome.hlahd_result_txt,
-       hlahd.hlahd_result_txt,
        phlat.phlat_summary,
        extractAlleles.allele_file,
        hlaConsensus.consensus_alleles_file],
