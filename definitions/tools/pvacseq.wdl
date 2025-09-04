@@ -20,6 +20,7 @@ task pvacseq {
     String? normal_sample_name
     String? net_chop_method  # enum [cterm , 20s]
     String? top_score_metric  # enum [lowest, median]
+    String? top_score_metric2  # enum [ic50, percentile]
     Float? net_chop_threshold
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
@@ -59,7 +60,7 @@ task pvacseq {
     maxRetries: 2
     memory: "32GB"
     cpu: n_threads
-    docker: "griffithlab/pvactools:5.3.0"
+    docker: "griffithlab/pvactools:5.5.0"
     disks: "local-disk ~{space_needed_gb} HDD"
     bootDiskSizeGb: 50
   }
@@ -96,6 +97,7 @@ task pvacseq {
     ~{if run_reference_proteome_similarity then "--run-reference-proteome-similarity" else ""} \
     ~{if defined(peptide_fasta) then "--peptide-fasta ~{peptide_fasta}" else ""} \
     ~{if defined(top_score_metric) then "-m ~{top_score_metric}" else ""} \
+    ~{if defined(top_score_metric2) then "--top-score-metric2 ~{top_score_metric2}" else ""} \
     ~{if defined(net_chop_threshold) then "--net-chop-threshold ~{net_chop_threshold}" else ""} \
     ~{if defined(additional_report_columns) then "-m ~{additional_report_columns}" else ""} \
     ~{if defined(fasta_size) then "-s ~{fasta_size}" else ""} \
@@ -167,6 +169,7 @@ workflow wf {
     String? normal_sample_name
     String? net_chop_method  # enum [cterm , 20s]
     String? top_score_metric  # enum [lowest, median]
+    String? top_score_metric2  # enum [ic50, percentile]
     Float? net_chop_threshold
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
@@ -211,6 +214,7 @@ workflow wf {
     normal_sample_name=normal_sample_name,
     net_chop_method=net_chop_method,
     top_score_metric=top_score_metric,
+    top_score_metric2=top_score_metric2,
     net_chop_threshold=net_chop_threshold,
     additional_report_columns=additional_report_columns,
     fasta_size=fasta_size,

@@ -37,6 +37,7 @@ workflow pvacseq {
     String? percentile_threshold_strategy
     Float? minimum_fold_change
     String? top_score_metric  # enum [lowest, median]
+    String? top_score_metric2  # enum [ic50, percentile]
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
     Int? downstream_sequence_length
@@ -155,6 +156,7 @@ workflow pvacseq {
     normal_sample_name=normal_sample_name,
     minimum_fold_change=minimum_fold_change,
     top_score_metric=top_score_metric,
+    top_score_metric2=top_score_metric2,
     additional_report_columns=additional_report_columns,
     fasta_size=fasta_size,
     downstream_sequence_length=downstream_sequence_length,
