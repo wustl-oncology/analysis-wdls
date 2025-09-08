@@ -188,11 +188,6 @@ workflow pvacseq {
     biotypes=biotypes
   }
 
-  call ptl.pvacseqAggregatedReportToPreferredTranscriptsList as pvacseqAggregatedReportToPreferredTranscriptsList {
-    input:
-    pvacseq_aggregated_report=select_first([ps.mhc_i_aggregated_report, ps.mhc_ii_aggregated_report])
-  }
-
   call vtt.variantsToTable {
     input:
     reference=reference,
@@ -204,19 +199,35 @@ workflow pvacseq {
     genotype_fields=variants_to_table_genotype_fields
   }
 
-  call avftt.addVepFieldsToTable {
-    input:
-    vcf=index.indexed_vcf,
-    vep_fields=vep_to_table_fields,
-    tsv=variantsToTable.variants_tsv,
-    prefix=prefix,
-    preferred_transcripts_tsv=pvacseqAggregatedReportToPreferredTranscriptsList.preferred_transcripts_tsv
+  if (length(select_all([ps.mhc_i_aggregated_report, ps.mhc_ii_aggregated_report])) > 0 ) {
+      call ptl.pvacseqAggregatedReportToPreferredTranscriptsList as pvacseqAggregatedReportToPreferredTranscriptsList {
+        input:
+        pvacseq_aggregated_report=select_first([ps.mhc_i_aggregated_report, ps.mhc_ii_aggregated_report])
+      }
+
+      call avftt.addVepFieldsToTable as addVepFieldsToTableWithPreferredTranscriptsTsv{
+        input:
+        vcf=index.indexed_vcf,
+        vep_fields=vep_to_table_fields,
+        tsv=variantsToTable.variants_tsv,
+        prefix=prefix,
+        preferred_transcripts_tsv=pvacseqAggregatedReportToPreferredTranscriptsList.preferred_transcripts_tsv
+      }
+  }
+  if (length(select_all([ps.mhc_i_aggregated_report, ps.mhc_ii_aggregated_report])) == 0 ) {
+      call avftt.addVepFieldsToTable as addVepFieldsToTableWithoutPreferredTranscriptsTsv{
+        input:
+        vcf=index.indexed_vcf,
+        vep_fields=vep_to_table_fields,
+        tsv=variantsToTable.variants_tsv,
+        prefix=prefix,
+      }
   }
 
   output {
     File annotated_vcf = index.indexed_vcf
     File annotated_vcf_tbi = index.indexed_vcf_tbi
-    File annotated_tsv = addVepFieldsToTable.annotated_variants_tsv
+    File annotated_tsv = select_first([addVepFieldsToTableWithPreferredTranscriptsTsv.annotated_variants_tsv, addVepFieldsToTableWithoutPreferredTranscriptsTsv.annotated_variants_tsv])
     Array[File] mhc_i = ps.mhc_i
     File? mhc_i_log = ps.mhc_i_log
     Array[File] mhc_ii = ps.mhc_ii
