@@ -249,7 +249,7 @@ task hlaConsensus {
                 c_c.write( ",".join(consensus_calls) )
             with open("hla_calls/consensus_calls_newline.txt", "w") as c_c:
                 c_c.write( "\n".join(consensus_calls) )
-        elif hla_source-mode == "clinical_only":
+        elif hla_source_mode == "clinical_only":
             flat_i = [allele for multicall in raw_clinical_i_calls for allele in multicall.split("/")]
             consensus_calls_lines = flat_i + raw_clinical_ii_calls
             with open("hla_calls/consensus_calls.txt", "w") as c_c:
@@ -272,12 +272,14 @@ workflow wf {
     Array[String] hla_alleles
     Array[String]? clinical_mhc_classI_alleles
     Array[String]? clinical_mhc_classII_alleles
+    String hla_source_mode
   }
 
   call hlaConsensus {
     input:
     hla_alleles=hla_alleles,
     clinical_mhc_classI_alleles=clinical_mhc_classI_alleles,
-    clinical_mhc_classII_alleles=clinical_mhc_classII_alleles
+    clinical_mhc_classII_alleles=clinical_mhc_classII_alleles,
+    hla_source_mode=hla_source_mode
   }
 }
