@@ -4,6 +4,7 @@ import "germline_exome.wdl" as ge
 import "types.wdl"  # !UnusedImport
 import "tools/optitype_dna.wdl" as od
 import "tools/phlat.wdl" as ph
+import "tools/hlahd_dna.wdl" as hd
 
 workflow germlineExomeHlaTyping {
   input {
@@ -100,6 +101,16 @@ workflow germlineExomeHlaTyping {
     cram_crai=germlineExome.cram_crai
   }
 
+
+  call hd.hlahdDna as hlahd {
+    input:
+    reference=reference,
+    reference_fai=reference_fai,
+    cram=germlineExome.cram,
+    cram_crai=germlineExome.cram_crai,
+    hlahd_name="hlahd_normal"
+  }
+
   output {
     File cram = germlineExome.cram
     File mark_duplicates_metrics = germlineExome.mark_duplicates_metrics
@@ -114,5 +125,6 @@ workflow germlineExomeHlaTyping {
     File optitype_tsv = optitype.optitype_tsv
     File optitype_plot = optitype.optitype_plot
     File phlat_summary = phlat.phlat_summary 
+    File hlahd_result_txt = hlahd.hlahd_result_txt
   }
 }
