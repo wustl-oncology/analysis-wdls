@@ -1,15 +1,15 @@
 version 1.0
 
-import "../tools/split_n_cigar_reads.wdl" as sncr
-import "../tools/left_align_indels.wdl" as lai
-import "../subworkflows/bam_readcount.wdl" as br
-import "../subworkflows/vcf_readcount_annotator.wdl" as vra
-import "../tools/vcf_expression_annotator.wdl" as vea
-import "../tools/index_vcf.wdl" as iv
-import "../tools/pvacseq.wdl" as p
-import "../tools/pvacseq_aggregated_report_to_preferred_transcripts_list.wdl" as ptl
-import "../tools/variants_to_table.wdl" as vtt
-import "../tools/add_vep_fields_to_table.wdl" as avftt
+import "./tools/split_n_cigar_reads.wdl" as sncr
+import "./tools/left_align_indels.wdl" as lai
+import "./subworkflows/bam_readcount.wdl" as br
+import "./subworkflows/vcf_readcount_annotator.wdl" as vra
+import "./tools/vcf_expression_annotator.wdl" as vea
+import "./tools/index_vcf.wdl" as iv
+import "./tools/pvacseq.wdl" as p
+import "./tools/pvacseq_aggregated_report_to_preferred_transcripts_list.wdl" as ptl
+import "./tools/variants_to_table.wdl" as vtt
+import "./tools/add_vep_fields_to_table.wdl" as avftt
 
 workflow pvacseq {
   input {
