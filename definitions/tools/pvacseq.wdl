@@ -9,6 +9,7 @@ task pvacseq {
     Array[String] alleles
     Array[String] prediction_algorithms
     File? peptide_fasta
+    File? genes_of_interest_file
 
     Array[Int]? epitope_lengths_class_i
     Array[Int]? epitope_lengths_class_ii
@@ -37,17 +38,20 @@ task pvacseq {
     Float? trna_vaf
     Float? expn_val
     Int? maximum_transcript_support_level  # enum [1, 2, 3, 4, 5]
+    Array[String]? transcript_prioritization_strategy # allowed values ['canonical', 'mane_select', 'tsl']
     Int? aggregate_inclusion_binding_threshold
     Int? aggregate_inclusion_count_limit
     Array[String]? problematic_amino_acids
     Float? anchor_contribution_threshold
     Array[String]? biotypes
+    String? netmhciipan_version # enum [4.3, 4.2, 4.1, 4.0]
 
     Boolean allele_specific_binding_thresholds = false
     Boolean keep_tmp_files = false
     Boolean netmhc_stab = false
     Boolean run_reference_proteome_similarity = false
     Boolean allele_specific_anchors = false
+    Boolean allow_incomplete_transcripts =  false
 
     Float? tumor_purity
   }
@@ -60,7 +64,7 @@ task pvacseq {
     maxRetries: 2
     memory: "32GB"
     cpu: n_threads
-    docker: "griffithlab/pvactools:5.5.2"
+    docker: "susannakiwala/pvactools:6.0.0a8"
     disks: "local-disk ~{space_needed_gb} HDD"
     bootDiskSizeGb: 50
   }
@@ -70,6 +74,7 @@ task pvacseq {
   Array[Int] epitope_ii = select_first([epitope_lengths_class_ii, []])
   Array[String] problematic_aa = select_first([problematic_amino_acids, []])
   Array[String] biotypes_list = select_first([biotypes, []])
+  Array[String] transcript_prioritization_strategy_list = select_first([transcript_prioritization_strategy, []])
   command <<<
     set -eou pipefail
 
@@ -112,11 +117,15 @@ task pvacseq {
     ~{if defined(tdna_vaf) then "--tdna-vaf ~{tdna_vaf}" else ""} \
     ~{if defined(trna_vaf) then "--trna-vaf ~{trna_vaf}" else ""} \
     ~{if defined(expn_val) then "--expn-val ~{expn_val}" else ""} \
+    ~{if length(transcript_prioritization_strategy_list) > 0 then "--transcript-prioritization-strategy" else ""} ~{sep="," transcript_prioritization_strategy_list} \
     ~{if defined(maximum_transcript_support_level) then "--maximum-transcript-support-level ~{maximum_transcript_support_level}" else ""} \
     ~{if length(problematic_aa) > 0 then "--problematic-amino-acids" else ""} ~{sep="," problematic_aa} \
     ~{if allele_specific_anchors then "--allele-specific-anchors" else ""} \
     ~{if defined(anchor_contribution_threshold) then "--anchor-contribution-threshold ~{anchor_contribution_threshold}" else ""} \
     ~{if length(biotypes_list) > 0 then "--biotypes" else ""} ~{sep="," biotypes_list} \
+    ~{if allow_incomplete_transcripts then "--allow-incomplete-transcripts" else ""} \
+    ~{if defined(genes_of_interest_file) then "--genes-of-interest-file ~{genes_of_interest_file}" else ""} \
+    ~{if defined(netmhciipan_version) then "--netmhciipan-version ~{netmhciipan_version}" else ""} \
     --n-threads ~{n_threads} \
     ~{input_vcf} ~{sample_name} ~{sep="," alleles} ~{sep=" " prediction_algorithms} \
     pvacseq_predictions
@@ -158,6 +167,8 @@ workflow wf {
     String sample_name
     Array[String] alleles
     Array[String] prediction_algorithms
+    File? peptide_fasta
+    File? genes_of_interest_file
 
     Array[Int]? epitope_lengths_class_i
     Array[Int]? epitope_lengths_class_ii
@@ -185,16 +196,23 @@ workflow wf {
     Float? tdna_vaf
     Float? trna_vaf
     Float? expn_val
-    String? maximum_transcript_support_level  # enum [1, 2, 3, 4, 5]
+    Int? maximum_transcript_support_level  # enum [1, 2, 3, 4, 5]
+    Array[String]? transcript_prioritization_strategy # allowed values ['canonical', 'mane_select', 'tsl']
     Int? aggregate_inclusion_binding_threshold
+    Int? aggregate_inclusion_count_limit
     Array[String]? problematic_amino_acids
     Float? anchor_contribution_threshold
+    Array[String]? biotypes
+    String? netmhciipan_version # enum [4.3, 4.2, 4.1, 4.0]
 
-    Boolean? allele_specific_binding_thresholds
-    Boolean? keep_tmp_files
-    Boolean? netmhc_stab
-    Boolean? run_reference_proteome_similarity
+    Boolean allele_specific_binding_thresholds = false
+    Boolean keep_tmp_files = false
+    Boolean netmhc_stab = false
+    Boolean run_reference_proteome_similarity = false
     Boolean allele_specific_anchors = false
+    Boolean allow_incomplete_transcripts =  false
+
+    Float? tumor_purity
   }
   call pvacseq {
     input:
@@ -204,12 +222,15 @@ workflow wf {
     sample_name=sample_name,
     alleles=alleles,
     prediction_algorithms=prediction_algorithms,
+    peptide_fasta=peptide_fasta,
+    genes_of_interest_file=genes_of_interest_file,
     epitope_lengths_class_i=epitope_lengths_class_i,
     epitope_lengths_class_ii=epitope_lengths_class_ii,
     binding_threshold=binding_threshold,
     percentile_threshold=percentile_threshold,
     percentile_threshold_strategy=percentile_threshold_strategy,
     aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
+    aggregate_inclusion_count_limit=aggregate_inclusion_count_limit,
     iedb_retries=iedb_retries,
     normal_sample_name=normal_sample_name,
     net_chop_method=net_chop_method,
@@ -230,13 +251,18 @@ workflow wf {
     tdna_vaf=tdna_vaf,
     trna_vaf=trna_vaf,
     expn_val=expn_val,
+    tumor_purity=tumor_purity,
     maximum_transcript_support_level=maximum_transcript_support_level,
+    transcript_prioritization_strategy=transcript_prioritization_strategy,
     allele_specific_binding_thresholds=allele_specific_binding_thresholds,
     problematic_amino_acids=problematic_amino_acids,
     allele_specific_anchors=allele_specific_anchors,
     anchor_contribution_threshold=anchor_contribution_threshold,
     keep_tmp_files=keep_tmp_files,
     netmhc_stab=netmhc_stab,
-    run_reference_proteome_similarity=run_reference_proteome_similarity
+    run_reference_proteome_similarity=run_reference_proteome_similarity,
+    biotypes=biotypes,
+    allow_incomplete_transcripts=allow_incomplete_transcripts,
+    netmhciipan_version=netmhciipan_version,
   }
 }
