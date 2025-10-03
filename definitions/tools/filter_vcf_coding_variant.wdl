@@ -29,3 +29,15 @@ task filterVcfCodingVariant {
     File filtered_vcf = outfile
   }
 }
+
+workflow wf {
+  input {
+    File vcf
+  }
+
+  call filterVcfCodingVariant {
+    input:
+    vcf=vcf
+  }
+}
+
