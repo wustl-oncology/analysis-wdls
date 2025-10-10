@@ -7,7 +7,7 @@ import "rnaseq_star_fusion.wdl" as rsf
 import "somatic_exome.wdl" as se
 # others
 import "subworkflows/phase_vcf.wdl" as pv
-import "subworkflows/pvacseq.wdl" as p
+import "pvacseq.wdl" as p
 import "subworkflows/generate_fda_metrics.wdl" as generate_fda_metrics
 import "tools/extract_hla_alleles.wdl" as eha
 import "tools/hla_consensus.wdl" as hc
@@ -15,7 +15,9 @@ import "tools/pvacfuse.wdl" as pf
 import "types.wdl"  # !UnusedImport
 import "tools/optitype_dna.wdl" as od
 import "tools/phlat.wdl" as ph
+import "tools/hlahd_dna.wdl" as hd
 import "tools/concordance.wdl" as c
+
 
 #
 # These structs are needed only because MiniWDL, used by some of our
@@ -443,6 +445,16 @@ workflow immuno {
     cram_crai=somaticExome.tumor_cram_crai,
   }
 
+
+  call hd.hlahdDna as hlahd {
+    input:
+    reference=reference,
+    reference_fai=reference_fai,
+    cram=somaticExome.tumor_cram,
+    cram_crai=somaticExome.tumor_cram_crai,
+    hlahd_name="hlahd_tumor"
+  }
+
   call ph.phlat {
     input:
     phlat_name="phlat_tumor",
@@ -451,6 +463,8 @@ workflow immuno {
     reference=reference,
     reference_fai=reference_fai
   } 
+
+  
 
   call pv.phaseVcf {
     input:
@@ -469,7 +483,8 @@ workflow immuno {
   call eha.extractHlaAlleles as extractAlleles {
     input:
     optitype_file=germlineExome.optitype_tsv, 
-    phlat_file=germlineExome.phlat_summary
+    phlat_file=germlineExome.phlat_summary, 
+    hlahd_file=germlineExome.hlahd_result_txt
   }
 
   call hc.hlaConsensus {
@@ -765,6 +780,8 @@ workflow immuno {
        germlineExome.optitype_plot,
        optitype.optitype_tsv,
        optitype.optitype_plot,
+       hlahd.hlahd_result_txt,
+       germlineExome.hlahd_result_txt,
        germlineExome.phlat_summary,
        phlat.phlat_summary,
        extractAlleles.allele_file,

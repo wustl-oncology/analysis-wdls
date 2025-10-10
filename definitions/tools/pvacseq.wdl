@@ -60,7 +60,7 @@ task pvacseq {
     maxRetries: 2
     memory: "32GB"
     cpu: n_threads
-    docker: "griffithlab/pvactools:5.5.0"
+    docker: "griffithlab/pvactools:5.5.3"
     disks: "local-disk ~{space_needed_gb} HDD"
     bootDiskSizeGb: 50
   }
@@ -74,7 +74,7 @@ task pvacseq {
     set -eou pipefail
 
     # touch each tbi to ensure they have a timestamp after the vcf
-    touch ~{phased_proximal_variants_vcf_tbi}
+    ~{if defined(phased_proximal_variants_vcf_tbi) then "touch ~{phased_proximal_variants_vcf_tbi}" else ""}
     touch ~{input_vcf_tbi}
 
     ln -s "$TMPDIR" /tmp/pvacseq && export TMPDIR=/tmp/pvacseq && \

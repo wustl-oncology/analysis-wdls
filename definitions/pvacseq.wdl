@@ -1,15 +1,15 @@
 version 1.0
 
-import "../tools/split_n_cigar_reads.wdl" as sncr
-import "../tools/left_align_indels.wdl" as lai
-import "../subworkflows/bam_readcount.wdl" as br
-import "../subworkflows/vcf_readcount_annotator.wdl" as vra
-import "../tools/vcf_expression_annotator.wdl" as vea
-import "../tools/index_vcf.wdl" as iv
-import "../tools/pvacseq.wdl" as p
-import "../tools/pvacseq_aggregated_report_to_preferred_transcripts_list.wdl" as ptl
-import "../tools/variants_to_table.wdl" as vtt
-import "../tools/add_vep_fields_to_table.wdl" as avftt
+import "./tools/split_n_cigar_reads.wdl" as sncr
+import "./tools/left_align_indels.wdl" as lai
+import "./subworkflows/bam_readcount.wdl" as br
+import "./subworkflows/vcf_readcount_annotator.wdl" as vra
+import "./tools/vcf_expression_annotator.wdl" as vea
+import "./tools/index_vcf.wdl" as iv
+import "./tools/pvacseq.wdl" as p
+import "./tools/pvacseq_aggregated_report_to_preferred_transcripts_list.wdl" as ptl
+import "./tools/variants_to_table.wdl" as vtt
+import "./tools/add_vep_fields_to_table.wdl" as avftt
 
 workflow pvacseq {
   input {
@@ -188,11 +188,6 @@ workflow pvacseq {
     biotypes=biotypes
   }
 
-  call ptl.pvacseqAggregatedReportToPreferredTranscriptsList as pvacseqAggregatedReportToPreferredTranscriptsList {
-    input:
-    pvacseq_aggregated_report=select_first([ps.mhc_i_aggregated_report, ps.mhc_ii_aggregated_report])
-  }
-
   call vtt.variantsToTable {
     input:
     reference=reference,
@@ -204,19 +199,35 @@ workflow pvacseq {
     genotype_fields=variants_to_table_genotype_fields
   }
 
-  call avftt.addVepFieldsToTable {
-    input:
-    vcf=index.indexed_vcf,
-    vep_fields=vep_to_table_fields,
-    tsv=variantsToTable.variants_tsv,
-    prefix=prefix,
-    preferred_transcripts_tsv=pvacseqAggregatedReportToPreferredTranscriptsList.preferred_transcripts_tsv
+  if (length(select_all([ps.mhc_i_aggregated_report, ps.mhc_ii_aggregated_report])) > 0 ) {
+      call ptl.pvacseqAggregatedReportToPreferredTranscriptsList as pvacseqAggregatedReportToPreferredTranscriptsList {
+        input:
+        pvacseq_aggregated_report=select_first([ps.mhc_i_aggregated_report, ps.mhc_ii_aggregated_report])
+      }
+
+      call avftt.addVepFieldsToTable as addVepFieldsToTableWithPreferredTranscriptsTsv{
+        input:
+        vcf=index.indexed_vcf,
+        vep_fields=vep_to_table_fields,
+        tsv=variantsToTable.variants_tsv,
+        prefix=prefix,
+        preferred_transcripts_tsv=pvacseqAggregatedReportToPreferredTranscriptsList.preferred_transcripts_tsv
+      }
+  }
+  if (length(select_all([ps.mhc_i_aggregated_report, ps.mhc_ii_aggregated_report])) == 0 ) {
+      call avftt.addVepFieldsToTable as addVepFieldsToTableWithoutPreferredTranscriptsTsv{
+        input:
+        vcf=index.indexed_vcf,
+        vep_fields=vep_to_table_fields,
+        tsv=variantsToTable.variants_tsv,
+        prefix=prefix,
+      }
   }
 
   output {
     File annotated_vcf = index.indexed_vcf
     File annotated_vcf_tbi = index.indexed_vcf_tbi
-    File annotated_tsv = addVepFieldsToTable.annotated_variants_tsv
+    File annotated_tsv = select_first([addVepFieldsToTableWithPreferredTranscriptsTsv.annotated_variants_tsv, addVepFieldsToTableWithoutPreferredTranscriptsTsv.annotated_variants_tsv])
     Array[File] mhc_i = ps.mhc_i
     File? mhc_i_log = ps.mhc_i_log
     Array[File] mhc_ii = ps.mhc_ii

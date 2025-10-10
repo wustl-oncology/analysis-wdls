@@ -140,7 +140,7 @@ workflow rnaseqStarFusion {
 
   call a.agfusion {
     input:
-    fusion_predictions=starFusionDetect.fusion_predictions,
+    fusion_predictions=starFusionDetect.fusion_abridged,
     agfusion_database=agfusion_database,
     annotate_noncanonical=agfusion_annotate_noncanonical
   }
