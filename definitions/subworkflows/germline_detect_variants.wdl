@@ -28,6 +28,7 @@ workflow germlineDetectVariants {
     String vep_ensembl_version
     String vep_ensembl_species
     Array[String] vep_plugins = ["Frameshift", "Wildtype"]
+    String? coding_filter
     File? synonyms_file
     Boolean? annotate_coding_only
     Array[VepCustomAnnotation] vep_custom_annotations
@@ -79,10 +80,10 @@ workflow germlineDetectVariants {
     plugins=vep_plugins
   }
 
-
   call gfv.germlineFilterVcf as filterVcf {
     input:
     annotated_vcf=annotateVariants.annotated_vcf,
+    coding_filter=coding_filter,
     reference=reference,
     reference_fai=reference_fai,
     reference_dict=reference_dict,

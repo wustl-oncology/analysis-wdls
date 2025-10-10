@@ -37,6 +37,7 @@ workflow germlineWgs {
     String vep_ensembl_version
     String vep_ensembl_species
     Array[String]? vep_plugins
+    String? coding_filter
     File? synonyms_file
     Boolean? annotate_coding_only
     Array[File] bqsr_known_sites
@@ -124,6 +125,7 @@ workflow germlineWgs {
     vep_ensembl_version=vep_ensembl_version,
     vep_ensembl_species=vep_ensembl_species,
     vep_plugins=vep_plugins,
+    coding_filter=coding_filter,
     vep_to_table_fields=vep_to_table_fields,
     variants_to_table_fields=variants_to_table_fields,
     variants_to_table_genotype_fields=variants_to_table_genotype_fields

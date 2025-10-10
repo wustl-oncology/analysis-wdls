@@ -1,6 +1,5 @@
 version 1.0
 
-
 # pipelines
 import "germline_exome_hla_typing.wdl" as geht
 import "rnaseq_star_fusion.wdl" as rsf
@@ -17,7 +16,6 @@ import "tools/optitype_dna.wdl" as od
 import "tools/phlat.wdl" as ph
 import "tools/hlahd_dna.wdl" as hd
 import "tools/concordance.wdl" as c
-
 
 #
 # These structs are needed only because MiniWDL, used by some of our
@@ -216,6 +214,7 @@ workflow immuno {
     Int? ploidy
     String? optitype_name
     Float germline_filter_gnomAD_maximum_population_allele_frequency = 1.1
+    String? coding_filter
 
     # --------- Phase VCF Inputs ---------------------------------------
 
@@ -423,7 +422,8 @@ workflow immuno {
     qc_minimum_mapping_quality=qc_minimum_mapping_quality,
     qc_minimum_base_quality=qc_minimum_base_quality,
     optitype_name="optitype_normal",
-    germline_filter_gnomAD_maximum_population_allele_frequency=germline_filter_gnomAD_maximum_population_allele_frequency
+    germline_filter_gnomAD_maximum_population_allele_frequency=germline_filter_gnomAD_maximum_population_allele_frequency,
+    coding_filter=coding_filter
   }
 
   call c.concordance as concordanceThreeway {

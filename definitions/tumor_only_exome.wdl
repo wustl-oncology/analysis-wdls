@@ -46,6 +46,7 @@ workflow tumorOnlyExome {
     String vep_ensembl_assembly
     String vep_ensembl_version
     String vep_ensembl_species
+    String? coding_filter
     File? synonyms_file
     String vep_pick  # enum ["pick", "flag_pick", "pick_allele", "per_gene", "pick_allele_gene", "flag_pick_allele", "flag_pick_allele_gene"]
     Array[String] variants_to_table_fields = ["CHROM", "POS", "REF", "ALT", "set"]
@@ -115,6 +116,7 @@ workflow tumorOnlyExome {
     vep_ensembl_assembly=vep_ensembl_assembly,
     vep_ensembl_version=vep_ensembl_version,
     vep_ensembl_species=vep_ensembl_species,
+    coding_filter=coding_filter,
     synonyms_file=synonyms_file,
     vep_pick=vep_pick,
     variants_to_table_fields=variants_to_table_fields,
