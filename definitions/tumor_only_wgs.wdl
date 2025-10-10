@@ -44,6 +44,8 @@ workflow tumorOnlyWgs {
     String? vep_pick  # enum ["pick", "flag_pick", "pick_allele", "per_gene", "pick_allele_gene", "flag_pick_allele", "flag_pick_allele_gene"]
     Array[VepCustomAnnotation] vep_custom_annotations
 
+    String? coding_filter
+
     File? synonyms_file
     String sample_name
 
@@ -111,6 +113,7 @@ workflow tumorOnlyWgs {
     vep_ensembl_assembly=vep_ensembl_assembly,
     vep_ensembl_version=vep_ensembl_version,
     vep_ensembl_species=vep_ensembl_species,
+    coding_filter=coding_filter,
     variants_to_table_fields=variants_to_table_fields,
     variants_to_table_genotype_fields=variants_to_table_genotype_fields,
     vep_to_table_fields=vep_to_table_fields,

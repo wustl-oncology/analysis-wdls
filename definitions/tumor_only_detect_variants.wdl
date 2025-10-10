@@ -48,6 +48,7 @@ workflow tumorOnlyDetectVariants {
     Array[VepCustomAnnotation] vep_custom_annotations
 
     Boolean annotate_coding_only = false
+    String? coding_filter
     File? synonyms_file
 
     Array[String] variants_to_table_fields = ["CHROM", "POS", "ID", "REF", "ALT", "set", "AC", "AF"]
@@ -175,7 +176,8 @@ workflow tumorOnlyDetectVariants {
 
   call fvcv.filterVcfCodingVariant as codingVariantFilter {
     input:
-    vcf=afFilter.filtered_vcf
+    vcf=afFilter.filtered_vcf,
+    coding_filter=coding_filter
   }
 
   call b.bgzip as bgzipFiltered {

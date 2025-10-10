@@ -43,6 +43,7 @@ workflow germlineExomeHlaTyping {
     Array[VepCustomAnnotation] vep_custom_annotations
     String? optitype_name
     Float germline_filter_gnomAD_maximum_population_allele_frequency
+    String? coding_filter
   }
 
   call ge.germlineExome {
@@ -80,7 +81,8 @@ workflow germlineExomeHlaTyping {
     vep_custom_annotations=vep_custom_annotations,
     qc_minimum_mapping_quality=qc_minimum_mapping_quality,
     qc_minimum_base_quality=qc_minimum_base_quality,
-    germline_filter_gnomAD_maximum_population_allele_frequency=germline_filter_gnomAD_maximum_population_allele_frequency
+    germline_filter_gnomAD_maximum_population_allele_frequency=germline_filter_gnomAD_maximum_population_allele_frequency,
+    coding_filter=coding_filter
   }
 
   call od.optitypeDna as optitype {
