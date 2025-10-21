@@ -24,7 +24,7 @@ task filterVcfCustomAlleleFreq {
   command <<<
     /usr/bin/perl /usr/bin/vcf_check.pl ~{vcf} ~{step1_soft_filtered_file} \
     /usr/bin/perl /opt/vep/src/ensembl-vep/filter_vep --format vcf -o ~{step1_soft_filtered_file} -i ~{vcf} \
-    --filter "~{field_name} < ~{maximum_population_allele_frequency} or ~{field_name} = '.' or ~{field_name} = ''" \
+    --filter "~{field_name} < ~{maximum_population_allele_frequency} or not ~{field_name}" \
     --soft_filter
 
     # Compute a dynamic FILTER ID that reflects the threshold, e.g., gnomade_af_0.001
