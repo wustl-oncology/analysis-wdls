@@ -101,6 +101,10 @@ task filterVcfCustomAlleleFreq {
 
   output {
     File filtered_vcf = outfile
+    File step1_soft_filtered = step1_soft_filtered_file
+    File step2_header_processed = step2_header_processed_file  
+    File step3_filter_vep_pass_processed = step3_filter_vep_pass_processed_file
+    File step4_filter_vep_fail_processed = step4_filter_vep_fail_processed_file
   }
 }
 
