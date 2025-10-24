@@ -1,12 +1,14 @@
 version 1.0
 
-import "./subworkflows/bam_readcount.wdl" as br
-import "./subworkflows/vcf_readcount_annotator.wdl" as vra
-import "./tools/vcf_expression_annotator.wdl" as vea
-import "./tools/index_vcf.wdl" as iv
-import "./tools/regtools.wdl" as reg
-import "./tools/pvacsplice.wdl" as pspl
+import "subworkflows/bam_readcount.wdl" as br
+import "subworkflows/vcf_readcount_annotator.wdl" as vra
+import "tools/vcf_expression_annotator.wdl" as vea
+import "tools/index_vcf.wdl" as iv
+import "tools/regtools.wdl" as reg
+import "tools/pvacsplice.wdl" as pspl
 
+# Starting point of this workflow is a vcf which has been annotated with VEP, but doesnt have any expression data yet.
+# this will be annotated_filtered.vcf.gz (not annotated.expression.vcf.gz)
 
 workflow pvacsplice {
   input {
@@ -30,7 +32,7 @@ workflow pvacsplice {
     String output_filename_tsv
     String? output_filename_vcf
     String? output_filename_bed
-    String? strand
+    String strand #[first, second, unstranded, RF, FR, XS]
     Int? window_size
     Int? max_distance_exon 
     Int? max_distance_intron
@@ -140,6 +142,7 @@ workflow pvacsplice {
     intron_motif_priority=intron_motif_priority,
     input_vcf=index.indexed_vcf,
     input_bam=rnaseq_bam,
+    input_bam_bai=rnaseq_bam_bai,
     input_reference_dna_fasta=reference,
     input_reference_gtf=reference_annotation
   }
