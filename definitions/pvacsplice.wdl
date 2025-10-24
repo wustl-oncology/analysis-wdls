@@ -1,11 +1,11 @@
 version 1.0
 
-import "../subworkflows/bam_readcount.wdl" as br
-import "../subworkflows/vcf_readcount_annotator.wdl" as vra
-import "../tools/vcf_expression_annotator.wdl" as vea
-import "../tools/index_vcf.wdl" as iv
-import "../tools/regtools.wdl" as reg
-import "../tools/pvacsplice.wdl" as pspl
+import "./subworkflows/bam_readcount.wdl" as br
+import "./subworkflows/vcf_readcount_annotator.wdl" as vra
+import "./tools/vcf_expression_annotator.wdl" as vea
+import "./tools/index_vcf.wdl" as iv
+import "./tools/regtools.wdl" as reg
+import "./tools/pvacsplice.wdl" as pspl
 
 
 workflow pvacsplice {
