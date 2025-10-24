@@ -59,6 +59,9 @@ workflow tumorOnlyDetectVariants {
 
     Int? readcount_minimum_base_quality
     Int? readcount_minimum_mapping_quality
+    
+    Int? max_mm_qualsum_diff
+    Int? max_var_mm_qualsum    
   }
 
   call vg.varscanGermline as varscan {
@@ -74,7 +77,9 @@ workflow tumorOnlyDetectVariants {
     varscan_min_var_freq=varscan_min_var_freq,
     min_reads=varscan_min_reads,
     p_value=varscan_p_value,
-    sample_name=sample_name
+    sample_name=sample_name,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum
   }
 
   call dg.docmGermline as docm {

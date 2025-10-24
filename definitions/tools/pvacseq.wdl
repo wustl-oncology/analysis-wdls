@@ -14,11 +14,13 @@ task pvacseq {
     Array[Int]? epitope_lengths_class_ii
     Int? binding_threshold
     Int? percentile_threshold
+    String? percentile_threshold_strategy
     Int? iedb_retries
 
     String? normal_sample_name
     String? net_chop_method  # enum [cterm , 20s]
     String? top_score_metric  # enum [lowest, median]
+    String? top_score_metric2  # enum [ic50, percentile]
     Float? net_chop_threshold
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
@@ -36,8 +38,10 @@ task pvacseq {
     Float? expn_val
     Int? maximum_transcript_support_level  # enum [1, 2, 3, 4, 5]
     Int? aggregate_inclusion_binding_threshold
+    Int? aggregate_inclusion_count_limit
     Array[String]? problematic_amino_acids
     Float? anchor_contribution_threshold
+    Array[String]? biotypes
 
     Boolean allele_specific_binding_thresholds = false
     Boolean keep_tmp_files = false
@@ -56,17 +60,21 @@ task pvacseq {
     maxRetries: 2
     memory: "32GB"
     cpu: n_threads
-    docker: "griffithlab/pvactools:4.4.1"
+    docker: "griffithlab/pvactools:5.5.4"
     disks: "local-disk ~{space_needed_gb} HDD"
+    bootDiskSizeGb: 50
   }
 
   # explicit typing required, don't inline
   Array[Int] epitope_i = select_first([epitope_lengths_class_i, []])
   Array[Int] epitope_ii = select_first([epitope_lengths_class_ii, []])
   Array[String] problematic_aa = select_first([problematic_amino_acids, []])
+  Array[String] biotypes_list = select_first([biotypes, []])
   command <<<
+    set -eou pipefail
+
     # touch each tbi to ensure they have a timestamp after the vcf
-    touch ~{phased_proximal_variants_vcf_tbi}
+    ~{if defined(phased_proximal_variants_vcf_tbi) then "touch ~{phased_proximal_variants_vcf_tbi}" else ""}
     touch ~{input_vcf_tbi}
 
     ln -s "$TMPDIR" /tmp/pvacseq && export TMPDIR=/tmp/pvacseq && \
@@ -77,8 +85,10 @@ task pvacseq {
     ~{if length(epitope_ii) > 0 then "-e2 " else ""} ~{sep="," epitope_ii} \
     ~{if defined(binding_threshold) then "-b ~{binding_threshold}" else ""} \
     ~{if defined(percentile_threshold) then "--percentile-threshold ~{percentile_threshold}" else ""} \
+    ~{if defined(percentile_threshold_strategy) then "--percentile-threshold-strategy ~{percentile_threshold_strategy}" else ""} \
     ~{if allele_specific_binding_thresholds then "--allele-specific-binding-thresholds" else ""} \
     ~{if defined(aggregate_inclusion_binding_threshold) then "--aggregate-inclusion-binding-threshold ~{aggregate_inclusion_binding_threshold}" else ""} \
+    ~{if defined(aggregate_inclusion_count_limit) then "--aggregate-inclusion-count-limit ~{aggregate_inclusion_count_limit}" else ""} \
     ~{if defined(iedb_retries) then "-r ~{iedb_retries}" else ""} \
     ~{if keep_tmp_files then "-k" else ""} \
     ~{if defined(normal_sample_name) then "--normal-sample-name ~{normal_sample_name}" else ""} \
@@ -87,6 +97,7 @@ task pvacseq {
     ~{if run_reference_proteome_similarity then "--run-reference-proteome-similarity" else ""} \
     ~{if defined(peptide_fasta) then "--peptide-fasta ~{peptide_fasta}" else ""} \
     ~{if defined(top_score_metric) then "-m ~{top_score_metric}" else ""} \
+    ~{if defined(top_score_metric2) then "--top-score-metric2 ~{top_score_metric2}" else ""} \
     ~{if defined(net_chop_threshold) then "--net-chop-threshold ~{net_chop_threshold}" else ""} \
     ~{if defined(additional_report_columns) then "-m ~{additional_report_columns}" else ""} \
     ~{if defined(fasta_size) then "-s ~{fasta_size}" else ""} \
@@ -105,9 +116,13 @@ task pvacseq {
     ~{if length(problematic_aa) > 0 then "--problematic-amino-acids" else ""} ~{sep="," problematic_aa} \
     ~{if allele_specific_anchors then "--allele-specific-anchors" else ""} \
     ~{if defined(anchor_contribution_threshold) then "--anchor-contribution-threshold ~{anchor_contribution_threshold}" else ""} \
+    ~{if length(biotypes_list) > 0 then "--biotypes" else ""} ~{sep="," biotypes_list} \
     --n-threads ~{n_threads} \
     ~{input_vcf} ~{sample_name} ~{sep="," alleles} ~{sep=" " prediction_algorithms} \
     pvacseq_predictions
+
+    if [[ -e pvacseq_predictions/MHC_Class_I/log/inputs.yml ]]; then cp pvacseq_predictions/MHC_Class_I/log/inputs.yml inputs_class_I.yml; fi
+    if [[ -e pvacseq_predictions/MHC_Class_II/log/inputs.yml ]]; then cp pvacseq_predictions/MHC_Class_II/log/inputs.yml inputs_class_II.yml; fi
   >>>
 
   output {
@@ -115,10 +130,12 @@ task pvacseq {
     File? mhc_i_aggregated_report = "pvacseq_predictions/MHC_Class_I/~{sample_name}.all_epitopes.aggregated.tsv"
     File? mhc_i_filtered_epitopes = "pvacseq_predictions/MHC_Class_I/~{sample_name}.filtered.tsv"
     File? mhc_i_aggregated_metrics_file = "pvacseq_predictions/MHC_Class_I/" + sample_name + ".all_epitopes.aggregated.metrics.json"
+    File? mhc_i_log = "inputs_class_I.yml"
     File? mhc_ii_all_epitopes = "pvacseq_predictions/MHC_Class_II/~{sample_name}.all_epitopes.tsv"
     File? mhc_ii_aggregated_report = "pvacseq_predictions/MHC_Class_II/~{sample_name}.all_epitopes.aggregated.tsv"
     File? mhc_ii_filtered_epitopes = "pvacseq_predictions/MHC_Class_II/~{sample_name}.filtered.tsv"
     File? mhc_ii_aggregated_metrics_file = "pvacseq_predictions/MHC_Class_II/" + sample_name + ".all_epitopes.aggregated.metrics.json"
+    File? mhc_ii_log = "inputs_class_II.yml"
     File? combined_all_epitopes = "pvacseq_predictions/combined/~{sample_name}.all_epitopes.tsv"
     File? combined_aggregated_report = "pvacseq_predictions/combined/~{sample_name}.all_epitopes.aggregated.tsv"
     File? combined_filtered_epitopes = "pvacseq_predictions/combined/~{sample_name}.filtered.tsv"
@@ -146,11 +163,13 @@ workflow wf {
     Array[Int]? epitope_lengths_class_ii
     Int? binding_threshold
     Int? percentile_threshold
+    String? percentile_threshold_strategy
     Int? iedb_retries
 
     String? normal_sample_name
     String? net_chop_method  # enum [cterm , 20s]
     String? top_score_metric  # enum [lowest, median]
+    String? top_score_metric2  # enum [ic50, percentile]
     Float? net_chop_threshold
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
@@ -189,11 +208,13 @@ workflow wf {
     epitope_lengths_class_ii=epitope_lengths_class_ii,
     binding_threshold=binding_threshold,
     percentile_threshold=percentile_threshold,
+    percentile_threshold_strategy=percentile_threshold_strategy,
     aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
     iedb_retries=iedb_retries,
     normal_sample_name=normal_sample_name,
     net_chop_method=net_chop_method,
     top_score_metric=top_score_metric,
+    top_score_metric2=top_score_metric2,
     net_chop_threshold=net_chop_threshold,
     additional_report_columns=additional_report_columns,
     fasta_size=fasta_size,

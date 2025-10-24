@@ -12,6 +12,8 @@ task fpFilter {
     String output_vcf_basename = "fpfilter"
     String sample_name = "TUMOR"
     Float fp_min_var_freq = 0.05
+    Int? max_mm_qualsum_diff
+    Int? max_var_mm_qualsum
   }
 
   Int space_needed_gb = 10 + round(size(vcf, "GB")*2 + size([reference, reference_fai, reference_dict, bam], "GB"))
@@ -26,7 +28,17 @@ task fpFilter {
 
   String output_vcf = output_vcf_basename + ".vcf"
   command <<<
-    /usr/bin/perl /usr/bin/fpfilter.pl --bam-readcount /usr/bin/bam-readcount --samtools /opt/samtools/bin/samtools --output ~{output_vcf} --reference ~{reference} --bam-file ~{bam} --vcf-file ~{vcf} --sample ~{sample_name} --min-var-freq ~{fp_min_var_freq}
+    /usr/bin/perl /usr/bin/fpfilter.pl \
+    --bam-readcount /usr/bin/bam-readcount \
+    --samtools /opt/samtools/bin/samtools \
+    --output ~{output_vcf} \
+    --reference ~{reference} \
+    --bam-file ~{bam} \
+    --vcf-file ~{vcf} \
+    --sample ~{sample_name} \
+    --min-var-freq ~{fp_min_var_freq} \
+    ~{if defined(max_mm_qualsum_diff) then "--max-mm-qualsum-diff ~{max_mm_qualsum_diff}" else ""} \
+    ~{if defined(max_var_mm_qualsum) then "--max_var_mm_qualsum ~{max_var_mm_qualsum}" else ""}
   >>>
 
   output {

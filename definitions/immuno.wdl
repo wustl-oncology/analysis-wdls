@@ -7,8 +7,8 @@ import "rnaseq_star_fusion.wdl" as rsf
 import "somatic_exome.wdl" as se
 # others
 import "subworkflows/phase_vcf.wdl" as pv
-import "subworkflows/pvacseq.wdl" as p
 import "subworkflows/pvacsplice.wdl" as pspl
+import "pvacseq.wdl" as p
 import "subworkflows/generate_fda_metrics.wdl" as generate_fda_metrics
 import "tools/extract_hla_alleles.wdl" as eha
 import "tools/hla_consensus.wdl" as hc
@@ -16,6 +16,9 @@ import "tools/pvacfuse.wdl" as pf
 import "types.wdl"  # !UnusedImport
 import "tools/optitype_dna.wdl" as od
 import "tools/phlat.wdl" as ph
+import "tools/hlahd_dna.wdl" as hd
+import "tools/concordance.wdl" as c
+
 
 #
 # These structs are needed only because MiniWDL, used by some of our
@@ -54,6 +57,7 @@ struct Qc {
   QCMetrics tumor_dna
   QCMetrics normal_dna
   Array[File?] concordance
+  Array[File?] concordanceThreeway
   FdaMetricBundle fda_metrics
 }
 
@@ -85,7 +89,9 @@ struct Germline {
 
 struct MHC {
   Array[File] mhc_i
+  File? mhc_i_log
   Array[File] mhc_ii
+  File? mhc_ii_log
   Array[File] combined
   Array[File]? phase_vcf
 }
@@ -201,6 +207,9 @@ workflow immuno {
     File? validated_variants
     File? validated_variants_tbi
 
+    Int? max_mm_qualsum_diff
+    Int? max_var_mm_qualsum
+
     # --------- Germline Inputs ----------------------------------------
 
     Array[String] gvcf_gq_bands
@@ -211,11 +220,13 @@ workflow immuno {
 
     # --------- Phase VCF Inputs ---------------------------------------
 
+
+    # --------- HLA Consensus Inputs -----------------------------------
     Array[String]? clinical_mhc_classI_alleles
     Array[String]? clinical_mhc_classII_alleles
+    String hla_source_mode
 
     # --------- PVACseq Inputs -----------------------------------------
-    String hla_source_mode
     Int? readcount_minimum_base_quality
     Int? readcount_minimum_mapping_quality
     Array[String] prediction_algorithms
@@ -223,8 +234,10 @@ workflow immuno {
     Array[Int]? epitope_lengths_class_ii
     Int? binding_threshold
     Int? percentile_threshold
+    String? percentile_threshold_strategy
     Float? minimum_fold_change
     String? top_score_metric  # enum [lowest, median]
+    String? top_score_metric2  # enum [ic50, percentile]
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
     Int? downstream_sequence_length
@@ -391,7 +404,9 @@ workflow immuno {
     tumor_sample_name=tumor_sample_name,
     normal_sample_name=normal_sample_name,
     validated_variants=validated_variants,
-    validated_variants_tbi=validated_variants_tbi
+    validated_variants_tbi=validated_variants_tbi,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum
   }
 
   call geht.germlineExomeHlaTyping as germlineExome {
@@ -433,6 +448,16 @@ workflow immuno {
     germline_filter_gnomAD_maximum_population_allele_frequency=germline_filter_gnomAD_maximum_population_allele_frequency
   }
 
+  call c.concordance as concordanceThreeway {
+    input:
+      reference = reference,
+      reference_fai = reference_fai,
+      reference_dict = reference_dict,
+      vcf = somalier_vcf,
+      bams = [somaticExome.tumor_cram, somaticExome.normal_cram, rna.final_bam],
+      bais = [somaticExome.tumor_cram_crai, somaticExome.normal_cram_crai, rna.final_bam_bai]
+  }
+
   call od.optitypeDna as optitype {
     input: 
     optitype_name="optitype_tumor",
@@ -440,6 +465,16 @@ workflow immuno {
     reference_fai=reference_fai,
     cram=somaticExome.tumor_cram,
     cram_crai=somaticExome.tumor_cram_crai,
+  }
+
+
+  call hd.hlahdDna as hlahd {
+    input:
+    reference=reference,
+    reference_fai=reference_fai,
+    cram=somaticExome.tumor_cram,
+    cram_crai=somaticExome.tumor_cram_crai,
+    hlahd_name="hlahd_tumor"
   }
 
   call ph.phlat {
@@ -450,6 +485,8 @@ workflow immuno {
     reference=reference,
     reference_fai=reference_fai
   } 
+
+  
 
   call pv.phaseVcf {
     input:
@@ -468,7 +505,8 @@ workflow immuno {
   call eha.extractHlaAlleles as extractAlleles {
     input:
     optitype_file=germlineExome.optitype_tsv, 
-    phlat_file=germlineExome.phlat_summary
+    phlat_file=germlineExome.phlat_summary, 
+    hlahd_file=germlineExome.hlahd_result_txt
   }
 
   call hc.hlaConsensus {
@@ -500,8 +538,10 @@ workflow immuno {
     epitope_lengths_class_ii=epitope_lengths_class_ii,
     binding_threshold=binding_threshold,
     percentile_threshold=percentile_threshold,
+    percentile_threshold_strategy=percentile_threshold_strategy,
     minimum_fold_change=minimum_fold_change,
     top_score_metric=top_score_metric,
+    top_score_metric2=top_score_metric2,
     additional_report_columns=additional_report_columns,
     fasta_size=fasta_size,
     downstream_sequence_length=downstream_sequence_length,
@@ -522,6 +562,7 @@ workflow immuno {
     run_reference_proteome_similarity=run_reference_proteome_similarity,
     peptide_fasta=peptide_fasta,
     n_threads=pvacseq_threads,
+    iedb_retries=iedb_retries,
     variants_to_table_fields=variants_to_table_fields,
     variants_to_table_genotype_fields=variants_to_table_genotype_fields,
     vep_to_table_fields=vep_to_table_fields,
@@ -529,9 +570,11 @@ workflow immuno {
     tumor_purity=tumor_purity,
     allele_specific_binding_thresholds=allele_specific_binding_thresholds,
     aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
+    aggregate_inclusion_count_limit=aggregate_inclusion_count_limit,
     problematic_amino_acids=problematic_amino_acids,
     allele_specific_anchors=allele_specific_anchors,
-    anchor_contribution_threshold=anchor_contribution_threshold
+    anchor_contribution_threshold=anchor_contribution_threshold,
+    biotypes=biotypes
   }
 
   call pspl.pvacsplice {
@@ -615,11 +658,12 @@ workflow immuno {
     epitope_lengths_class_ii=epitope_lengths_class_ii,
     binding_threshold=binding_threshold,
     percentile_threshold=percentile_threshold,
-    iedb_retries=iedb_retries,
+    percentile_threshold_strategy=percentile_threshold_strategy,
     keep_tmp_files=pvacfuse_keep_tmp_files,
     net_chop_method=net_chop_method,
     netmhc_stab=netmhc_stab,
     top_score_metric=top_score_metric,
+    top_score_metric2=top_score_metric2,
     net_chop_threshold=net_chop_threshold,
     run_reference_proteome_similarity=run_reference_proteome_similarity,
     peptide_fasta=peptide_fasta,
@@ -628,10 +672,12 @@ workflow immuno {
     downstream_sequence_length=downstream_sequence_length,
     exclude_nas=exclude_nas,
     n_threads=pvacseq_threads,
+    iedb_retries=iedb_retries,
     read_support=pvacfuse_read_support,
     expn_val=pvacfuse_expn_val,
     allele_specific_binding_thresholds=allele_specific_binding_thresholds,
     aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
+    aggregate_inclusion_count_limit=aggregate_inclusion_count_limit,
     problematic_amino_acids=problematic_amino_acids,
   }
 
@@ -686,7 +732,9 @@ workflow immuno {
     Rnaseq rnaseq = object {
       alignments: [
         rna.final_bam,
-        rna.final_bam_bai
+        rna.final_bam_bai,
+        pvacseq.indel_counting_bam,
+        pvacseq.indel_counting_bai
       ],
       stringtie_expression: [
         rna.stringtie_transcript_gtf,
@@ -712,7 +760,7 @@ workflow immuno {
       fusioninspector_evidence: rna.fusioninspector_evidence
     }
 
-    # -------- Somatic Outputs -----------------------------------------
+    # -------- QC Outputs -----------------------------------------
 
     Qc qc =  object {
       tumor_rna: flatten([
@@ -727,6 +775,10 @@ workflow immuno {
         somaticExome.somalier_concordance_metrics,
         somaticExome.somalier_concordance_statistics
       ],
+      concordanceThreeway: [
+        concordanceThreeway.somalier_pairs,
+        concordanceThreeway.somalier_samples
+      ],  
       fda_metrics: object {
         unaligned_normal_dna: generateFdaMetrics.unaligned_normal_dna_metrics,
         unaligned_tumor_dna: generateFdaMetrics.unaligned_tumor_dna_metrics,
@@ -736,6 +788,8 @@ workflow immuno {
         aligned_tumor_rna: generateFdaMetrics.aligned_tumor_rna_metrics
       }
     }
+
+    # -------- Somatic Outputs -----------------------------------------
 
     File tumor_cram = somaticExome.tumor_cram
     File tumor_cram_crai = somaticExome.tumor_cram_crai
@@ -818,6 +872,8 @@ workflow immuno {
        germlineExome.optitype_plot,
        optitype.optitype_tsv,
        optitype.optitype_plot,
+       hlahd.hlahd_result_txt,
+       germlineExome.hlahd_result_txt,
        germlineExome.phlat_summary,
        phlat.phlat_summary,
        extractAlleles.allele_file,
@@ -826,18 +882,22 @@ workflow immuno {
     ])
 
 
-    # --------- Other Outputs ------------------------------------------
+    # --------- pVACtools Outputs ------------------------------------------
 
     MHC pVACseq = object {
       mhc_i: pvacseq.mhc_i,
+      mhc_i_log: pvacseq.mhc_i_log,
       mhc_ii: pvacseq.mhc_ii,
+      mhc_ii_log: pvacseq.mhc_ii_log,
       combined: pvacseq.combined,
       phase_vcf: [phaseVcf.phased_vcf, phaseVcf.phased_vcf_tbi]
     }
 
     MHC pVACfuse = object {
       mhc_i: pvacfuse.mhc_i,
+      mhc_i_log: pvacfuse.mhc_i_log,
       mhc_ii: pvacfuse.mhc_ii,
+      mhc_ii_log: pvacfuse.mhc_ii_log,
       combined: pvacfuse.combined
     }
 

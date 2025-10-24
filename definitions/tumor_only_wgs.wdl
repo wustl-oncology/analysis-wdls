@@ -62,6 +62,8 @@ workflow tumorOnlyWgs {
     Float? varscan_min_var_freq
     Int? varscan_min_reads
     Float maximum_population_allele_frequency = 0.001
+    Int? max_mm_qualsum_diff
+    Int? max_var_mm_qualsum    
 }
 
   call aw.alignmentWgs as alignmentAndQc {
@@ -117,7 +119,9 @@ workflow tumorOnlyWgs {
     docm_vcf_tbi=docm_vcf_tbi,
     vep_custom_annotations=vep_custom_annotations,
     readcount_minimum_mapping_quality=readcount_minimum_mapping_quality,
-    readcount_minimum_base_quality=readcount_minimum_base_quality
+    readcount_minimum_base_quality=readcount_minimum_base_quality,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum
   }
 
   call btc.bamToCram {

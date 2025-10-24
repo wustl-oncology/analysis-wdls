@@ -16,6 +16,8 @@ workflow bamReadcount {
     File bam_bai
     Int? min_base_quality
     Int? min_mapping_quality
+    File? indel_counting_bam
+    File? indel_counting_bai
   }
 
   call nv.normalizeVariants {
@@ -43,7 +45,9 @@ workflow bamReadcount {
     bam_bai=bam_bai,
     sample=sample,
     min_mapping_quality=min_mapping_quality,
-    min_base_quality=min_base_quality
+    min_base_quality=min_base_quality,
+    indel_counting_bam=indel_counting_bam,
+    indel_counting_bai=indel_counting_bai
   }
 
   output {

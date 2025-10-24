@@ -78,6 +78,9 @@ workflow detectVariants {
     # Both or neither
     File? validated_variants
     File? validated_variants_tbi
+
+    Int? max_mm_qualsum_diff
+    Int? max_var_mm_qualsum
   }
 
   call m.mutect {
@@ -92,7 +95,9 @@ workflow detectVariants {
     normal_bam_bai=normal_bam_bai,
     interval_list=roi_intervals,
     scatter_count=scatter_count,
-    fp_min_var_freq=fp_min_var_freq
+    fp_min_var_freq=fp_min_var_freq,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum
   }
 
   call sapp.strelkaAndPostProcessing as strelka {
@@ -109,7 +114,9 @@ workflow detectVariants {
     cpu_reserved=strelka_cpu_reserved,
     normal_sample_name=normal_sample_name,
     tumor_sample_name=tumor_sample_name,
-    fp_min_var_freq=fp_min_var_freq
+    fp_min_var_freq=fp_min_var_freq,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum
   }
 
   call vpapp.varscanPreAndPostProcessing as varscan {
@@ -129,7 +136,9 @@ workflow detectVariants {
     p_value=varscan_p_value,
     max_normal_freq=varscan_max_normal_freq,
     normal_sample_name=normal_sample_name,
-    tumor_sample_name=tumor_sample_name
+    tumor_sample_name=tumor_sample_name,
+    max_mm_qualsum_diff=max_mm_qualsum_diff,
+    max_var_mm_qualsum=max_var_mm_qualsum
   }
 
   call dc.docmCle as docm {
