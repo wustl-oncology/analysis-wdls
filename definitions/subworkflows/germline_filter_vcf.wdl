@@ -10,6 +10,7 @@ import "../tools/select_variants.wdl" as sv
 workflow germlineFilterVcf {
   input {
     File annotated_vcf
+    String? coding_filter
     Float germline_filter_gnomAD_maximum_population_allele_frequency
     String gnomad_field_name
     File limit_variant_intervals
@@ -19,7 +20,9 @@ workflow germlineFilterVcf {
   }
 
   call fvcv.filterVcfCodingVariant as codingVariantFilter {
-    input: vcf=annotated_vcf
+    input: 
+    vcf=annotated_vcf,
+    coding_filter=coding_filter
   }
 
   call fvcaf.filterVcfCustomAlleleFreq as gnomadFrequencyFilter {
