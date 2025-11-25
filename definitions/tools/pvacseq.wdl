@@ -14,14 +14,16 @@ task pvacseq {
     Array[Int]? epitope_lengths_class_i
     Array[Int]? epitope_lengths_class_ii
     Int? binding_threshold
-    Int? percentile_threshold
+    Float? binding_percentile_threshold
+    Float? presentation_percentile_threshold
+    Float? immunogenicity_percentile_threshold
     String? percentile_threshold_strategy
     Int? iedb_retries
 
     String? normal_sample_name
     String? net_chop_method  # enum [cterm , 20s]
     String? top_score_metric  # enum [lowest, median]
-    String? top_score_metric2  # enum [ic50, percentile]
+    Array[String]? top_score_metric2
     Float? net_chop_threshold
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
@@ -45,6 +47,7 @@ task pvacseq {
     Float? anchor_contribution_threshold
     Array[String]? biotypes
     String? netmhciipan_version # enum [4.3, 4.2, 4.1, 4.0]
+    String? reference_scores_path
 
     Boolean allele_specific_binding_thresholds = false
     Boolean keep_tmp_files = false
@@ -52,6 +55,7 @@ task pvacseq {
     Boolean run_reference_proteome_similarity = false
     Boolean allele_specific_anchors = false
     Boolean allow_incomplete_transcripts =  false
+    Boolean use_normalized_percentiles = false
 
     Float? tumor_purity
   }
@@ -64,7 +68,7 @@ task pvacseq {
     maxRetries: 2
     memory: "32GB"
     cpu: n_threads
-    docker: "griffithlab/pvactools:6.0.2"
+    docker: "susannakiwala/pvactools:7.0.0a14"
     disks: "local-disk ~{space_needed_gb} HDD"
     bootDiskSizeGb: 50
   }
@@ -75,6 +79,7 @@ task pvacseq {
   Array[String] problematic_aa = select_first([problematic_amino_acids, []])
   Array[String] biotypes_list = select_first([biotypes, []])
   Array[String] transcript_prioritization_strategy_list = select_first([transcript_prioritization_strategy, []])
+  Array[String] tsm2 = select_first([top_score_metric2, []])
   command <<<
     set -eou pipefail
 
@@ -89,7 +94,9 @@ task pvacseq {
     ~{if length(epitope_i ) > 0 then "-e1 " else ""} ~{sep="," epitope_i} \
     ~{if length(epitope_ii) > 0 then "-e2 " else ""} ~{sep="," epitope_ii} \
     ~{if defined(binding_threshold) then "-b ~{binding_threshold}" else ""} \
-    ~{if defined(percentile_threshold) then "--percentile-threshold ~{percentile_threshold}" else ""} \
+    ~{if defined(binding_percentile_threshold) then "--binding-percentile-threshold ~{binding_percentile_threshold}" else ""} \
+    ~{if defined(presentation_percentile_threshold) then "--presentation-percentile-threshold ~{presentation_percentile_threshold}" else ""} \
+    ~{if defined(immunogenicity_percentile_threshold) then "--immunogenicity-percentile-threshold ~{immunogenicity_percentile_threshold}" else ""} \
     ~{if defined(percentile_threshold_strategy) then "--percentile-threshold-strategy ~{percentile_threshold_strategy}" else ""} \
     ~{if allele_specific_binding_thresholds then "--allele-specific-binding-thresholds" else ""} \
     ~{if defined(aggregate_inclusion_binding_threshold) then "--aggregate-inclusion-binding-threshold ~{aggregate_inclusion_binding_threshold}" else ""} \
@@ -102,7 +109,7 @@ task pvacseq {
     ~{if run_reference_proteome_similarity then "--run-reference-proteome-similarity" else ""} \
     ~{if defined(peptide_fasta) then "--peptide-fasta ~{peptide_fasta}" else ""} \
     ~{if defined(top_score_metric) then "-m ~{top_score_metric}" else ""} \
-    ~{if defined(top_score_metric2) then "--top-score-metric2 ~{top_score_metric2}" else ""} \
+    ~{if length(tsm2) > 0 then "--top-score-metric2 " else ""} ~{sep="," tsm2} \
     ~{if defined(net_chop_threshold) then "--net-chop-threshold ~{net_chop_threshold}" else ""} \
     ~{if defined(additional_report_columns) then "-m ~{additional_report_columns}" else ""} \
     ~{if defined(fasta_size) then "-s ~{fasta_size}" else ""} \
@@ -126,6 +133,8 @@ task pvacseq {
     ~{if allow_incomplete_transcripts then "--allow-incomplete-transcripts" else ""} \
     ~{if defined(genes_of_interest_file) then "--genes-of-interest-file ~{genes_of_interest_file}" else ""} \
     ~{if defined(netmhciipan_version) then "--netmhciipan-version ~{netmhciipan_version}" else ""} \
+    ~{if use_normalized_percentiles then "--use-normalized-percentiles" else ""} \
+    ~{if defined(reference_scores_path) then "--reference-scores-path ~{reference_scores_path}" else ""} \
     --n-threads ~{n_threads} \
     ~{input_vcf} ~{sample_name} ~{sep="," alleles} ~{sep=" " prediction_algorithms} \
     pvacseq_predictions
@@ -173,14 +182,16 @@ workflow wf {
     Array[Int]? epitope_lengths_class_i
     Array[Int]? epitope_lengths_class_ii
     Int? binding_threshold
-    Int? percentile_threshold
+    Float? binding_percentile_threshold
+    Float? presentation_percentile_threshold
+    Float? immunogenicity_percentile_threshold
     String? percentile_threshold_strategy
     Int? iedb_retries
 
     String? normal_sample_name
     String? net_chop_method  # enum [cterm , 20s]
     String? top_score_metric  # enum [lowest, median]
-    String? top_score_metric2  # enum [ic50, percentile]
+    Array[String]? top_score_metric2
     Float? net_chop_threshold
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
@@ -204,6 +215,7 @@ workflow wf {
     Float? anchor_contribution_threshold
     Array[String]? biotypes
     String? netmhciipan_version # enum [4.3, 4.2, 4.1, 4.0]
+    String? reference_scores_path
 
     Boolean allele_specific_binding_thresholds = false
     Boolean keep_tmp_files = false
@@ -211,6 +223,7 @@ workflow wf {
     Boolean run_reference_proteome_similarity = false
     Boolean allele_specific_anchors = false
     Boolean allow_incomplete_transcripts =  false
+    Boolean use_normalized_percentiles = false
 
     Float? tumor_purity
   }
@@ -227,7 +240,9 @@ workflow wf {
     epitope_lengths_class_i=epitope_lengths_class_i,
     epitope_lengths_class_ii=epitope_lengths_class_ii,
     binding_threshold=binding_threshold,
-    percentile_threshold=percentile_threshold,
+    binding_percentile_threshold=binding_percentile_threshold,
+    presentation_percentile_threshold=presentation_percentile_threshold,
+    immunogenicity_percentile_threshold=immunogenicity_percentile_threshold,
     percentile_threshold_strategy=percentile_threshold_strategy,
     aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
     aggregate_inclusion_count_limit=aggregate_inclusion_count_limit,
@@ -264,5 +279,7 @@ workflow wf {
     biotypes=biotypes,
     allow_incomplete_transcripts=allow_incomplete_transcripts,
     netmhciipan_version=netmhciipan_version,
+    use_normalized_percentiles=use_normalized_percentiles,
+    reference_scores_path=reference_scores_path
   }
 }
