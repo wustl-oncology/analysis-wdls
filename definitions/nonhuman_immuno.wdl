@@ -64,7 +64,9 @@ workflow nonhuman_immuno {
         Array[Int]? epitope_lengths_class_i
         Array[Int]? epitope_lengths_class_ii
         Int? binding_threshold
-        Int? percentile_threshold
+        Float? binding_percentile_threshold
+        Float? presentation_percentile_threshold
+        Float? immunogenicity_percentile_threshold
         String? percentile_threshold_strategy
         Float? minimum_fold_change
         String? top_score_metric  # enum [lowest, median]
@@ -100,6 +102,8 @@ workflow nonhuman_immuno {
         Float? anchor_contribution_threshold
         String? prefix = "pvacseq"
         Array[String]? biotypes
+        Boolean? use_normalized_percentiles
+        String? reference_scores_path
         # Somatic Exome Nonhuman Inputs:
         # File reference
         # File reference_fai
@@ -271,7 +275,9 @@ workflow nonhuman_immuno {
         epitope_lengths_class_i=epitope_lengths_class_i,
         epitope_lengths_class_ii=epitope_lengths_class_ii,
         binding_threshold=binding_threshold,
-        percentile_threshold=percentile_threshold,
+        binding_percentile_threshold=binding_percentile_threshold,
+        presentation_percentile_threshold=presentation_percentile_threshold,
+        immunogenicity_percentile_threshold=immunogenicity_percentile_threshold,
         percentile_threshold_strategy=percentile_threshold_strategy,
         minimum_fold_change=minimum_fold_change,
         top_score_metric=top_score_metric,
@@ -306,7 +312,9 @@ workflow nonhuman_immuno {
         allele_specific_anchors=allele_specific_anchors,
         anchor_contribution_threshold=anchor_contribution_threshold,
         prefix=prefix,
-        biotypes=biotypes
+        biotypes=biotypes,
+        use_normalized_percentiles=use_normalized_percentiles,
+        reference_scores_path=reference_scores_path
     }
     output {
         #PVacseq:
