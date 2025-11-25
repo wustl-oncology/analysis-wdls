@@ -23,6 +23,7 @@ workflow pvacseq {
     File reference_fai
     File reference_dict
     File? peptide_fasta
+    File? genes_of_interest_file
     Int? readcount_minimum_base_quality
     Int? readcount_minimum_mapping_quality
     File gene_expression_file
@@ -44,6 +45,7 @@ workflow pvacseq {
     Boolean? exclude_nas
     File? phased_proximal_variants_vcf
     File? phased_proximal_variants_vcf_tbi
+    Array[String]? transcript_prioritization_strategy # allowed values ['canonical', 'mane_select', 'tsl']
     Int? maximum_transcript_support_level  # enum [1 2 3 4 5]
     Int? normal_cov
     Int? tdna_cov
@@ -70,6 +72,8 @@ workflow pvacseq {
     Float? anchor_contribution_threshold
     String? prefix = "pvacseq"
     Array[String]? biotypes
+    Boolean? allow_incomplete_transcripts
+    String? netmhciipan_version # enum [4.3, 4.2, 4.1, 4.0]
   }
 
   call sncr.splitNCigarReads as tumorRnaSplitNCigarReads{
@@ -163,6 +167,7 @@ workflow pvacseq {
     exclude_nas=exclude_nas,
     phased_proximal_variants_vcf=phased_proximal_variants_vcf,
     phased_proximal_variants_vcf_tbi=phased_proximal_variants_vcf_tbi,
+    transcript_prioritization_strategy=transcript_prioritization_strategy,
     maximum_transcript_support_level=maximum_transcript_support_level,
     normal_cov=normal_cov,
     tdna_cov=tdna_cov,
@@ -176,8 +181,10 @@ workflow pvacseq {
     netmhc_stab=netmhc_stab,
     run_reference_proteome_similarity=run_reference_proteome_similarity,
     peptide_fasta=peptide_fasta,
+    genes_of_interest_file=genes_of_interest_file,
     n_threads=n_threads,
     iedb_retries=iedb_retries,
+    netmhciipan_version=netmhciipan_version,
     tumor_purity=tumor_purity,
     allele_specific_binding_thresholds=allele_specific_binding_thresholds,
     aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
@@ -185,7 +192,8 @@ workflow pvacseq {
     problematic_amino_acids=problematic_amino_acids,
     allele_specific_anchors=allele_specific_anchors,
     anchor_contribution_threshold=anchor_contribution_threshold,
-    biotypes=biotypes
+    biotypes=biotypes,
+    allow_incomplete_transcripts=allow_incomplete_transcripts
   }
 
   call vtt.variantsToTable {
