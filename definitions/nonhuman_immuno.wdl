@@ -68,12 +68,14 @@ workflow nonhuman_immuno {
         String? percentile_threshold_strategy
         Float? minimum_fold_change
         String? top_score_metric  # enum [lowest, median]
+        String? top_score_metric2  # enum [ic50, percentile]
         String? additional_report_columns  # enum [sample_name]
         Int? fasta_size
         Int? downstream_sequence_length
         Boolean? exclude_nas
         File? phased_proximal_variants_vcf
         File? phased_proximal_variants_vcf_tbi
+        Array[String]? transcript_prioritization_strategy # allowed values ['canonical', 'mane_select', 'tsl']
         Int? maximum_transcript_support_level  # enum [1 2 3 4 5]
         Int? normal_cov
         Int? tdna_cov
@@ -86,7 +88,9 @@ workflow nonhuman_immuno {
         Float? net_chop_threshold
         Boolean? netmhc_stab
         Boolean? run_reference_proteome_similarity
+        File? genes_of_interest_file
         Int? n_threads
+        String? netmhciipan_version # enum [4,3, 4.2, 4.1, 4.0]
         Int? iedb_retries
         Array[String] pvacseq_variants_to_table_fields = ["CHROM", "POS", "ID", "REF", "ALT"]
         Array[String] pvacseq_variants_to_table_genotype_fields = ["GT", "AD", "AF", "DP", "RAD", "RAF", "RDP", "GX", "TX"]
@@ -100,6 +104,7 @@ workflow nonhuman_immuno {
         Float? anchor_contribution_threshold
         String? prefix = "pvacseq"
         Array[String]? biotypes
+        Boolean? allow_incomplete_transcripts
         # Somatic Exome Nonhuman Inputs:
         # File reference
         # File reference_fai
@@ -275,12 +280,14 @@ workflow nonhuman_immuno {
         percentile_threshold_strategy=percentile_threshold_strategy,
         minimum_fold_change=minimum_fold_change,
         top_score_metric=top_score_metric,
+        top_score_metric2=top_score_metric2,
         additional_report_columns=additional_report_columns,
         fasta_size=fasta_size,
         downstream_sequence_length=downstream_sequence_length,
         exclude_nas=exclude_nas,
         phased_proximal_variants_vcf=phased_proximal_variants_vcf,
         phased_proximal_variants_vcf_tbi=phased_proximal_variants_vcf_tbi,
+        transcript_prioritization_strategy=transcript_prioritization_strategy,
         maximum_transcript_support_level=maximum_transcript_support_level,
         normal_cov=normal_cov,
         tdna_cov=tdna_cov,
@@ -293,7 +300,9 @@ workflow nonhuman_immuno {
         net_chop_threshold=net_chop_threshold,
         netmhc_stab=netmhc_stab,
         run_reference_proteome_similarity=run_reference_proteome_similarity,
+        genes_of_interest_file=genes_of_interest_file,
         n_threads=n_threads,
+        netmhciipan_version=netmhciipan_version,
         iedb_retries=iedb_retries,
         variants_to_table_fields=pvacseq_variants_to_table_fields,
         variants_to_table_genotype_fields=pvacseq_variants_to_table_genotype_fields,
@@ -306,7 +315,8 @@ workflow nonhuman_immuno {
         allele_specific_anchors=allele_specific_anchors,
         anchor_contribution_threshold=anchor_contribution_threshold,
         prefix=prefix,
-        biotypes=biotypes
+        biotypes=biotypes,
+        allow_incomplete_transcripts=allow_incomplete_transcripts
     }
     output {
         #PVacseq:
