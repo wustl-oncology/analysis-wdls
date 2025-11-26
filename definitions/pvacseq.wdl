@@ -77,7 +77,7 @@ workflow pvacseq {
     Boolean? allow_incomplete_transcripts
     String? netmhciipan_version # enum [4.3, 4.2, 4.1, 4.0]
     Boolean? use_normalized_percentiles
-    String? reference_scores_path
+    File? reference_scores_zip
   }
 
   call sncr.splitNCigarReads as tumorRnaSplitNCigarReads{
@@ -201,7 +201,7 @@ workflow pvacseq {
     biotypes=biotypes,
     allow_incomplete_transcripts=allow_incomplete_transcripts,
     use_normalized_percentiles=use_normalized_percentiles,
-    reference_scores_path=reference_scores_path
+    reference_scores_zip=reference_scores_zip
   }
 
   call vtt.variantsToTable {

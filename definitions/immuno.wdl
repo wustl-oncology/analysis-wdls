@@ -273,7 +273,7 @@ workflow immuno {
     Array[String]? biotypes
     Boolean? allow_incomplete_transcripts
     Boolean? use_normalized_percentiles
-    String? reference_scores_path
+    File? reference_scores_zip
 
     # --------- FDA metrics inputs -------------------------------------
     String? reference_genome_name
@@ -568,7 +568,7 @@ workflow immuno {
     biotypes=biotypes,
     allow_incomplete_transcripts=allow_incomplete_transcripts,
     use_normalized_percentiles=use_normalized_percentiles,
-    reference_scores_path=reference_scores_path
+    reference_scores_zip=reference_scores_zip
   }
 
   call pf.pvacfuse {
@@ -608,7 +608,7 @@ workflow immuno {
     aggregate_inclusion_count_limit=aggregate_inclusion_count_limit,
     problematic_amino_acids=problematic_amino_acids,
     use_normalized_percentiles=use_normalized_percentiles,
-    reference_scores_path=reference_scores_path
+    reference_scores_zip=reference_scores_zip
   }
 
   call generate_fda_metrics.generateFdaMetrics {

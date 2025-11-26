@@ -47,7 +47,7 @@ task pvacseq {
     Float? anchor_contribution_threshold
     Array[String]? biotypes
     String? netmhciipan_version # enum [4.3, 4.2, 4.1, 4.0]
-    String? reference_scores_path
+    File? reference_scores_zip
 
     Boolean allele_specific_binding_thresholds = false
     Boolean keep_tmp_files = false
@@ -62,7 +62,9 @@ task pvacseq {
 
   Float input_size = size([input_vcf, input_vcf_tbi], "GB")
   Float phased_variants_size = size([phased_proximal_variants_vcf, phased_proximal_variants_vcf_tbi], "GB")
-  Int space_needed_gb = 10 + round(input_size + phased_variants_size)
+  Float reference_scores_size = 3*size(reference_scores_zip, "GB")  # tripled to unzip
+  Int space_needed_gb = 10 + round(input_size + phased_variants_size + reference_scores_size)
+
   runtime {
     preemptible: 1
     maxRetries: 2
@@ -80,8 +82,11 @@ task pvacseq {
   Array[String] biotypes_list = select_first([biotypes, []])
   Array[String] transcript_prioritization_strategy_list = select_first([transcript_prioritization_strategy, []])
   Array[String] tsm2 = select_first([top_score_metric2, []])
+
   command <<<
     set -eou pipefail
+
+    ~{if defined(reference_scores_zip) then "mkdir -p /tmp/pvacseq/reference_scores && unzip -qq ~{reference_scores_zip} -d /tmp/pvacseq/reference_scores" else ""} \
 
     # touch each tbi to ensure they have a timestamp after the vcf
     ~{if defined(phased_proximal_variants_vcf_tbi) then "touch ~{phased_proximal_variants_vcf_tbi}" else ""}
@@ -134,7 +139,7 @@ task pvacseq {
     ~{if defined(genes_of_interest_file) then "--genes-of-interest-file ~{genes_of_interest_file}" else ""} \
     ~{if defined(netmhciipan_version) then "--netmhciipan-version ~{netmhciipan_version}" else ""} \
     ~{if use_normalized_percentiles then "--use-normalized-percentiles" else ""} \
-    ~{if defined(reference_scores_path) then "--reference-scores-path ~{reference_scores_path}" else ""} \
+    ~{if defined(reference_scores_zip) then "--reference-scores-path /tmp/pvaseq/reference_scores" else ""} \
     --n-threads ~{n_threads} \
     ~{input_vcf} ~{sample_name} ~{sep="," alleles} ~{sep=" " prediction_algorithms} \
     pvacseq_predictions
@@ -215,7 +220,7 @@ workflow wf {
     Float? anchor_contribution_threshold
     Array[String]? biotypes
     String? netmhciipan_version # enum [4.3, 4.2, 4.1, 4.0]
-    String? reference_scores_path
+    File? reference_scores_zip
 
     Boolean allele_specific_binding_thresholds = false
     Boolean keep_tmp_files = false
@@ -280,6 +285,6 @@ workflow wf {
     allow_incomplete_transcripts=allow_incomplete_transcripts,
     netmhciipan_version=netmhciipan_version,
     use_normalized_percentiles=use_normalized_percentiles,
-    reference_scores_path=reference_scores_path
+    reference_scores_zip=reference_scores_zip
   }
 }

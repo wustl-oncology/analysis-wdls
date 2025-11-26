@@ -103,7 +103,7 @@ workflow nonhuman_immuno {
         String? prefix = "pvacseq"
         Array[String]? biotypes
         Boolean? use_normalized_percentiles
-        String? reference_scores_path
+        File? reference_scores_zip
         # Somatic Exome Nonhuman Inputs:
         # File reference
         # File reference_fai
@@ -314,7 +314,7 @@ workflow nonhuman_immuno {
         prefix=prefix,
         biotypes=biotypes,
         use_normalized_percentiles=use_normalized_percentiles,
-        reference_scores_path=reference_scores_path
+        reference_scores_zip=reference_scores_zip
     }
     output {
         #PVacseq:

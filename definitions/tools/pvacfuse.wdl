@@ -36,11 +36,14 @@ task pvacfuse {
     Int? read_support
     Float? expn_val
     String? netmhciipan_version # enum [4.3, 4.2, 4.1, 4.0]
-    String? reference_scores_path
+    File? reference_scores_zip
     Boolean use_normalized_percentiles = false
   }
 
-  Int space_needed_gb = 10 + round(size([input_fusions_zip], "GB") * 3)
+  Float input_size = 3*size([input_fusions_zip], "GB")
+  Float reference_scores_size = 3*size(reference_scores_zip, "GB")  # tripled to unzip
+  Int space_needed_gb = 10 + round(input_size + reference_scores_size)
+
   runtime {
     preemptible: 1
     maxRetries: 2
@@ -59,6 +62,9 @@ task pvacfuse {
   command <<<
     set -eou pipefail
 
+    ~{if defined(reference_scores_zip) then "mkdir -p /tmp/pvacfuse/reference_scores && unzip -qq ~{reference_scores_zip} -d /tmp/pvacfuse/reference_scores" else ""} \
+
+    # touch each tbi to ensure they have a timestamp after the vcf
     mkdir agfusion_dir && unzip -qq ~{input_fusions_zip} -d agfusion_dir
 
     ln -s "$TMPDIR" /tmp/pvacfuse && export TMPDIR=/tmp/pvacfuse && \
@@ -97,7 +103,7 @@ task pvacfuse {
     ~{if defined(genes_of_interest_file) then "--genes-of-interest-file ~{genes_of_interest_file}" else ""} \
     ~{if defined(netmhciipan_version) then "--netmhciipan-version ~{netmhciipan_version}" else ""} \
     ~{if use_normalized_percentiles then "--use-normalized-percentiles" else ""} \
-    ~{if defined(reference_scores_path) then "--reference-scores-path ~{reference_scores_path}" else ""} \
+    ~{if defined(reference_scores_zip) then "--reference-scores-path /tmp/pvacfuse/reference_scores" else ""} \
     --n-threads ~{n_threads}
 
     #concatenate the pvacfuse log files produced for each length together to produce one class I and one class II log
