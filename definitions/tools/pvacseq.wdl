@@ -70,7 +70,7 @@ task pvacseq {
     maxRetries: 2
     memory: "32GB"
     cpu: n_threads
-    docker: "susannakiwala/pvactools:7.0.0a14"
+    docker: "susannakiwala/pvactools:7.0.0a16"
     disks: "local-disk ~{space_needed_gb} HDD"
     bootDiskSizeGb: 50
   }
