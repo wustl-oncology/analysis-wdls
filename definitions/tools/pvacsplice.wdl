@@ -102,6 +102,15 @@ workflow pvacsplice_workflow {
       tumor_purity = tumor_purity,
       space_needed_gb = space_needed_gb
   }
+
+  output {
+    Array[File] mhc_i = pvacsplice.mhc_i
+    Array[File] mhc_ii = pvacsplice.mhc_ii
+    Array[File] combined = pvacsplice.combined
+    File? splice_transcript_combined_report = pvacsplice.splice_transcript_combined_report
+    File? splice_fasta = pvacsplice.splice_fasta
+    File? splice_fasta_fai = pvacsplice.splice_fasta_fai
+  }
 }
 task pvacsplice {
   input {

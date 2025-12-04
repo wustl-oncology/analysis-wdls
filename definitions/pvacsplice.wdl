@@ -126,7 +126,7 @@ workflow pvacsplice {
     input: vcf=addTranscriptExpressionDataToVcf.annotated_expression_vcf
   }
 
-  call reg.regtools as runregtools {
+  call reg.regtools_workflow as runregtools {
     input:
     output_filename_tsv=output_filename_tsv,
     output_filename_vcf=output_filename_vcf,
@@ -147,7 +147,7 @@ workflow pvacsplice {
     input_reference_gtf=reference_annotation
   }
 
-  call pspl.pvacsplice as runpvacsplice {
+  call pspl.pvacsplice_workflow as runpvacsplice {
     input:
     n_threads=n_threads,
     input_vcf=index.indexed_vcf,

@@ -48,6 +48,11 @@ workflow regtools_workflow {
       intron_motif_priority = intron_motif_priority,
       space_needed_gb = space_needed_gb
   }
+
+  output {
+    File output_splice_junction_tsv = regtools.output_splice_junction_tsv
+    File? output_splice_variant_vcf = regtools.output_splice_variant_vcf
+  }
 }
 
 task regtools {
