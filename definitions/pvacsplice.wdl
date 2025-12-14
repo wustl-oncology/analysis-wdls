@@ -32,7 +32,7 @@ workflow pvacsplice {
     String output_filename_tsv
     String? output_filename_vcf
     String? output_filename_bed
-    String strand #[first, second, unstranded, RF, FR, XS]
+    String? strand #[first, second, unstranded, RF, FR, XS]
     Int? window_size
     Int? max_distance_exon 
     Int? max_distance_intron
@@ -80,6 +80,9 @@ workflow pvacsplice {
     Array[String]? junction_anchor_types
     Boolean? keep_tmp_files 
   }
+
+  # normalize strand: default to 'unstranded' when caller omits it
+  String strand_used = select_first([strand, "unstranded"])
 
   call br.bamReadcount as tumorRnaBamReadcount {
     input:
@@ -131,7 +134,7 @@ workflow pvacsplice {
     output_filename_tsv=output_filename_tsv,
     output_filename_vcf=output_filename_vcf,
     output_filename_bed=output_filename_bed,
-    strand=strand,
+    strand=strand_used,
     window_size=window_size,
     max_distance_exon=max_distance_exon,
     max_distance_intron=max_distance_intron,

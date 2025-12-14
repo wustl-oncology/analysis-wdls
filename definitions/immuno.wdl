@@ -277,11 +277,11 @@ workflow immuno {
     Int? regtools_window_size
     Int? max_distance_exon 
     Int? max_distance_intron
-    Boolean annotate_intronic_variant 
-    Boolean annotate_exonic_variant 
-    Boolean not_skipping_single_exon_transcripts 
-    Boolean singecell_barcode 
-    Boolean intron_motif_priority
+    Boolean annotate_intronic_variant = false
+    Boolean annotate_exonic_variant = false
+    Boolean not_skipping_single_exon_transcripts = false
+    Boolean singecell_barcode = false
+    Boolean intron_motif_priority = false
     Int? pvacsplice_threads
     Int? junction_score
     Int? variant_distance
