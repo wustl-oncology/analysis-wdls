@@ -1,6 +1,5 @@
 version 1.0
 
-
 # pipelines
 import "germline_exome_hla_typing.wdl" as geht
 import "rnaseq_star_fusion.wdl" as rsf
@@ -18,7 +17,6 @@ import "tools/optitype_dna.wdl" as od
 import "tools/phlat.wdl" as ph
 import "tools/hlahd_dna.wdl" as hd
 import "tools/concordance.wdl" as c
-
 
 #
 # These structs are needed only because MiniWDL, used by some of our
@@ -217,6 +215,7 @@ workflow immuno {
     Int? ploidy
     String? optitype_name
     Float germline_filter_gnomAD_maximum_population_allele_frequency = 1.1
+    String? coding_filter
 
     # --------- Phase VCF Inputs ---------------------------------------
 
@@ -242,6 +241,7 @@ workflow immuno {
     Int? fasta_size
     Int? downstream_sequence_length
     Boolean? exclude_nas
+    Array[String]? transcript_prioritization_strategy # allowed values ['canonical', 'mane_select', 'tsl']
     Int? maximum_transcript_support_level  # enum [1 2 3 4 5]
     Int? normal_cov
     Int? tdna_cov
@@ -255,8 +255,10 @@ workflow immuno {
     Boolean? netmhc_stab
     Boolean? run_reference_proteome_similarity
     File? peptide_fasta
+    File? genes_of_interest_file
     Int? pvacseq_threads
     Int? iedb_retries
+    String? netmhciipan_version # enum [4.3, 4.2, 4.1, 4.0]
     Boolean? pvacfuse_keep_tmp_files
     Float? tumor_purity
     Boolean? allele_specific_binding_thresholds
@@ -268,9 +270,10 @@ workflow immuno {
     Int? pvacfuse_read_support
     Float? pvacfuse_expn_val
     Array[String]? biotypes
+    Boolean? allow_incomplete_transcripts
 
     # --------- PVACsplice Inputs -----------------------------------------
-    # Note: variables similar to PVACseq Inputs or other sections Inputs won't be listed here. 
+    # Note: variables similar to PVACseq Inputs or other sections Inputs won't be listed here.
     String regtools_output_filename_tsv
     String? regtools_output_filename_vcf
     String? regtools_output_filename_bed
@@ -288,7 +291,6 @@ workflow immuno {
     Boolean? save_gtf
     Array[String]? junction_anchor_types
     Boolean? pvacsplice_keep_tmp_files
-
 
     # --------- FDA metrics inputs -------------------------------------
     String? reference_genome_name
@@ -445,7 +447,8 @@ workflow immuno {
     qc_minimum_mapping_quality=qc_minimum_mapping_quality,
     qc_minimum_base_quality=qc_minimum_base_quality,
     optitype_name="optitype_normal",
-    germline_filter_gnomAD_maximum_population_allele_frequency=germline_filter_gnomAD_maximum_population_allele_frequency
+    germline_filter_gnomAD_maximum_population_allele_frequency=germline_filter_gnomAD_maximum_population_allele_frequency,
+    coding_filter=coding_filter
   }
 
   call c.concordance as concordanceThreeway {
@@ -548,6 +551,7 @@ workflow immuno {
     exclude_nas=exclude_nas,
     phased_proximal_variants_vcf=phaseVcf.phased_vcf,
     phased_proximal_variants_vcf_tbi=phaseVcf.phased_vcf_tbi,
+    transcript_prioritization_strategy=transcript_prioritization_strategy,
     maximum_transcript_support_level=maximum_transcript_support_level,
     normal_cov=normal_cov,
     tdna_cov=tdna_cov,
@@ -561,7 +565,9 @@ workflow immuno {
     netmhc_stab=netmhc_stab,
     run_reference_proteome_similarity=run_reference_proteome_similarity,
     peptide_fasta=peptide_fasta,
+    genes_of_interest_file=genes_of_interest_file,
     n_threads=pvacseq_threads,
+    netmhciipan_version=netmhciipan_version,
     iedb_retries=iedb_retries,
     variants_to_table_fields=variants_to_table_fields,
     variants_to_table_genotype_fields=variants_to_table_genotype_fields,
@@ -574,7 +580,8 @@ workflow immuno {
     problematic_amino_acids=problematic_amino_acids,
     allele_specific_anchors=allele_specific_anchors,
     anchor_contribution_threshold=anchor_contribution_threshold,
-    biotypes=biotypes
+    biotypes=biotypes,
+    allow_incomplete_transcripts=allow_incomplete_transcripts
   }
 
   call pspl.pvacsplice {
@@ -590,6 +597,7 @@ workflow immuno {
     reference_fai=reference_fai,
     reference_dict=reference_dict,
     peptide_fasta=peptide_fasta,
+    genes_of_interest_file=genes_of_interest_file,
     readcount_minimum_base_quality=readcount_minimum_base_quality,
     readcount_minimum_mapping_quality=readcount_minimum_mapping_quality,
     gene_expression_file=rna.kallisto_gene_abundance,
@@ -634,11 +642,13 @@ workflow immuno {
     netmhc_stab=netmhc_stab,
     run_reference_proteome_similarity=run_reference_proteome_similarity,
     n_threads=pvacsplice_threads,
+    netmhciipan_version=netmhciipan_version,
     tumor_purity=tumor_purity,
     allele_specific_binding_thresholds=allele_specific_binding_thresholds,
     aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
     problematic_amino_acids=problematic_amino_acids,
     biotypes=biotypes,
+    allow_incomplete_transcripts=allow_incomplete_transcripts,
     aggregate_inclusion_count_limit=aggregate_inclusion_count_limit,
     junction_score=junction_score,
     variant_distance=variant_distance,
@@ -667,12 +677,14 @@ workflow immuno {
     net_chop_threshold=net_chop_threshold,
     run_reference_proteome_similarity=run_reference_proteome_similarity,
     peptide_fasta=peptide_fasta,
+    genes_of_interest_file=genes_of_interest_file,
     additional_report_columns=additional_report_columns,
     fasta_size=fasta_size,
     downstream_sequence_length=downstream_sequence_length,
     exclude_nas=exclude_nas,
     n_threads=pvacseq_threads,
     iedb_retries=iedb_retries,
+    netmhciipan_version=netmhciipan_version,
     read_support=pvacfuse_read_support,
     expn_val=pvacfuse_expn_val,
     allele_specific_binding_thresholds=allele_specific_binding_thresholds,
@@ -906,6 +918,7 @@ workflow immuno {
       mhc_ii: pvacsplice.mhc_ii,
       combined: pvacsplice.combined
     }
+
 
     File pvacseq_annotated_expression_vcf_gz = pvacseq.annotated_vcf
     File pvacseq_annotated_expression_vcf_gz_tbi = pvacseq.annotated_vcf_tbi

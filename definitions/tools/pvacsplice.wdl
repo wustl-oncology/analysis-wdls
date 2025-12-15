@@ -12,6 +12,7 @@ workflow pvacsplice_workflow {
     Array[String] alleles
     Array[String] prediction_algorithms
     File? peptide_fasta
+    File? genes_of_interest_file
 
     Array[Int]? epitope_lengths_class_i
     Array[Int]? epitope_lengths_class_ii
@@ -34,9 +35,11 @@ workflow pvacsplice_workflow {
     Float? trna_vaf
     Float? expn_val
     Int? maximum_transcript_support_level  # enum [1, 2, 3, 4, 5]
+    Array[String]? transcript_prioritization_strategy # allowed values ['canonical', 'mane_select', 'tsl']
     Int? aggregate_inclusion_binding_threshold
     Array[String]? problematic_amino_acids
     Array[String]? biotypes
+    String? netmhciipan_version # enum [4.3, 4.2, 4.1, 4.0]
     Int? aggregate_inclusion_count_limit
 
     Int? junction_score
@@ -48,6 +51,7 @@ workflow pvacsplice_workflow {
     Boolean keep_tmp_files = false
     Boolean netmhc_stab = false
     Boolean run_reference_proteome_similarity = false
+    Boolean allow_incomplete_transcripts =  false
 
     Float? tumor_purity
   }
@@ -124,6 +128,7 @@ task pvacsplice {
     Array[String] alleles
     Array[String] prediction_algorithms
     File? peptide_fasta 
+    File? genes_of_interest_file
 
     Array[Int]? epitope_lengths_class_i
     Array[Int]? epitope_lengths_class_ii
@@ -146,6 +151,7 @@ task pvacsplice {
     Float? trna_vaf
     Float? expn_val
     Int? maximum_transcript_support_level  # enum [1, 2, 3, 4, 5]
+    Array[String]? transcript_prioritization_strategy # allowed values ['canonical', 'mane_select', 'tsl']
     Int? aggregate_inclusion_binding_threshold
     Array[String]? problematic_amino_acids
     Array[String]? biotypes
@@ -160,6 +166,7 @@ task pvacsplice {
     Boolean keep_tmp_files = false
     Boolean netmhc_stab = false
     Boolean run_reference_proteome_similarity = false
+    Boolean allow_incomplete_transcripts =  false
 
     Float? tumor_purity
     Int space_needed_gb
@@ -172,7 +179,7 @@ task pvacsplice {
     maxRetries: 2
     memory: "32GB"
     cpu: n_threads
-    docker: "griffithlab/pvactools:5.0.1"
+    docker: "griffithlab/pvactools:6.0.2"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
@@ -181,61 +188,9 @@ task pvacsplice {
   Array[Int] epitope_ii = select_first([epitope_lengths_class_ii, []])
   Array[String] problematic_aa = select_first([problematic_amino_acids, []])
   Array[String] biotypes_list = select_first([biotypes, []])
+  Array[String] transcript_prioritization_strategy_list = select_first([transcript_prioritization_strategy, []])
   Array[String] junction_anchor_types_list = select_first([junction_anchor_types,[]])
-#   command <<<
 
-#     # touch each tbi to ensure they have a timestamp after the vcf
-#     touch ~{input_vcf_tbi}
-
-#     ln -s "$TMPDIR" /tmp/pvacsplice && export TMPDIR=/tmp/pvacsplice && \
-#     /usr/local/bin/pvacsplice run \
-#     --iedb-install-directory /opt/iedb \
-#     --pass-only \
-#     ~{if defined(tumor_purity) then "--tumor-purity " + select_first([tumor_purity]) else ""} \
-#     ~{if length(epitope_i) > 0 then "-e1 " + sep(",", epitope_i) else ""} \
-#     ~{if length(epitope_ii) > 0 then "-e2 " + sep(",", epitope_ii) else ""} \
-#     ~{if defined(binding_threshold) then "-b " + binding_threshold else ""} \
-#     ~{if defined(percentile_threshold) then "--percentile-threshold " + percentile_threshold else ""} \
-#     ~{if allele_specific_binding_thresholds then "--allele-specific-binding-thresholds" else ""} \
-#     ~{if defined(aggregate_inclusion_binding_threshold) then "--aggregate-inclusion-binding-threshold " + aggregate_inclusion_binding_threshold else ""} \
-#     ~{if defined(aggregate_inclusion_count_limit) then "--aggregate-inclusion-count-limit " + aggregate_inclusion_count_limit else ""} \
-#     ~{if defined(iedb_retries) then "-r " + iedb_retries else ""} \
-#     ~{if keep_tmp_files then "-k" else ""} \
-#     ~{if defined(normal_sample_name) then "--normal-sample-name " + normal_sample_name else ""} \
-#     ~{if defined(net_chop_method) then "--net-chop-method " + net_chop_method else ""} \
-#     ~{if netmhc_stab then "--netmhc-stab" else ""} \
-#     ~{if run_reference_proteome_similarity then "--run-reference-proteome-similarity" else ""} \
-#     ~{if defined(peptide_fasta) then "--peptide-fasta " + peptide_fasta else ""} \
-#     ~{if defined(top_score_metric) then "-m " + top_score_metric else ""} \
-#     ~{if defined(net_chop_threshold) then "--net-chop-threshold " + net_chop_threshold else ""} \
-#     ~{if defined(additional_report_columns) then "-a " + additional_report_columns else ""} \
-#     ~{if defined(fasta_size) then "-s " + fasta_size else ""} \
-#     ~{if exclude_nas then "--exclude-NAs" else ""} \
-#     ~{if defined(normal_cov) then "--normal-cov " + normal_cov else ""} \
-#     ~{if defined(tdna_cov) then "--tdna-cov " + tdna_cov else ""} \
-#     ~{if defined(trna_cov) then "--trna-cov " + trna_cov else ""} \
-#     ~{if defined(normal_vaf) then "--normal-vaf " + normal_vaf else ""} \
-#     ~{if defined(tdna_vaf) then "--tdna-vaf " + tdna_vaf else ""} \
-#     ~{if defined(trna_vaf) then "--trna-vaf " + trna_vaf else ""} \
-#     ~{if defined(expn_val) then "--expn-val " + expn_val else ""} \
-#     ~{if defined(maximum_transcript_support_level) then "--maximum-transcript-support-level " + maximum_transcript_support_level else ""} \
-#     ~{if length(problematic_aa) > 0 then "--problematic-amino-acids " + sep(",", problematic_aa) else ""} \
-#     ~{if length(biotypes_list) > 0 then "--biotypes " + sep(",", biotypes_list) else ""} \
-#     ~{if defined(junction_score) then "--junction-score " + junction_score else ""} \
-#     ~{if defined(variant_distance) then "--variant-distance " + variant_distance else ""} \
-#     ~{if save_gtf then "-g" else ""} \
-#     ~{if length(junction_anchor_types_list) > 0 then "--anchor-types " + sep(",", junction_anchor_types_list) else ""} \
-#     -t ~{n_threads} \
-#     ~{input_regtools_tsv} \
-#     ~{sample_name} \
-#     ~{sep="," alleles} \
-#     ~{sep=" " prediction_algorithms} \
-#     pvacsplice_predictions \
-#     ~{input_vcf} \
-#     ~{input_reference_dna_fasta} \
-#     ~{input_reference_gtf}
-
-# >>>
 
   command <<<
     # touch each tbi to ensure they have a timestamp after the vcf
@@ -271,9 +226,13 @@ task pvacsplice {
     ~{if defined(tdna_vaf) then "--tdna-vaf ~{tdna_vaf}" else ""} \
     ~{if defined(trna_vaf) then "--trna-vaf ~{trna_vaf}" else ""} \
     ~{if defined(expn_val) then "--expn-val ~{expn_val}" else ""} \
+    ~{if length(transcript_prioritization_strategy_list) > 0 then "--transcript-prioritization-strategy" else ""} ~{sep="," transcript_prioritization_strategy_list} \
     ~{if defined(maximum_transcript_support_level) then "--maximum-transcript-support-level ~{maximum_transcript_support_level}" else ""} \
     ~{if length(problematic_aa) > 0 then "--problematic-amino-acids" else ""} ~{sep="," problematic_aa} \
     ~{if length(biotypes_list) > 0 then "--biotypes" else ""} ~{sep="," biotypes_list} \
+    ~{if allow_incomplete_transcripts then "--allow-incomplete-transcripts" else ""} \
+    ~{if defined(genes_of_interest_file) then "--genes-of-interest-file ~{genes_of_interest_file}" else ""} \
+    ~{if defined(netmhciipan_version) then "--netmhciipan-version ~{netmhciipan_version}" else ""} \
     ~{if defined(junction_score) then "--junction-score ~{junction_score}" else ""} \
     ~{if defined(variant_distance) then "--variant-distance ~{variant_distance}" else ""} \
     ~{if save_gtf then "-g" else ""} \

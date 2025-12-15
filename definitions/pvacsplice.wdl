@@ -22,6 +22,7 @@ workflow pvacsplice {
     File reference_fai 
     File reference_dict 
     File? peptide_fasta 
+    File? genes_of_interest_file
     Int? readcount_minimum_base_quality 
     Int? readcount_minimum_mapping_quality 
     File gene_expression_file 
@@ -55,6 +56,7 @@ workflow pvacsplice {
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
     Boolean? exclude_nas
+    Array[String]? transcript_prioritization_strategy # allowed values ['canonical', 'mane_select', 'tsl']
     Int? maximum_transcript_support_level  # enum [1 2 3 4 5]
     Int? normal_cov
     Int? tdna_cov
@@ -73,6 +75,8 @@ workflow pvacsplice {
     Int? aggregate_inclusion_binding_threshold
     Array[String]? problematic_amino_acids
     Array[String]? biotypes
+    Boolean? allow_incomplete_transcripts
+    String? netmhciipan_version # enum [4.3, 4.2, 4.1, 4.0]
     Int? aggregate_inclusion_count_limit
     Int? junction_score
     Int? variant_distance
@@ -162,11 +166,13 @@ workflow pvacsplice {
     alleles=alleles,
     prediction_algorithms=prediction_algorithms,
     peptide_fasta=peptide_fasta, 
+    genes_of_interest_file=genes_of_interest_file,
     epitope_lengths_class_i=epitope_lengths_class_i, 
     epitope_lengths_class_ii=epitope_lengths_class_ii,
     binding_threshold=binding_threshold,
     percentile_threshold=percentile_threshold,
     iedb_retries=iedb_retries,
+    netmhciipan_version=netmhciipan_version,
     normal_sample_name=normal_sample_name,
     net_chop_method=net_chop_method,
     top_score_metric=top_score_metric,  
@@ -185,6 +191,7 @@ workflow pvacsplice {
     aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
     problematic_amino_acids=problematic_amino_acids,
     biotypes=biotypes,
+    allow_incomplete_transcripts=allow_incomplete_transcripts,
     aggregate_inclusion_count_limit=aggregate_inclusion_count_limit,
     junction_score=junction_score,
     variant_distance=variant_distance,

@@ -4,6 +4,7 @@ task pvacfuse {
   input {
     File input_fusions_zip
     File? peptide_fasta
+    File? genes_of_interest_file
     String sample_name
     Array[String] alleles
     Array[String] prediction_algorithms
@@ -32,13 +33,14 @@ task pvacfuse {
     File? star_fusion_file
     Int? read_support
     Float? expn_val
+    String? netmhciipan_version # enum [4.3, 4.2, 4.1, 4.0]
   }
 
   Int space_needed_gb = 10 + round(size([input_fusions_zip], "GB") * 3)
   runtime {
     preemptible: 1
     maxRetries: 2
-    docker: "griffithlab/pvactools:5.5.4"
+    docker: "griffithlab/pvactools:6.0.2"
     memory: "32GB"
     cpu: n_threads
     disks: "local-disk ~{space_needed_gb} HDD"
@@ -85,6 +87,8 @@ task pvacfuse {
     ~{if defined(star_fusion_file) then "--starfusion-file ~{star_fusion_file}" else ""} \
     ~{if defined(read_support) then "--read-support ~{read_support}" else ""} \
     ~{if defined(expn_val) then "--expn-val ~{expn_val}" else ""} \
+    ~{if defined(genes_of_interest_file) then "--genes-of-interest-file ~{genes_of_interest_file}" else ""} \
+    ~{if defined(netmhciipan_version) then "--netmhciipan-version ~{netmhciipan_version}" else ""} \
     --n-threads ~{n_threads}
 
     #concatenate the pvacfuse log files produced for each length together to produce one class I and one class II log

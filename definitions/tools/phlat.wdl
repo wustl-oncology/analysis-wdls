@@ -18,7 +18,7 @@ task phlat {
     maxRetries: 2
     memory: "~{mem}GB"
     cpu: nthreads
-    docker: "mgibio/phlat:1.1_withindex"
+    docker: "mgibio/phlat:1.1_with_index_apptainer_compatible"
     disks: "local-disk ~{space_needed_gb} HDD"
     bootDiskSizeGb: 3*space_needed_gb
   }

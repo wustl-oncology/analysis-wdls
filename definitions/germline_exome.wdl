@@ -49,6 +49,7 @@ workflow germlineExome {
     Array[String]? variants_to_table_genotype_fields
     Array[String]? vep_to_table_fields
     Float germline_filter_gnomAD_maximum_population_allele_frequency
+    String? coding_filter
   }
 
   call ae.alignmentExome as alignmentAndQc {
@@ -107,7 +108,8 @@ workflow germlineExome {
     vep_custom_annotations=vep_custom_annotations,
     variants_to_table_fields=variants_to_table_fields,
     variants_to_table_genotype_fields=variants_to_table_genotype_fields,
-    germline_filter_gnomAD_maximum_population_allele_frequency=germline_filter_gnomAD_maximum_population_allele_frequency
+    germline_filter_gnomAD_maximum_population_allele_frequency=germline_filter_gnomAD_maximum_population_allele_frequency,
+    coding_filter=coding_filter
   }
 
   call btc.bamToCram {
