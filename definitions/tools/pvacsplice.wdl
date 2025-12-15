@@ -115,6 +115,8 @@ workflow pvacsplice_workflow {
     File? splice_transcript_combined_report = pvacsplice.splice_transcript_combined_report
     File? splice_fasta = pvacsplice.splice_fasta
     File? splice_fasta_fai = pvacsplice.splice_fasta_fai
+    File? mhc_i_log = pvacsplice.mhc_i_log
+    File? mhc_ii_log = pvacsplice.mhc_ii_log
   }
 }
 task pvacsplice {
