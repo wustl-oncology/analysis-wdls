@@ -92,6 +92,8 @@ struct MHC {
   File? mhc_ii_log
   Array[File] combined
   Array[File]? phase_vcf
+  File? regtools_tsv
+  File? splice_transcript_combined_report
 }
 
 workflow immuno {
@@ -918,7 +920,9 @@ workflow immuno {
       mhc_i_log: pvacsplice.mhc_i_log,
       mhc_ii: pvacsplice.mhc_ii,
       mhc_ii_log: pvacsplice.mhc_ii_log,
-      combined: pvacsplice.combined
+      combined: pvacsplice.combined,
+      regtools_tsv: pvacsplice.regtools_tsv,
+      splice_transcript_combined_report: pvacsplice.splice_transcript_combined_report
     }
 
 
@@ -926,9 +930,6 @@ workflow immuno {
     File pvacseq_annotated_expression_vcf_gz_tbi = pvacseq.annotated_vcf_tbi
     File variants_final_annotated_tsv = pvacseq.annotated_tsv
 
-    File? pvacsplice_splice_transcript_combined_report = pvacsplice.splice_transcript_combined_report
-    File? pvacsplice_splice_fasta = pvacsplice.splice_fasta
-    File? pvacsplice_splice_fasta_fai = pvacsplice.splice_fasta_fai
 
   }
 }
