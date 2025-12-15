@@ -94,6 +94,7 @@ workflow pvacsplice_workflow {
       aggregate_inclusion_binding_threshold = aggregate_inclusion_binding_threshold,
       problematic_amino_acids = problematic_amino_acids,
       biotypes = biotypes,
+      netmhciipan_version = netmhciipan_version,
       aggregate_inclusion_count_limit = aggregate_inclusion_count_limit,
       junction_score = junction_score,
       variant_distance = variant_distance,
@@ -155,6 +156,7 @@ task pvacsplice {
     Int? aggregate_inclusion_binding_threshold
     Array[String]? problematic_amino_acids
     Array[String]? biotypes
+  String? netmhciipan_version # enum [4.3, 4.2, 4.1, 4.0]
     Int? aggregate_inclusion_count_limit
     
     Int? junction_score
