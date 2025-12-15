@@ -915,7 +915,9 @@ workflow immuno {
 
     MHC pVACsplice = object {
       mhc_i: pvacsplice.mhc_i,
+      mhc_i_log: pvacsplice.mhc_i_log,
       mhc_ii: pvacsplice.mhc_ii,
+      mhc_ii_log: pvacsplice.mhc_ii_log,
       combined: pvacsplice.combined
     }
 

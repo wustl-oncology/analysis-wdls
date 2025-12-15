@@ -241,16 +241,21 @@ task pvacsplice {
     ~{if length(junction_anchor_types_list) > 0 then "--anchor-types" else ""} ~{sep="," junction_anchor_types_list} \
     -t ~{n_threads} \
     ~{input_regtools_tsv} ~{sample_name} ~{sep="," alleles} ~{sep=" " prediction_algorithms} \
-    pvacsplice_predictions ~{input_vcf} ~{input_reference_dna_fasta} ~{input_reference_gtf} 
+    pvacsplice_predictions ~{input_vcf} ~{input_reference_dna_fasta} ~{input_reference_gtf}
+
+    if [[ -e pvacsplice_predictions/MHC_Class_I/log/inputs.yml ]]; then cp pvacsplice_predictions/MHC_Class_I/log/inputs.yml inputs_class_I.yml; fi
+    if [[ -e pvacsplice_predictions/MHC_Class_II/log/inputs.yml ]]; then cp pvacsplice_predictions/MHC_Class_II/log/inputs.yml inputs_class_II.yml; fi 
   >>>
 
   output {
     File? mhc_i_all_epitopes = "pvacsplice_predictions/MHC_Class_I/~{sample_name}.all_epitopes.tsv"
     File? mhc_i_aggregated_report = "pvacsplice_predictions/MHC_Class_I/~{sample_name}.all_epitopes.aggregated.tsv"
     File? mhc_i_filtered_epitopes = "pvacsplice_predictions/MHC_Class_I/~{sample_name}.filtered.tsv"
+    File? mhc_i_log = "inputs_class_I.yml"
     File? mhc_ii_all_epitopes = "pvacsplice_predictions/MHC_Class_II/~{sample_name}.all_epitopes.tsv"
     File? mhc_ii_aggregated_report = "pvacsplice_predictions/MHC_Class_II/~{sample_name}.all_epitopes.aggregated.tsv"
     File? mhc_ii_filtered_epitopes = "pvacsplice_predictions/MHC_Class_II/~{sample_name}.filtered.tsv"
+    File? mhc_ii_log = "inputs_class_II.yml"
     File? combined_all_epitopes = "pvacsplice_predictions/combined/~{sample_name}.all_epitopes.tsv"
     File? combined_aggregated_report = "pvacsplice_predictions/combined/~{sample_name}.all_epitopes.aggregated.tsv"
     File? combined_filtered_epitopes = "pvacsplice_predictions/combined/~{sample_name}.filtered.tsv"

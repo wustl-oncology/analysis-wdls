@@ -211,7 +211,9 @@ workflow pvacsplice {
     File regtools_tsv = runregtools.output_splice_junction_tsv
     File? regtools_vcf = runregtools.output_splice_variant_vcf
     Array[File] mhc_i = runpvacsplice.mhc_i
+    File? mhc_i_log = runpvacsplice.mhc_i_log
     Array[File] mhc_ii = runpvacsplice.mhc_ii
+    File? mhc_ii_log = runpvacsplice.mhc_ii_log
     Array[File] combined = runpvacsplice.combined
     File? splice_transcript_combined_report = runpvacsplice.splice_transcript_combined_report
     File? splice_fasta = runpvacsplice.splice_fasta
