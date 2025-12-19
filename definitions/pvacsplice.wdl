@@ -218,6 +218,7 @@ workflow pvacsplice {
     File? mhc_i_log = runpvacsplice.mhc_i_log
     Array[File] mhc_ii = runpvacsplice.mhc_ii
     File? mhc_ii_log = runpvacsplice.mhc_ii_log
+    File? mhc_log = runpvacsplice.mhc_log
     Array[File] combined = runpvacsplice.combined
     File? splice_transcript_combined_report = runpvacsplice.splice_transcript_combined_report
     File? splice_fasta = runpvacsplice.splice_fasta

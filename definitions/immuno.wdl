@@ -90,6 +90,7 @@ struct MHC {
   File? mhc_i_log
   Array[File] mhc_ii
   File? mhc_ii_log
+  File? mhc_log
   Array[File] combined
   Array[File]? phase_vcf
   File? regtools_tsv
@@ -925,6 +926,7 @@ workflow immuno {
       mhc_i_log: pvacsplice.mhc_i_log,
       mhc_ii: pvacsplice.mhc_ii,
       mhc_ii_log: pvacsplice.mhc_ii_log,
+      mhc_log: pvacsplice.mhc_log,
       combined: pvacsplice.combined,
       regtools_tsv: pvacsplice.regtools_tsv,
       splice_transcript_combined_report: pvacsplice.splice_transcript_combined_report

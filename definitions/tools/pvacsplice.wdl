@@ -123,6 +123,7 @@ workflow pvacsplice_workflow {
     File? splice_fasta_fai = pvacsplice.splice_fasta_fai
     File? mhc_i_log = pvacsplice.mhc_i_log
     File? mhc_ii_log = pvacsplice.mhc_ii_log
+    File? mhc_log = pvacsplice.mhc_log
   }
 }
 task pvacsplice {
@@ -256,9 +257,11 @@ task pvacsplice {
     pvacsplice_predictions ~{input_vcf} ~{input_reference_dna_fasta} ~{input_reference_gtf}
 
     if [[ -e pvacsplice_predictions/MHC_Class_I/log/inputs.yml ]]; then cp pvacsplice_predictions/MHC_Class_I/log/inputs.yml inputs_class_I.yml; fi
-    if [[ -e pvacsplice_predictions/MHC_Class_II/log/inputs.yml ]]; then cp pvacsplice_predictions/MHC_Class_II/log/inputs.yml inputs_class_II.yml; fi 
+    if [[ -e pvacsplice_predictions/MHC_Class_II/log/inputs.yml ]]; then cp pvacsplice_predictions/MHC_Class_II/log/inputs.yml inputs_class_II.yml; fi
+    if [[ -e pvacsplice_predictions/log/inputs.yml ]]; then cp pvacsplice_predictions/log/inputs.yml inputs.yml; fi 
   >>>
 
+  # I keep the inputs_class_I.yml and inputs_class_II.yml here, but may delete those in the future if we dont plan to actually add those in pvacsplice output. At the time of writing (pvacsplice ver 6.0.3), there's only 1 log file that combine both class I and class II (inputs.yml). 
   output {
     File? mhc_i_all_epitopes = "pvacsplice_predictions/MHC_Class_I/~{sample_name}.all_epitopes.tsv"
     File? mhc_i_aggregated_report = "pvacsplice_predictions/MHC_Class_I/~{sample_name}.all_epitopes.aggregated.tsv"
@@ -268,6 +271,7 @@ task pvacsplice {
     File? mhc_ii_aggregated_report = "pvacsplice_predictions/MHC_Class_II/~{sample_name}.all_epitopes.aggregated.tsv"
     File? mhc_ii_filtered_epitopes = "pvacsplice_predictions/MHC_Class_II/~{sample_name}.filtered.tsv"
     File? mhc_ii_log = "inputs_class_II.yml"
+    File? mhc_log = "inputs.yml"
     File? combined_all_epitopes = "pvacsplice_predictions/combined/~{sample_name}.all_epitopes.tsv"
     File? combined_aggregated_report = "pvacsplice_predictions/combined/~{sample_name}.all_epitopes.aggregated.tsv"
     File? combined_filtered_epitopes = "pvacsplice_predictions/combined/~{sample_name}.filtered.tsv"
