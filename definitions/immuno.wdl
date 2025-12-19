@@ -274,6 +274,7 @@ workflow immuno {
     Array[String]? biotypes
     Boolean? allow_incomplete_transcripts
 
+
     # --------- PVACsplice Inputs -----------------------------------------
     # Note: variables similar to PVACseq Inputs or other sections Inputs won't be listed here.
     String regtools_output_filename_tsv
@@ -293,6 +294,7 @@ workflow immuno {
     Boolean? save_gtf
     Array[String]? junction_anchor_types
     Boolean? pvacsplice_keep_tmp_files
+
 
     # --------- FDA metrics inputs -------------------------------------
     String? reference_genome_name
@@ -584,6 +586,7 @@ workflow immuno {
     anchor_contribution_threshold=anchor_contribution_threshold,
     biotypes=biotypes,
     allow_incomplete_transcripts=allow_incomplete_transcripts
+
   }
 
   call pspl.pvacsplice {
