@@ -18,11 +18,13 @@ workflow pvacsplice_workflow {
     Array[Int]? epitope_lengths_class_ii
     Int? binding_threshold
     Int? percentile_threshold
+    String? percentile_threshold_strategy
     Int? iedb_retries
 
     String? normal_sample_name
     String? net_chop_method  # enum [cterm , 20s]
     String? top_score_metric  # enum [lowest, median]
+    String? top_score_metric2  # enum [ic50, percentile]
     Float? net_chop_threshold
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
@@ -71,14 +73,17 @@ workflow pvacsplice_workflow {
       alleles = alleles,
       prediction_algorithms = prediction_algorithms,
       peptide_fasta = peptide_fasta,
+      genes_of_interest_file = genes_of_interest_file,
       epitope_lengths_class_i = epitope_lengths_class_i,
       epitope_lengths_class_ii = epitope_lengths_class_ii,
       binding_threshold = binding_threshold,
       percentile_threshold = percentile_threshold,
+      percentile_threshold_strategy = percentile_threshold_strategy,
       iedb_retries = iedb_retries,
       normal_sample_name = normal_sample_name,
       net_chop_method = net_chop_method,
       top_score_metric = top_score_metric,
+      top_score_metric2 = top_score_metric2,
       net_chop_threshold = net_chop_threshold,
       additional_report_columns = additional_report_columns,
       fasta_size = fasta_size,
@@ -104,6 +109,7 @@ workflow pvacsplice_workflow {
       keep_tmp_files = keep_tmp_files,
       netmhc_stab = netmhc_stab,
       run_reference_proteome_similarity = run_reference_proteome_similarity,
+      allow_incomplete_transcripts = allow_incomplete_transcripts,
       tumor_purity = tumor_purity,
       space_needed_gb = space_needed_gb
   }
@@ -137,11 +143,13 @@ task pvacsplice {
     Array[Int]? epitope_lengths_class_ii
     Int? binding_threshold
     Int? percentile_threshold
+    String? percentile_threshold_strategy
     Int? iedb_retries
 
     String? normal_sample_name
     String? net_chop_method  # enum [cterm , 20s]
     String? top_score_metric  # enum [lowest, median]
+    String? top_score_metric2  # enum [ic50, percentile]
     Float? net_chop_threshold
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
@@ -208,6 +216,7 @@ task pvacsplice {
     ~{if length(epitope_ii) > 0 then "-e2 " else ""} ~{sep="," epitope_ii} \
     ~{if defined(binding_threshold) then "-b ~{binding_threshold}" else ""} \
     ~{if defined(percentile_threshold) then "--percentile-threshold ~{percentile_threshold}" else ""} \
+    ~{if defined(percentile_threshold_strategy) then "--percentile-threshold-strategy ~{percentile_threshold_strategy}" else ""} \
     ~{if allele_specific_binding_thresholds then "--allele-specific-binding-thresholds" else ""} \
     ~{if defined(aggregate_inclusion_binding_threshold) then "--aggregate-inclusion-binding-threshold ~{aggregate_inclusion_binding_threshold}" else ""} \
     ~{if defined(aggregate_inclusion_count_limit) then "--aggregate-inclusion-count-limit ~{aggregate_inclusion_count_limit}" else ""} \
@@ -219,6 +228,7 @@ task pvacsplice {
     ~{if run_reference_proteome_similarity then "--run-reference-proteome-similarity" else ""} \
     ~{if defined(peptide_fasta) then "--peptide-fasta ~{peptide_fasta}" else ""} \
     ~{if defined(top_score_metric) then "-m ~{top_score_metric}" else ""} \
+    ~{if defined(top_score_metric2) then "--top-score-metric2 ~{top_score_metric2}" else ""} \
     ~{if defined(net_chop_threshold) then "--net-chop-threshold ~{net_chop_threshold}" else ""} \
     ~{if defined(additional_report_columns) then "-a ~{additional_report_columns}" else ""} \
     ~{if defined(fasta_size) then "-s ~{fasta_size}" else ""} \

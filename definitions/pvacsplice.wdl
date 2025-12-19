@@ -51,8 +51,10 @@ workflow pvacsplice {
     Array[Int]? epitope_lengths_class_ii
     Int? binding_threshold
     Int? percentile_threshold
+    String? percentile_threshold_strategy
     Int? iedb_retries
     String? top_score_metric  # enum [lowest, median]
+    String? top_score_metric2  # enum [ic50, percentile]
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
     Boolean? exclude_nas
@@ -171,11 +173,13 @@ workflow pvacsplice {
     epitope_lengths_class_ii=epitope_lengths_class_ii,
     binding_threshold=binding_threshold,
     percentile_threshold=percentile_threshold,
+    percentile_threshold_strategy=percentile_threshold_strategy,
     iedb_retries=iedb_retries,
     netmhciipan_version=netmhciipan_version,
     normal_sample_name=normal_sample_name,
     net_chop_method=net_chop_method,
-    top_score_metric=top_score_metric,  
+    top_score_metric=top_score_metric,
+    top_score_metric2=top_score_metric2,  
     net_chop_threshold=net_chop_threshold,
     additional_report_columns=additional_report_columns,
     fasta_size=fasta_size,
