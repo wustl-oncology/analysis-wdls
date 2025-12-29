@@ -30,7 +30,7 @@ workflow pvacsplice {
     String expression_tool = "kallisto" 
     
     #REGTOOLS inputs : 
-    String output_filename_tsv
+    String? output_filename_tsv
     String? output_filename_vcf
     String? output_filename_bed
     String? strand #[first, second, unstranded, RF, FR, XS]
@@ -135,9 +135,11 @@ workflow pvacsplice {
     input: vcf=addTranscriptExpressionDataToVcf.annotated_expression_vcf
   }
 
+  String output_filename_tsv_used = select_first([output_filename_tsv, "splice_junction.tsv"])
+
   call reg.regtools_workflow as runregtools {
     input:
-    output_filename_tsv=output_filename_tsv,
+    output_filename_tsv=output_filename_tsv_used,
     output_filename_vcf=output_filename_vcf,
     output_filename_bed=output_filename_bed,
     strand=strand_used,

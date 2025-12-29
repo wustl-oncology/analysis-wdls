@@ -278,7 +278,7 @@ workflow immuno {
 
     # --------- PVACsplice Inputs -----------------------------------------
     # Note: variables similar to PVACseq Inputs or other sections Inputs won't be listed here.
-    String regtools_output_filename_tsv
+    String? regtools_output_filename_tsv
     String? regtools_output_filename_vcf
     String? regtools_output_filename_bed
     Int? regtools_window_size
