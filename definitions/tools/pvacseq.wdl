@@ -64,7 +64,7 @@ task pvacseq {
     maxRetries: 2
     memory: "32GB"
     cpu: n_threads
-    docker: "griffithlab/pvactools:6.0.3"
+    docker: "griffithlab/pvactools:6.0.4"
     disks: "local-disk ~{space_needed_gb} HDD"
     bootDiskSizeGb: 50
   }
