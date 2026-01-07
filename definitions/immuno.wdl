@@ -97,7 +97,7 @@ struct MHC {
   File? splice_fasta
   File? splice_fasta_fai
   File? splice_gtf
-  Object? regtools_output
+  RegtoolsOutput? regtools_output
 }
 
 workflow immuno {
