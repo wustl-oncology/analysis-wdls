@@ -7,6 +7,13 @@ import "tools/index_vcf.wdl" as iv
 import "tools/regtools.wdl" as reg
 import "tools/pvacsplice.wdl" as pspl
 
+# Struct to group regtools output files
+struct RegtoolsOutput {
+  File tsv
+  File? vcf
+  File? bed
+}
+
 # Starting point of this workflow is a vcf which has been annotated with VEP, but doesnt have any expression data yet.
 # this will be annotated_filtered.vcf.gz (not annotated.expression.vcf.gz)
 
@@ -135,13 +142,17 @@ workflow pvacsplice {
     input: vcf=addTranscriptExpressionDataToVcf.annotated_expression_vcf
   }
 
+  # make sure that regtools tsv, vcf, and bed are official output of the pvacsplice (sub)workflow
   String output_filename_tsv_used = select_first([output_filename_tsv, "splice_junction.tsv"])
+  String output_filename_vcf_used = select_first([output_filename_vcf, "splice_variant.vcf"])
+  String output_filename_bed_used = select_first([output_filename_bed, "splice_variant.bed"])
+
 
   call reg.regtools_workflow as runregtools {
     input:
     output_filename_tsv=output_filename_tsv_used,
-    output_filename_vcf=output_filename_vcf,
-    output_filename_bed=output_filename_bed,
+    output_filename_vcf=output_filename_vcf_used,
+    output_filename_bed=output_filename_bed_used,
     strand=strand_used,
     window_size=window_size,
     max_distance_exon=max_distance_exon,
@@ -214,8 +225,11 @@ workflow pvacsplice {
   output {
     File annotated_vcf = index.indexed_vcf
     File annotated_vcf_tbi = index.indexed_vcf_tbi
-    File regtools_tsv = runregtools.output_splice_junction_tsv
-    File? regtools_vcf = runregtools.output_splice_variant_vcf
+    RegtoolsOutput regtools_output = object {
+      tsv: runregtools.output_splice_junction_tsv,
+      vcf: runregtools.output_splice_variant_vcf,
+      bed: runregtools.output_splice_variant_bed
+    }
     Array[File] mhc_i = runpvacsplice.mhc_i
     File? mhc_i_log = runpvacsplice.mhc_i_log
     Array[File] mhc_ii = runpvacsplice.mhc_ii
@@ -225,5 +239,6 @@ workflow pvacsplice {
     File? splice_transcript_combined_report = runpvacsplice.splice_transcript_combined_report
     File? splice_fasta = runpvacsplice.splice_fasta
     File? splice_fasta_fai = runpvacsplice.splice_fasta_fai
+    File? splice_gtf = runpvacsplice.splice_gtf
   }
 }

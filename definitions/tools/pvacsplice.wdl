@@ -46,7 +46,7 @@ workflow pvacsplice_workflow {
 
     Int? junction_score
     Int? variant_distance
-    Boolean save_gtf = false
+    Boolean save_gtf = true
     Array[String]? junction_anchor_types
 
     Boolean allele_specific_binding_thresholds = false
@@ -121,6 +121,7 @@ workflow pvacsplice_workflow {
     File? splice_transcript_combined_report = pvacsplice.splice_transcript_combined_report
     File? splice_fasta = pvacsplice.splice_fasta
     File? splice_fasta_fai = pvacsplice.splice_fasta_fai
+    File? splice_gtf = pvacsplice.splice_gtf
     File? mhc_i_log = pvacsplice.mhc_i_log
     File? mhc_ii_log = pvacsplice.mhc_ii_log
     File? mhc_log = pvacsplice.mhc_log
@@ -277,8 +278,8 @@ task pvacsplice {
     File? combined_filtered_epitopes = "pvacsplice_predictions/combined/~{sample_name}.filtered.tsv"
     File? splice_transcript_combined_report = "pvacsplice_predictions/~{sample_name}_combined.tsv"
     File? splice_gtf = "pvacsplice_predictions/~{sample_name}_gtf.tsv"
-    File? splice_fasta = "pvacsplice_predictions/~{sample_name}_.transcripts.fa"
-    File? splice_fasta_fai = "pvacsplice_predictions/~{sample_name}_.transcripts.fa.fai"
+    File? splice_fasta = "pvacsplice_predictions/~{sample_name}.transcripts.fa"
+    File? splice_fasta_fai = "pvacsplice_predictions/~{sample_name}.transcripts.fa.fai"
     
     # glob documentations
     # https://github.com/openwdl/wdl/blob/main/versions/1.0/SPEC.md#globs

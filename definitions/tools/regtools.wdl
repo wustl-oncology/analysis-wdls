@@ -52,6 +52,7 @@ workflow regtools_workflow {
   output {
     File output_splice_junction_tsv = regtools.output_splice_junction_tsv
     File? output_splice_variant_vcf = regtools.output_splice_variant_vcf
+    File? output_splice_variant_bed = regtools.output_splice_variant_bed
   }
 }
 
@@ -115,5 +116,6 @@ task regtools {
   output {
     File output_splice_junction_tsv = output_filename_tsv
     File? output_splice_variant_vcf = output_filename_vcf
+    File? output_splice_variant_bed = output_filename_bed
   }
 }
