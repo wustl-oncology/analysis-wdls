@@ -11,14 +11,16 @@ task pvacfuse {
     Array[Int]? epitope_lengths_class_i
     Array[Int]? epitope_lengths_class_ii
     Int? binding_threshold
-    Int? percentile_threshold
+    Float? binding_percentile_threshold
+    Float? presentation_percentile_threshold
+    Float? immunogenicity_percentile_threshold
     String? percentile_threshold_strategy
     Int? iedb_retries
     Boolean keep_tmp_files = false
     String? net_chop_method  # enum [cterm 20s]
     Boolean netmhc_stab = false
     String? top_score_metric  # enum [lowest, median]
-    String? top_score_metric2  # enum [ic50, percentile]
+    Array[String]? top_score_metric2
     Float? net_chop_threshold
     Boolean run_reference_proteome_similarity = false
     String? additional_report_columns  # enum [sample_name]
@@ -34,13 +36,18 @@ task pvacfuse {
     Int? read_support
     Float? expn_val
     String? netmhciipan_version # enum [4.3, 4.2, 4.1, 4.0]
+    File? reference_scores_zip
+    Boolean use_normalized_percentiles = false
   }
 
-  Int space_needed_gb = 10 + round(size([input_fusions_zip], "GB") * 3)
+  Float input_size = 3*size([input_fusions_zip], "GB")
+  Float reference_scores_size = 3*size(reference_scores_zip, "GB")  # tripled to unzip
+  Int space_needed_gb = 10 + round(input_size + reference_scores_size)
+
   runtime {
     preemptible: 1
     maxRetries: 2
-    docker: "griffithlab/pvactools:6.0.2"
+    docker: "susannakiwala/pvactools:7.0.0b1"
     memory: "32GB"
     cpu: n_threads
     disks: "local-disk ~{space_needed_gb} HDD"
@@ -51,9 +58,13 @@ task pvacfuse {
   Array[Int] epitope_i = select_first([epitope_lengths_class_i, []])
   Array[Int] epitope_ii = select_first([epitope_lengths_class_ii, []])
   Array[String] problematic_aa = select_first([problematic_amino_acids, []])
+  Array[String] tsm2 = select_first([top_score_metric2, []])
   command <<<
     set -eou pipefail
 
+    ~{if defined(reference_scores_zip) then "mkdir -p /tmp/pvacfuse/reference_scores && unzip -qq ~{reference_scores_zip} -d /tmp/pvacfuse/reference_scores" else ""} \
+
+    # touch each tbi to ensure they have a timestamp after the vcf
     mkdir agfusion_dir && unzip -qq ~{input_fusions_zip} -d agfusion_dir
 
     ln -s "$TMPDIR" /tmp/pvacfuse && export TMPDIR=/tmp/pvacfuse && \
@@ -65,7 +76,9 @@ task pvacfuse {
     ~{if length(epitope_i) > 0 then "-e1 " else ""} ~{sep="," epitope_i} \
     ~{if length(epitope_ii) > 0 then "-e2 " else ""} ~{sep="," epitope_ii} \
     ~{if defined(binding_threshold) then "-b ~{binding_threshold}" else ""} \
-    ~{if defined(percentile_threshold) then "--percentile-threshold ~{percentile_threshold}" else ""} \
+    ~{if defined(binding_percentile_threshold) then "--binding-percentile-threshold ~{binding_percentile_threshold}" else ""} \
+    ~{if defined(presentation_percentile_threshold) then "--presentation-percentile-threshold ~{presentation_percentile_threshold}" else ""} \
+    ~{if defined(immunogenicity_percentile_threshold) then "--immunogenicity-percentile-threshold ~{immunogenicity_percentile_threshold}" else ""} \
     ~{if defined(percentile_threshold_strategy) then "--percentile-threshold-strategy ~{percentile_threshold_strategy}" else ""} \
     ~{if allele_specific_binding_thresholds then "--allele-specific-binding-thresholds" else ""} \
     ~{if defined(aggregate_inclusion_binding_threshold) then "--aggregate-inclusion-binding-threshold ~{aggregate_inclusion_binding_threshold}" else ""} \
@@ -75,7 +88,7 @@ task pvacfuse {
     ~{if defined(net_chop_method) then "--net-chop-method ~{net_chop_method}" else ""} \
     ~{if netmhc_stab then "--netmhc-stab" else ""} \
     ~{if defined(top_score_metric) then "-m ~{top_score_metric}" else ""} \
-    ~{if defined(top_score_metric2) then "--top-score-metric2 ~{top_score_metric2}" else ""} \
+    ~{if length(tsm2) > 0 then "--top-score-metric2 " else ""} ~{sep="," tsm2} \
     ~{if defined(net_chop_threshold) then "--net-chop-threshold ~{net_chop_threshold}" else ""} \
     ~{if run_reference_proteome_similarity then "--run-reference-proteome-similarity" else ""} \
     ~{if defined(peptide_fasta) then "--peptide-fasta ~{peptide_fasta}" else ""} \
@@ -89,6 +102,8 @@ task pvacfuse {
     ~{if defined(expn_val) then "--expn-val ~{expn_val}" else ""} \
     ~{if defined(genes_of_interest_file) then "--genes-of-interest-file ~{genes_of_interest_file}" else ""} \
     ~{if defined(netmhciipan_version) then "--netmhciipan-version ~{netmhciipan_version}" else ""} \
+    ~{if use_normalized_percentiles then "--use-normalized-percentiles" else ""} \
+    ~{if defined(reference_scores_zip) then "--reference-scores-path /tmp/pvacfuse/reference_scores" else ""} \
     --n-threads ~{n_threads}
 
     #concatenate the pvacfuse log files produced for each length together to produce one class I and one class II log
