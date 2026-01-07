@@ -96,6 +96,7 @@ struct MHC {
   File? splice_transcript_combined_report
   File? splice_fasta
   File? splice_fasta_fai
+  File? splice_gtf
   Object? regtools_output
 }
 
