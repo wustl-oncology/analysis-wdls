@@ -40,7 +40,7 @@ task pvacfuse {
   runtime {
     preemptible: 1
     maxRetries: 2
-    docker: "griffithlab/pvactools:6.0.4"
+    docker: "griffithlab/pvactools:6.0.5"
     memory: "32GB"
     cpu: n_threads
     disks: "local-disk ~{space_needed_gb} HDD"
