@@ -6,6 +6,7 @@ import "rnaseq_star_fusion.wdl" as rsf
 import "somatic_exome.wdl" as se
 # others
 import "subworkflows/phase_vcf.wdl" as pv
+import "pvacsplice.wdl" as pspl
 import "pvacseq.wdl" as p
 import "subworkflows/generate_fda_metrics.wdl" as generate_fda_metrics
 import "tools/extract_hla_alleles.wdl" as eha
@@ -89,8 +90,14 @@ struct MHC {
   File? mhc_i_log
   Array[File] mhc_ii
   File? mhc_ii_log
+  File? mhc_log
   Array[File] combined
   Array[File]? phase_vcf
+  File? splice_transcript_combined_report
+  File? splice_fasta
+  File? splice_fasta_fai
+  File? splice_gtf
+  RegtoolsOutput? regtools_output
 }
 
 workflow immuno {
@@ -270,6 +277,28 @@ workflow immuno {
     Float? pvacfuse_expn_val
     Array[String]? biotypes
     Boolean? allow_incomplete_transcripts
+
+
+    # --------- PVACsplice Inputs -----------------------------------------
+    # Note: variables similar to PVACseq Inputs or other sections Inputs won't be listed here.
+    String? regtools_output_filename_tsv
+    String? regtools_output_filename_vcf
+    String? regtools_output_filename_bed
+    Int? regtools_window_size
+    Int? max_distance_exon 
+    Int? max_distance_intron
+    Boolean annotate_intronic_variant = false
+    Boolean annotate_exonic_variant = false
+    Boolean not_skipping_single_exon_transcripts = false
+    Boolean singecell_barcode = false
+    Boolean intron_motif_priority = false
+    Int? pvacsplice_threads
+    Int? junction_score
+    Int? variant_distance
+    Boolean? save_gtf
+    Array[String]? junction_anchor_types
+    Boolean? pvacsplice_keep_tmp_files
+
 
     # --------- FDA metrics inputs -------------------------------------
     String? reference_genome_name
@@ -561,6 +590,82 @@ workflow immuno {
     anchor_contribution_threshold=anchor_contribution_threshold,
     biotypes=biotypes,
     allow_incomplete_transcripts=allow_incomplete_transcripts
+
+  }
+
+  call pspl.pvacsplice {
+    input: 
+    #### prep files
+    detect_variants_vcf=somaticExome.final_filtered_vcf,
+    detect_variants_vcf_tbi=somaticExome.final_filtered_vcf_tbi,
+    sample_name=tumor_sample_name,
+    normal_sample_name=normal_sample_name,
+    rnaseq_bam=rna.final_bam,
+    rnaseq_bam_bai=rna.final_bam_bai,
+    reference=reference,
+    reference_fai=reference_fai,
+    reference_dict=reference_dict,
+    peptide_fasta=peptide_fasta,
+    genes_of_interest_file=genes_of_interest_file,
+    readcount_minimum_base_quality=readcount_minimum_base_quality,
+    readcount_minimum_mapping_quality=readcount_minimum_mapping_quality,
+    gene_expression_file=rna.kallisto_gene_abundance,
+    transcript_expression_file=rna.kallisto_transcript_abundance_tsv,
+    #expression_tool=expression_tool #if add this, also add the following line to input section : String expression_tool = "kallisto" 
+    #### REGTOOLS inputs : 
+    output_filename_tsv=regtools_output_filename_tsv,
+    output_filename_vcf=regtools_output_filename_vcf,
+    output_filename_bed=regtools_output_filename_bed,
+    strand=strand, #might consider using the output of task 'rna' for strand info instead
+    window_size=regtools_window_size,
+    max_distance_exon=max_distance_exon, 
+    max_distance_intron=max_distance_intron,
+    annotate_intronic_variant=annotate_intronic_variant, 
+    annotate_exonic_variant=annotate_exonic_variant, 
+    not_skipping_single_exon_transcripts=not_skipping_single_exon_transcripts, 
+    singecell_barcode=singecell_barcode, 
+    intron_motif_priority=intron_motif_priority,
+    reference_annotation=reference_annotation,
+    #### PVACSPLICE inputs :
+    alleles=hlaConsensus.consensus_alleles,
+    prediction_algorithms=prediction_algorithms,
+    epitope_lengths_class_i=epitope_lengths_class_i,
+    epitope_lengths_class_ii=epitope_lengths_class_ii,
+    binding_threshold=binding_threshold,
+    percentile_threshold=percentile_threshold,
+    percentile_threshold_strategy=percentile_threshold_strategy,
+    iedb_retries=iedb_retries,
+    top_score_metric=top_score_metric,
+    top_score_metric2=top_score_metric2,
+    additional_report_columns=additional_report_columns,
+    fasta_size=fasta_size,
+    exclude_nas=exclude_nas,
+    maximum_transcript_support_level=maximum_transcript_support_level,
+    normal_cov=normal_cov,
+    tdna_cov=tdna_cov,
+    trna_cov=trna_cov,
+    normal_vaf=normal_vaf,
+    tdna_vaf=tdna_vaf,
+    trna_vaf=trna_vaf,
+    expn_val=expn_val,
+    net_chop_method=net_chop_method,
+    net_chop_threshold=net_chop_threshold,
+    netmhc_stab=netmhc_stab,
+    run_reference_proteome_similarity=run_reference_proteome_similarity,
+    n_threads=pvacsplice_threads,
+    netmhciipan_version=netmhciipan_version,
+    tumor_purity=tumor_purity,
+    allele_specific_binding_thresholds=allele_specific_binding_thresholds,
+    aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
+    problematic_amino_acids=problematic_amino_acids,
+    biotypes=biotypes,
+    allow_incomplete_transcripts=allow_incomplete_transcripts,
+    aggregate_inclusion_count_limit=aggregate_inclusion_count_limit,
+    junction_score=junction_score,
+    variant_distance=variant_distance,
+    save_gtf=save_gtf,
+    junction_anchor_types=junction_anchor_types,
+    keep_tmp_files=pvacsplice_keep_tmp_files
   }
 
   call pf.pvacfuse {
@@ -819,9 +924,25 @@ workflow immuno {
       combined: pvacfuse.combined
     }
 
+    MHC pVACsplice = object {
+      mhc_i: pvacsplice.mhc_i,
+      mhc_i_log: pvacsplice.mhc_i_log,
+      mhc_ii: pvacsplice.mhc_ii,
+      mhc_ii_log: pvacsplice.mhc_ii_log,
+      mhc_log: pvacsplice.mhc_log,
+      combined: pvacsplice.combined,
+      regtools_output: pvacsplice.regtools_output,
+      splice_transcript_combined_report: pvacsplice.splice_transcript_combined_report,
+      splice_fasta: pvacsplice.splice_fasta,
+      splice_fasta_fai: pvacsplice.splice_fasta_fai,
+      splice_gtf : pvacsplice.splice_gtf
+    }
+
+
     File pvacseq_annotated_expression_vcf_gz = pvacseq.annotated_vcf
     File pvacseq_annotated_expression_vcf_gz_tbi = pvacseq.annotated_vcf_tbi
     File variants_final_annotated_tsv = pvacseq.annotated_tsv
+
 
   }
 }
