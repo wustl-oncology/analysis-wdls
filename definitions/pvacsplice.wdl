@@ -57,11 +57,13 @@ workflow pvacsplice {
     Array[Int]? epitope_lengths_class_i
     Array[Int]? epitope_lengths_class_ii
     Int? binding_threshold
-    Int? percentile_threshold
+    Float? binding_percentile_threshold
+    Float? presentation_percentile_threshold
+    Float? immunogenicity_percentile_threshold
     String? percentile_threshold_strategy
     Int? iedb_retries
     String? top_score_metric  # enum [lowest, median]
-    String? top_score_metric2  # enum [ic50, percentile]
+    Array[String]? top_score_metric2
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
     Boolean? exclude_nas
@@ -185,7 +187,9 @@ workflow pvacsplice {
     epitope_lengths_class_i=epitope_lengths_class_i, 
     epitope_lengths_class_ii=epitope_lengths_class_ii,
     binding_threshold=binding_threshold,
-    percentile_threshold=percentile_threshold,
+    binding_percentile_threshold=binding_percentile_threshold,
+    presentation_percentile_threshold=presentation_percentile_threshold,
+    immunogenicity_percentile_threshold=immunogenicity_percentile_threshold,
     percentile_threshold_strategy=percentile_threshold_strategy,
     iedb_retries=iedb_retries,
     netmhciipan_version=netmhciipan_version,

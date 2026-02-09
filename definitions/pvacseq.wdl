@@ -203,14 +203,11 @@ workflow pvacseq {
     anchor_contribution_threshold=anchor_contribution_threshold,
     biotypes=biotypes,
     allow_incomplete_transcripts=allow_incomplete_transcripts,
-<<<<<<< HEAD
+    use_normalized_percentiles=use_normalized_percentiles,
+    reference_scores_zip=reference_scores_zip,
     run_ml_predictions=run_ml_predictions,
     ml_threshold_accept=ml_threshold_accept,
     ml_threshold_reject=ml_threshold_reject
-=======
-    use_normalized_percentiles=use_normalized_percentiles,
-    reference_scores_zip=reference_scores_zip
->>>>>>> susannasiebert/pvactools_7.0
   }
 
   call vtt.variantsToTable {
