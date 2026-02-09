@@ -70,7 +70,7 @@ workflow nonhuman_immuno {
         String? percentile_threshold_strategy
         Float? minimum_fold_change
         String? top_score_metric  # enum [lowest, median]
-        String? top_score_metric2  # enum [ic50, percentile]
+        Array[String]? top_score_metric2
         String? additional_report_columns  # enum [sample_name]
         Int? fasta_size
         Int? downstream_sequence_length
