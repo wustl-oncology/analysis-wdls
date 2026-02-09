@@ -54,6 +54,10 @@ task pvacseq {
     Boolean allow_incomplete_transcripts =  false
 
     Float? tumor_purity
+
+    Boolean run_ml_predictions = false
+    Float? ml_threshold_accept
+    Float? ml_threshold_reject
   }
 
   Float input_size = size([input_vcf, input_vcf_tbi], "GB")
@@ -126,6 +130,9 @@ task pvacseq {
     ~{if allow_incomplete_transcripts then "--allow-incomplete-transcripts" else ""} \
     ~{if defined(genes_of_interest_file) then "--genes-of-interest-file ~{genes_of_interest_file}" else ""} \
     ~{if defined(netmhciipan_version) then "--netmhciipan-version ~{netmhciipan_version}" else ""} \
+    ~{if run_ml_predictions then "--run-ml-predictions" else ""} \
+    ~{if defined(ml_threshold_accept) then "--ml-threshold-accept ~{ml_threshold_accept}" else ""} \
+    ~{if defined(ml_threshold_reject) then "--ml-threshold-reject ~{ml_threshold_reject}" else ""} \
     --n-threads ~{n_threads} \
     ~{input_vcf} ~{sample_name} ~{sep="," alleles} ~{sep=" " prediction_algorithms} \
     pvacseq_predictions
@@ -213,6 +220,10 @@ workflow wf {
     Boolean allow_incomplete_transcripts =  false
 
     Float? tumor_purity
+
+    Boolean run_ml_predictions = false
+    Float? ml_threshold_accept
+    Float? ml_threshold_reject
   }
   call pvacseq {
     input:
@@ -264,5 +275,8 @@ workflow wf {
     biotypes=biotypes,
     allow_incomplete_transcripts=allow_incomplete_transcripts,
     netmhciipan_version=netmhciipan_version,
+    run_ml_predictions=run_ml_predictions,
+    ml_threshold_accept=ml_threshold_accept,
+    ml_threshold_reject=ml_threshold_reject,
   }
 }

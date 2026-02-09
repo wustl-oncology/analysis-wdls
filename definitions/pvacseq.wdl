@@ -74,6 +74,9 @@ workflow pvacseq {
     Array[String]? biotypes
     Boolean? allow_incomplete_transcripts
     String? netmhciipan_version # enum [4.3, 4.2, 4.1, 4.0]
+    Boolean? run_ml_predictions
+    Float? ml_threshold_accept
+    Float? ml_threshold_reject
   }
 
   call sncr.splitNCigarReads as tumorRnaSplitNCigarReads{
@@ -193,7 +196,10 @@ workflow pvacseq {
     allele_specific_anchors=allele_specific_anchors,
     anchor_contribution_threshold=anchor_contribution_threshold,
     biotypes=biotypes,
-    allow_incomplete_transcripts=allow_incomplete_transcripts
+    allow_incomplete_transcripts=allow_incomplete_transcripts,
+    run_ml_predictions=run_ml_predictions,
+    ml_threshold_accept=ml_threshold_accept,
+    ml_threshold_reject=ml_threshold_reject
   }
 
   call vtt.variantsToTable {
