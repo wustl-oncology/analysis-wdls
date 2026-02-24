@@ -47,7 +47,7 @@ task pvacfuse {
   runtime {
     preemptible: 1
     maxRetries: 2
-    docker: "susannakiwala/pvactools:7.0.0b1"
+    docker: "susannakiwala/pvactools:7.0.0b1_ml_predictor2"
     memory: "32GB"
     cpu: n_threads
     disks: "local-disk ~{space_needed_gb} HDD"
