@@ -193,7 +193,7 @@ task pvacsplice {
     maxRetries: 2
     memory: "32GB"
     cpu: n_threads
-    docker: "griffithlab/pvactools:6.1.0"
+    docker: "griffithlab/pvactools:6.1.1"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
