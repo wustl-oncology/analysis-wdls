@@ -58,6 +58,10 @@ task pvacseq {
     Boolean use_normalized_percentiles = false
 
     Float? tumor_purity
+
+    Boolean run_ml_predictions = false
+    Float? ml_threshold_accept
+    Float? ml_threshold_reject
   }
 
   Float input_size = size([input_vcf, input_vcf_tbi], "GB")
@@ -140,6 +144,9 @@ task pvacseq {
     ~{if defined(netmhciipan_version) then "--netmhciipan-version ~{netmhciipan_version}" else ""} \
     ~{if use_normalized_percentiles then "--use-normalized-percentiles" else ""} \
     ~{if defined(reference_scores_zip) then "--reference-scores-path /tmp/pvaseq/reference_scores" else ""} \
+    ~{if run_ml_predictions then "--run-ml-predictions" else ""} \
+    ~{if defined(ml_threshold_accept) then "--ml-threshold-accept ~{ml_threshold_accept}" else ""} \
+    ~{if defined(ml_threshold_reject) then "--ml-threshold-reject ~{ml_threshold_reject}" else ""} \
     --n-threads ~{n_threads} \
     ~{input_vcf} ~{sample_name} ~{sep="," alleles} ~{sep=" " prediction_algorithms} \
     pvacseq_predictions
@@ -231,6 +238,10 @@ workflow wf {
     Boolean use_normalized_percentiles = false
 
     Float? tumor_purity
+
+    Boolean run_ml_predictions = false
+    Float? ml_threshold_accept
+    Float? ml_threshold_reject
   }
   call pvacseq {
     input:
@@ -285,6 +296,9 @@ workflow wf {
     allow_incomplete_transcripts=allow_incomplete_transcripts,
     netmhciipan_version=netmhciipan_version,
     use_normalized_percentiles=use_normalized_percentiles,
-    reference_scores_zip=reference_scores_zip
+    reference_scores_zip=reference_scores_zip,
+    run_ml_predictions=run_ml_predictions,
+    ml_threshold_accept=ml_threshold_accept,
+    ml_threshold_reject=ml_threshold_reject,
   }
 }

@@ -78,6 +78,9 @@ workflow pvacseq {
     String? netmhciipan_version # enum [4.3, 4.2, 4.1, 4.0]
     Boolean? use_normalized_percentiles
     File? reference_scores_zip
+    Boolean? run_ml_predictions
+    Float? ml_threshold_accept
+    Float? ml_threshold_reject
   }
 
   call sncr.splitNCigarReads as tumorRnaSplitNCigarReads{
@@ -201,7 +204,10 @@ workflow pvacseq {
     biotypes=biotypes,
     allow_incomplete_transcripts=allow_incomplete_transcripts,
     use_normalized_percentiles=use_normalized_percentiles,
-    reference_scores_zip=reference_scores_zip
+    reference_scores_zip=reference_scores_zip,
+    run_ml_predictions=run_ml_predictions,
+    ml_threshold_accept=ml_threshold_accept,
+    ml_threshold_reject=ml_threshold_reject
   }
 
   call vtt.variantsToTable {
