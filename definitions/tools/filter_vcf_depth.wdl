@@ -11,8 +11,8 @@ task filterVcfDepth {
   runtime {
     preemptible: 1
     maxRetries: 2
-    docker: "mgibio/depth-filter:0.1.2"
-    memory: "12GB"
+    docker: "zlskidmore/depth-filter:0.1.3"
+    memory: "4GB"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
