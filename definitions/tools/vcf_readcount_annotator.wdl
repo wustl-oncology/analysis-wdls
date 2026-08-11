@@ -13,7 +13,7 @@ task vcfReadcountAnnotator {
   runtime {
     preemptible: 1
     maxRetries: 2
-    docker: "susannakiwala/vatools:5.2.1"
+    docker: "griffithlab/vatools:6.0.1"
     memory: "4GB"
     disks: "local-disk ~{space_needed_gb} HDD"
   }

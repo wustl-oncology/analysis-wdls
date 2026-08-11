@@ -14,7 +14,7 @@ task addVepFieldsToTable {
     preemptible: 1
     maxRetries: 2
     memory: "4GB"
-    docker: "susannakiwala/vatools:5.2.1"
+    docker: "griffithlab/vatools:6.0.1"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
