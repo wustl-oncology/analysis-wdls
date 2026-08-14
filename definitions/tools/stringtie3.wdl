@@ -1,0 +1,91 @@
+version 1.0
+
+# StringTie 3 quantification of long-read (Iso-Seq / ONT) alignments.
+#
+# Differences from tools/stringtie.wdl (the short-read version):
+#   -L   long-read mode; treats each read as a full-length transcript
+#   -e   restrict output to transcripts already present in the reference GTF
+#
+# `-e` matters for the pVACseq path. Without it StringTie invents novel
+# transcript IDs (MSTRG.*), which will not join against the Ensembl transcript
+# IDs that VEP writes into the CSQ, and vcf-expression-annotator will annotate
+# nothing. With `-e` every row in both output files carries a reference
+# ENST/ENSG id.
+#
+# Both outputs feed vcf-expression-annotator directly:
+#   gene mode       <- gene_expression_tsv   (the -A file)
+#   transcript mode <- transcript_gtf        (the -o file)
+task stringtie3 {
+  input {
+    File bam
+    File bam_bai  # !UnusedDeclaration -- present to force localization beside the bam
+    File reference_annotation
+    String sample_name
+    # Iso-Seq FLNC is strand resolved, so the alignments are already oriented.
+    # "unstranded" is the right default when minimap2 was run with -uf.
+    String strand = "unstranded"  # [first, second, unstranded]
+    Boolean reference_only = true
+    Int cores = 12
+    # NOTE: verify this build hash against
+    # https://quay.io/repository/biocontainers/stringtie?tab=tags
+    String docker_image = "quay.io/biocontainers/stringtie:3.0.3--h29c0135_0"
+  }
+
+  Int space_needed_gb = 10 + round(3*size(bam, "GB") + size(reference_annotation, "GB"))
+  runtime {
+    preemptible: 1
+    maxRetries: 2
+    docker: docker_image
+    memory: "32GB"
+    cpu: cores
+    disks: "local-disk ~{space_needed_gb} HDD"
+  }
+
+  String transcripts = "stringtie_transcripts.gtf"
+  String expression = "stringtie_gene_expression.tsv"
+  Map[String, String] strandness = {
+    "first": "--rf", "second": "--fr", "unstranded": ""
+  }
+
+  command <<<
+    set -eou pipefail
+    stringtie --version
+
+    stringtie \
+      -L \
+      ~{if reference_only then "-e" else ""} \
+      -p ~{cores} \
+      ~{strandness[strand]} \
+      -G ~{reference_annotation} \
+      -o ~{transcripts} \
+      -A ~{expression} \
+      -l ~{sample_name} \
+      ~{bam}
+  >>>
+
+  output {
+    File transcript_gtf = transcripts
+    File gene_expression_tsv = expression
+  }
+}
+
+workflow wf {
+  input {
+    File bam
+    File bam_bai
+    File reference_annotation
+    String sample_name
+    String? strand
+    Boolean? reference_only
+  }
+
+  call stringtie3 {
+    input:
+    bam=bam,
+    bam_bai=bam_bai,
+    reference_annotation=reference_annotation,
+    sample_name=sample_name,
+    strand=select_first([strand, "unstranded"]),
+    reference_only=select_first([reference_only, true])
+  }
+}
