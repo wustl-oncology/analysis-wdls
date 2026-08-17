@@ -13,7 +13,7 @@ task vcfExpressionAnnotator {
   runtime {
     preemptible: 1
     maxRetries: 2
-    docker: "griffithlab/vatools:5.2.0"
+    docker: "griffithlab/vatools:6.0.1"
     memory: "4GB"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
