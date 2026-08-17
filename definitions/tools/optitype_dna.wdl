@@ -33,11 +33,15 @@ task optitypeDna {
     # See: https://github.com/wustl-oncology/analysis-wdls/issues/225
     #
     # Workaround: _JAVA_OPTIONS is honored by every JVM launched in this shell (Cromwell
-    # already relies on this for -Djava.io.tmpdir below), so exporting -Xmx here forces
-    # SamToFastq - and any other java call inside the wrapper script - to actually use
-    # the memory reserved for this task. Leave ~10GB of headroom for optitype's own
-    # (non-JVM) memory use after the conversion step.
-    export _JAVA_OPTIONS="-Xmx~{mem - 10}g"
+    # already relies on this for -Djava.io.tmpdir, exported above by Cromwell's generated
+    # script), so appending -Xmx here forces SamToFastq - and any other java call inside
+    # the wrapper script - to actually use the memory reserved for this task. Append
+    # rather than overwrite: _JAVA_OPTIONS already holds Cromwell's -Djava.io.tmpdir
+    # setting, which must be preserved so temp files still land on the disk provisioned
+    # for this task rather than falling back to the container's default /tmp. Leave
+    # ~10GB of headroom for optitype's own (non-JVM) memory use after the conversion
+    # step.
+    export _JAVA_OPTIONS="${_JAVA_OPTIONS} -Xmx~{mem - 10}g"
 
     /bin/bash /usr/bin/optitype_script_wdl.sh /tmp . \
     ~{optitype_name} ~{cram} ~{reference} ~{threads} ~{mem}
