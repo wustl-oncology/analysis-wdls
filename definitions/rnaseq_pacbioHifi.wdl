@@ -22,10 +22,19 @@ import "tools/samtools_flagstat.wdl" as sf
 # fusion arm can reuse this alignment instead of doing its own.
 workflow rnaseqPacbioHifi {
   input {
-    # Unaligned FLNC bam from `isoseq refine`
-    File flnc_bam
+    # One or more unaligned FLNC bams from `isoseq refine`. Multiple entries are
+    # replicates of ONE biological sample: each is aligned with its own @RG and
+    # the shards are merged into a single sorted, indexed bam. That single bam
+    # then feeds StringTie, regtools and ctat-LR-fusion alike.
+    Array[File] flnc_bams
+    # Optional per-replicate @RG IDs, positionally matched to flnc_bams.
+    # e.g. ["NTR004_rna_rep1", "NTR004_rna_rep2", "NTR004_rna_rep3"]
+    Array[String] flnc_read_group_ids = []
     String sample_name
 
+    # Either the genome fasta or a prebuilt .mmi (faster: skips genome indexing
+    # on every run). If you pass an .mmi, confirm it was built with the same
+    # preset -- see the caveat in tools/minimap2_rnaseq_pacbioHifi.wdl.
     File reference
     File reference_fai
     # Gene model GTF. Must be the same Ensembl release as the VEP cache used on
@@ -33,6 +42,9 @@ workflow rnaseqPacbioHifi {
     File reference_annotation
 
     String minimap2_preset = "splice:hq"
+    # Extra minimap2 flags. Default empty -- the base command already matches a
+    # configuration proven against ctat-LR-fusion.
+    String minimap2_additional_args = ""
     Int minimap2_cores = 16
     Int samtools_cores = 8
     String? minimap2_docker_image
@@ -49,11 +61,14 @@ workflow rnaseqPacbioHifi {
 
   call mm.minimap2Align as align {
     input:
-    flnc_bam=flnc_bam,
+    flnc_bams=flnc_bams,
+    read_group_ids=flnc_read_group_ids,
+    sample_name=sample_name,
     reference=reference,
     reference_fai=reference_fai,
     output_basename=sample_name + ".flnc.aligned",
     preset=minimap2_preset,
+    additional_args=minimap2_additional_args,
     minimap2_cores=minimap2_cores,
     samtools_cores=samtools_cores,
     minimap2_docker_image=minimap2_docker_image

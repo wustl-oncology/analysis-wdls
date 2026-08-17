@@ -41,10 +41,24 @@ workflow somaticPacbioHifi {
   input {
     # ---------- Sequence inputs ----------
     # Unaligned (or already aligned, with skip_align=true) HiFi bams.
-    Array[File] tumor_bams
-    Array[File] normal_bams
+    # Supply exactly ONE of bams / fastqs per sample.
+    # FASTQ mode exists to save disk -- a HiFi uBAM with kinetics is several
+    # times the size of the equivalent fastq.gz. Nothing in this workflow reads
+    # the PacBio tags that FASTQ discards (kinetics, MM/ML base modifications),
+    # so the only real cost is that a methylation arm could never be added on
+    # top of a FASTQ-derived run.
+    Array[File] tumor_bams = []
+    Array[File] tumor_fastqs = []
+    Array[File] normal_bams = []
+    Array[File] normal_fastqs = []
     String tumor_sample_name
     String normal_sample_name
+    # Optional per-file @RG IDs, positionally matched to the fastq/bam arrays.
+    # Keeps replicates distinguishable inside the merged bam (SM stays the
+    # sample name; ID records which sequencing run each read came from).
+    Array[String] tumor_read_group_ids = []
+    Array[String] normal_read_group_ids = []
+    # BAM mode only: treat inputs as already aligned and just merge/index.
     Boolean skip_align = false
     Boolean strip_kinetics = false
 
@@ -109,6 +123,8 @@ workflow somaticPacbioHifi {
   call pb.alignHifiBams as alignTumor {
     input:
     bams=tumor_bams,
+    fastqs=tumor_fastqs,
+    read_group_ids=tumor_read_group_ids,
     reference=align_reference,
     reference_fai=reference_fai,
     sample_name=tumor_sample_name,
@@ -121,6 +137,8 @@ workflow somaticPacbioHifi {
   call pb.alignHifiBams as alignNormal {
     input:
     bams=normal_bams,
+    fastqs=normal_fastqs,
+    read_group_ids=normal_read_group_ids,
     reference=align_reference,
     reference_fai=reference_fai,
     sample_name=normal_sample_name,
@@ -338,6 +356,8 @@ workflow somaticPacbioHifi {
 
   output {
     # ---- Alignments ----
+    String tumor_input_mode = alignTumor.input_mode
+    String normal_input_mode = alignNormal.input_mode
     File tumor_bam = alignTumor.final_bam
     File tumor_bam_bai = alignTumor.final_bam_bai
     File normal_bam = alignNormal.final_bam

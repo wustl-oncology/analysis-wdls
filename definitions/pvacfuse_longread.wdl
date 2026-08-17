@@ -3,7 +3,6 @@ version 1.0
 import "tools/ctat_lr_fusion.wdl" as clf
 import "tools/agfusion.wdl" as af
 import "tools/pvacfuse.wdl" as pf
-import "tools/zip_directory.wdl" as zd
 
 # Starting point of this workflow is a long-read RNA BAM file from PacBio or Nanopore
 # The workflow will:
@@ -15,11 +14,12 @@ import "tools/zip_directory.wdl" as zd
 #
 #   (a) Default -- supply lr_bam. Runs the full chain above.
 #
-#   (b) Resume -- supply agfusion_dir instead. Steps 1 and 2 are skipped and
-#       pVACfuse runs straight off an AGFusion output directory you already
-#       have. CTAT-LR-Fusion is by far the most expensive step here, so this is
-#       the path to use when you want to re-run pVACfuse against different HLA
-#       alleles, epitope lengths or binding thresholds.
+#   (b) Resume -- supply agfusion_dir_zip instead. Steps 1 and 2 are skipped
+#       and pVACfuse runs straight off an AGFusion output directory you
+#       already have, zipped up. CTAT-LR-Fusion is by far the most expensive
+#       step here, so this is the path to use when you want to re-run
+#       pVACfuse against different HLA alleles, epitope lengths or binding
+#       thresholds.
 #
 #       lr_bam is still required by WDL's type system when using (b); it is
 #       simply never read. Point it at the same bam or any placeholder.
@@ -27,9 +27,9 @@ import "tools/zip_directory.wdl" as zd
 # On the zip: pVACfuse itself always consumes a DIRECTORY. tools/pvacfuse.wdl
 # unzips into `agfusion_dir` before invoking it -- the zip is only a transport
 # wrapper for crossing task boundaries, since WDL 1.0 has no portable Directory
-# type. Entry point (b) therefore re-zips your directory rather than adding a
-# second pVACfuse task, which keeps tools/pvacfuse.wdl unmodified and leaves
-# every output type below unchanged.
+# type. Entry point (b) therefore expects the directory already zipped (same
+# layout `agfusion.annotated_fusion_predictions_zip` produces), which keeps
+# tools/pvacfuse.wdl unmodified and leaves every output type below unchanged.
 
 workflow pvacfuse_longread {
   input {
@@ -41,9 +41,9 @@ workflow pvacfuse_longread {
     Boolean examine_coding_effect = true
     Boolean vis = true
 
-    # Entry point (b): an existing AGFusion output directory. When set,
-    # CTAT-LR-Fusion and AGFusion are both skipped.
-    Directory? agfusion_dir
+    # Entry point (b): an existing AGFusion output directory, pre-zipped.
+    # When set, CTAT-LR-Fusion and AGFusion are both skipped.
+    File? agfusion_dir_zip
 
     # AGfusion inputs
     File agfusion_database
@@ -85,11 +85,12 @@ workflow pvacfuse_longread {
   }
 
   # Steps 1 and 2 run only on entry point (a).
-  if (!defined(agfusion_dir)) {
+  if (!defined(agfusion_dir_zip)) {
     # Step 1: Detect fusions using CTAT-LR-Fusion
     call clf.ctat_lr_fusion {
       input:
       lr_bam=lr_bam,
+      lr_bam_bai=lr_bam_bai,
       star_fusion_genome_lib_zip=star_fusion_genome_lib_zip,
       cpu=ctat_cpu,
       examine_coding_effect=examine_coding_effect,
@@ -105,17 +106,10 @@ workflow pvacfuse_longread {
     }
   }
 
-  # Entry point (b): package the supplied directory the same way agfusion.wdl
-  # would have, so the single pVACfuse call below does not care which path ran.
-  if (defined(agfusion_dir)) {
-    call zd.zipDirectory as zipAgfusionDir {
-      input:
-      dir=select_first([agfusion_dir]),
-      output_basename="agfusion_results"
-    }
-  }
-
-  File fusions_zip_to_use = select_first([agfusion.annotated_fusion_predictions_zip, zipAgfusionDir.zipped])
+  # Entry point (b): the supplied zip is already in the same shape
+  # agfusion.wdl would have produced, so the single pVACfuse call below does
+  # not care which path ran.
+  File fusions_zip_to_use = select_first([agfusion.annotated_fusion_predictions_zip, agfusion_dir_zip])
 
   # Step 3: Predict neoepitopes using pVACfuse
   call pf.pvacfuse {
@@ -158,7 +152,7 @@ workflow pvacfuse_longread {
     # Optional: absent on entry point (b), where CTAT-LR-Fusion never ran.
     File? ctat_fusion_predictions = ctat_lr_fusion.fusion_predictions
     File? ctat_fusion_predictions_abridged = ctat_lr_fusion.fusion_predictions_abridged
-    Directory? ctat_lr_fusion_outdir = ctat_lr_fusion.ctat_lr_fusion_outdir
+    File? ctat_lr_fusion_outdir_tar_gz = ctat_lr_fusion.ctat_lr_fusion_outdir_tar_gz
 
     # AGfusion outputs. On entry point (b) this is the re-zipped copy of the
     # directory you supplied, not a fresh AGFusion run.

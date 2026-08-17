@@ -12,8 +12,9 @@ import "tools/minimap2_ts_to_xs.wdl" as txs
 # Long-read neoantigen pipeline. The counterpart of immuno.wdl.
 #
 # SUPPORTED INPUT TYPES -- currently PacBio HiFi only:
-#   DNA : PacBio HiFi WGS, tumor/normal paired, as unaligned (or aligned) bams
-#   RNA : PacBio MAS-Iso-Seq FLNC bam from `isoseq refine`
+#   DNA : PacBio HiFi WGS, tumor/normal paired. Either unaligned (or aligned,
+#         with skip_align) bams, OR fastq.gz -- see tumor_bams/tumor_fastqs.
+#   RNA : PacBio MAS-Iso-Seq FLNC bam(s) from `isoseq refine` -- one or many
 #
 # Nanopore is NOT supported. tools/minimap2_rnaseq_pacbioHifi.wdl hardcodes
 # `-uf`, which is only valid for strand-resolved reads; the DNA arm uses pbmm2
@@ -30,7 +31,7 @@ import "tools/minimap2_ts_to_xs.wdl" as txs
 #     normal_sample_column_was_added output on run 1 to learn whether
 #     DeepSomatic emitted a normal column on its own.
 #
-#                    tumor/normal HiFi WGS bams        FLNC bam
+#              tumor/normal HiFi WGS bams OR fastq.gz    FLNC bam(s)
 #                              |                          |
 #            somatic_germline_wgs_pacbioHifi      rnaseq_pacbioHifi
 #                     |            |                 |    |    |
@@ -47,8 +48,19 @@ workflow immunoLongread {
   input {
     # =========== DNA: PacBio HiFi WGS ==============================
 
-    Array[File] tumor_bams
-    Array[File] normal_bams
+    # Supply exactly ONE of bams / fastqs per sample. FASTQ mode saves disk:
+    # a HiFi uBAM carrying kinetics is several times the size of the equivalent
+    # fastq.gz, and nothing downstream here reads the PacBio-only tags that
+    # FASTQ drops.
+    Array[File] tumor_bams = []
+    Array[File] tumor_fastqs = []
+    Array[File] normal_bams = []
+    Array[File] normal_fastqs = []
+    # Optional per-file @RG IDs, positionally matched to the arrays above.
+    # e.g. ["NTR004_3591_h2", "NTR004_3591_h3"] so each replicate stays
+    # identifiable by @RG ID inside the merged bam.
+    Array[String] tumor_read_group_ids = []
+    Array[String] normal_read_group_ids = []
     String tumor_sample_name
     String normal_sample_name
     Boolean skip_align = false
@@ -76,14 +88,23 @@ workflow immunoLongread {
 
     # =========== RNA: PacBio MAS-Iso-Seq ===========================
 
-    # Unaligned FLNC bam from `isoseq refine`
-    File flnc_bam
+    # One or more unaligned FLNC bams from `isoseq refine`. Multiple entries are
+    # replicates of one biological sample -- each is aligned with its own @RG and
+    # merged into a single bam, exactly like the DNA arm handles its replicates.
+    Array[File] flnc_bams
+    # Optional per-replicate @RG IDs, positionally matched to flnc_bams.
+    Array[String] flnc_read_group_ids = []
     # Gene model GTF. MUST be the same Ensembl release as the VEP cache below,
     # or StringTie's transcript ids will not join against VEP's CSQ and TX will
     # come out empty with no error.
     File reference_annotation
 
+    # Optional prebuilt minimap2 .mmi for the RNA arm. Saves the genome-indexing
+    # step on every run. Must be built with matching -k/-w -- see the caveat in
+    # tools/minimap2_rnaseq_pacbioHifi.wdl.
+    File? rna_reference_mmi
     String minimap2_preset = "splice:hq"
+    String minimap2_additional_args = ""
     Int minimap2_cores = 16
     String? minimap2_docker_image
     String stringtie_strand = "unstranded"
@@ -213,11 +234,11 @@ workflow immunoLongread {
     File star_fusion_genome_lib_zip
     File agfusion_database
     Boolean agfusion_annotate_noncanonical = true
-    # Resume entry point. Set this to an existing AGFusion output directory and
-    # CTAT-LR-Fusion + AGFusion are both skipped -- pVACfuse runs straight off
-    # it. Use this to re-run pVACfuse with different alleles or thresholds
-    # without paying for CTAT-LR-Fusion again.
-    Directory? agfusion_dir
+    # Resume entry point. Set this to an existing AGFusion output directory,
+    # zipped, and CTAT-LR-Fusion + AGFusion are both skipped -- pVACfuse runs
+    # straight off it. Use this to re-run pVACfuse with different alleles or
+    # thresholds without paying for CTAT-LR-Fusion again.
+    File? agfusion_dir_zip
     Int ctat_cpu = 30
     Boolean ctat_examine_coding_effect = true
     Boolean ctat_vis = true
@@ -232,7 +253,11 @@ workflow immunoLongread {
   call swgs.somaticPacbioHifi as somatic {
     input:
     tumor_bams=tumor_bams,
+    tumor_fastqs=tumor_fastqs,
+    tumor_read_group_ids=tumor_read_group_ids,
     normal_bams=normal_bams,
+    normal_fastqs=normal_fastqs,
+    normal_read_group_ids=normal_read_group_ids,
     tumor_sample_name=tumor_sample_name,
     normal_sample_name=normal_sample_name,
     skip_align=skip_align,
@@ -269,12 +294,14 @@ workflow immunoLongread {
 
   call rlr.rnaseqPacbioHifi as rna {
     input:
-    flnc_bam=flnc_bam,
+    flnc_bams=flnc_bams,
+    flnc_read_group_ids=flnc_read_group_ids,
     sample_name=tumor_sample_name,
-    reference=reference,
+    reference=select_first([rna_reference_mmi, reference]),
     reference_fai=reference_fai,
     reference_annotation=reference_annotation,
     minimap2_preset=minimap2_preset,
+    minimap2_additional_args=minimap2_additional_args,
     minimap2_cores=minimap2_cores,
     samtools_cores=samtools_cores,
     minimap2_docker_image=minimap2_docker_image,
@@ -450,7 +477,7 @@ workflow immunoLongread {
       input:
       lr_bam=rna.final_bam,
       lr_bam_bai=rna.final_bam_bai,
-      agfusion_dir=agfusion_dir,
+      agfusion_dir_zip=agfusion_dir_zip,
       star_fusion_genome_lib_zip=star_fusion_genome_lib_zip,
       ctat_cpu=ctat_cpu,
       examine_coding_effect=ctat_examine_coding_effect,
@@ -490,6 +517,8 @@ workflow immunoLongread {
 
   output {
     # ---------- DNA ----------
+    String tumor_input_mode = somatic.tumor_input_mode
+    String normal_input_mode = somatic.normal_input_mode
     File tumor_bam = somatic.tumor_bam
     File tumor_bam_bai = somatic.tumor_bam_bai
     File normal_bam = somatic.normal_bam
@@ -546,7 +575,7 @@ workflow immunoLongread {
     Array[File]? pvacfuse_mhc_i = pvacfuse.mhc_i_all
     Array[File]? pvacfuse_mhc_ii = pvacfuse.mhc_ii_all
     Array[File]? pvacfuse_combined = pvacfuse.combined_all
-    # Absent when agfusion_dir was supplied -- CTAT-LR-Fusion never ran.
+    # Absent when agfusion_dir_zip was supplied -- CTAT-LR-Fusion never ran.
     File? pvacfuse_ctat_fusion_predictions = pvacfuse.ctat_fusion_predictions
     File? pvacfuse_ctat_fusion_predictions_abridged = pvacfuse.ctat_fusion_predictions_abridged
     File? pvacfuse_agfusion_zip = pvacfuse.agfusion_annotated_predictions_zip
