@@ -153,6 +153,7 @@ workflow pvacfuse_longread {
     File? ctat_fusion_predictions = ctat_lr_fusion.fusion_predictions
     File? ctat_fusion_predictions_abridged = ctat_lr_fusion.fusion_predictions_abridged
     File? ctat_lr_fusion_outdir_tar_gz = ctat_lr_fusion.ctat_lr_fusion_outdir_tar_gz
+    File? ctat_fusion_inspector_web_html = ctat_lr_fusion.fusion_inspector_web_html
 
     # AGfusion outputs. On entry point (b) this is the re-zipped copy of the
     # directory you supplied, not a fresh AGFusion run.

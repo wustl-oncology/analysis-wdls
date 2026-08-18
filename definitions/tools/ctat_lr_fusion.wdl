@@ -59,5 +59,8 @@ task ctat_lr_fusion {
     File fusion_predictions = "ctat_LR_fusion_outdir/ctat-LR-fusion.fusion_predictions.tsv"
     File fusion_predictions_abridged = "ctat_LR_fusion_outdir/ctat-LR-fusion.fusion_predictions.abridged.tsv"
     File ctat_lr_fusion_outdir_tar_gz = "ctat_LR_fusion_outdir.tar.gz"
+    # Only written when vis=true (the default). Optional so a vis=false run
+    # doesn't fail on a missing glob.
+    File? fusion_inspector_web_html = "ctat_LR_fusion_outdir/ctat-LR-fusion.fusion_inspector_web.html"
   }
 }

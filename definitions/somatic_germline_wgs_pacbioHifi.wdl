@@ -354,6 +354,42 @@ workflow somaticPacbioHifi {
     output_basename=tumor_sample_name + ".phased_proximal_variants"
   }
 
+  # pVACseq validates every vcf it's given, including -p
+  # (--phased-proximal-variants-vcf), and refuses to run at all if any of them
+  # lack a VEP CSQ header -- even though proximal-variant correction itself
+  # only reads genotypes and phase sets. combinePhasedProximalVcf's output is
+  # plain bcftools concat/sort output with no annotation (see the comment in
+  # tools/combine_phased_proximal_vcf.wdl), so it has to be run through VEP
+  # here, the same way the main somatic vcf is, or pvacseqLongread.ps fails
+  # immediately with "Input VCF does not contain a CSQ header."
+  call v.vep as annotateProximalVariants {
+    input:
+    vcf=proximalVariants.phased_vcf,
+    cache_dir_zip=vep_cache_dir_zip,
+    reference=reference,
+    reference_fai=reference_fai,
+    reference_dict=reference_dict,
+    plugins=vep_plugins,
+    ensembl_assembly=vep_ensembl_assembly,
+    ensembl_version=vep_ensembl_version,
+    ensembl_species=vep_ensembl_species,
+    synonyms_file=vep_synonyms_file,
+    custom_annotations=vep_custom_annotations,
+    coding_only=vep_annotate_coding_only,
+    everything=vep_everything,
+    pick=vep_pick
+  }
+
+  # vep.wdl always emits a plain uncompressed .vcf; pVACseq wants -p bgzipped
+  # and indexed like every other vcf input.
+  call bg.bgzip as bgzipAnnotatedProximal {
+    input: file=annotateProximalVariants.annotated_vcf
+  }
+
+  call iv.indexVcf as indexAnnotatedProximal {
+    input: vcf=bgzipAnnotatedProximal.bgzipped_file
+  }
+
   output {
     # ---- Alignments ----
     String tumor_input_mode = alignTumor.input_mode
@@ -389,8 +425,8 @@ workflow somaticPacbioHifi {
     File? tumor_indel_bam_readcount_tsv = dnaReadcounts.tumor_indel_bam_readcount_tsv
     File? normal_snv_bam_readcount_tsv = dnaReadcounts.normal_snv_bam_readcount_tsv
     File? normal_indel_bam_readcount_tsv = dnaReadcounts.normal_indel_bam_readcount_tsv
-    File phased_proximal_variants_vcf = proximalVariants.phased_vcf
-    File phased_proximal_variants_vcf_tbi = proximalVariants.phased_vcf_tbi
+    File phased_proximal_variants_vcf = indexAnnotatedProximal.indexed_vcf
+    File phased_proximal_variants_vcf_tbi = indexAnnotatedProximal.indexed_vcf_tbi
 
     # ---- QC ----
     File? mosdepth_tumor_summary = mosdepthTumor.summary

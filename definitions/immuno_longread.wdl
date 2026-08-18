@@ -578,6 +578,7 @@ workflow immunoLongread {
     # Absent when agfusion_dir_zip was supplied -- CTAT-LR-Fusion never ran.
     File? pvacfuse_ctat_fusion_predictions = pvacfuse.ctat_fusion_predictions
     File? pvacfuse_ctat_fusion_predictions_abridged = pvacfuse.ctat_fusion_predictions_abridged
+    File? pvacfuse_ctat_fusion_inspector_web_html = pvacfuse.ctat_fusion_inspector_web_html
     File? pvacfuse_agfusion_zip = pvacfuse.agfusion_annotated_predictions_zip
   }
 }
