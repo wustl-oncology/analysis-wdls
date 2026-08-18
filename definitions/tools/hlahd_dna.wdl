@@ -23,27 +23,18 @@ task hlahdDna {
   }
 
   command <<<
-    # hlahd_script_wdl.sh (baked into the griffithlab/hlahd image) internally runs Picard
-    # SamToFastq to convert the input CRAM before HLA typing, but it never applies the
-    # `mem` argument to that Java invocation - it defaults to Java 8's unconfigured heap
-    # (~4GB) regardless of how much memory this task actually requested/received. On
-    # larger CRAMs this causes SamToFastq to die with "OutOfMemoryError: GC overhead
-    # limit exceeded" even though the LSF/backend job itself had ~{mem}GB available.
-    # See: https://github.com/wustl-oncology/analysis-wdls/issues/225
+    # hlahd_script_wdl.sh internally runs Picard SamToFastq to convert the 
+    # input CRAM before HLA typing, but it never applies the `mem` argument to 
+    # that Java invocation - it defaults to Java 8's unconfigured heap (~4GB)
+    # regardless of how much memory this task actually requested/received.
     #
-    # Workaround: _JAVA_OPTIONS is honored by every JVM launched in this shell (Cromwell
-    # already relies on this for -Djava.io.tmpdir, exported above by Cromwell's generated
-    # script), so appending -Xmx here forces SamToFastq - and any other java call inside
-    # the wrapper script - to actually use the memory reserved for this task. Append
-    # rather than overwrite: _JAVA_OPTIONS already holds Cromwell's -Djava.io.tmpdir
-    # setting, which must be preserved so temp files still land on the disk provisioned
-    # for this task rather than falling back to the container's default /tmp. Leave
-    # ~10GB of headroom for hlahd/optitype's own (non-JVM) memory use after the
-    # conversion step.
+    # Workaround: _JAVA_OPTIONS is honored by every JVM launched in this shell,
+    # so appending -Xmx here forces SamToFastq to actually use the memory reserved for this task.
+    # Leave ~10GB of headroom for hlahd/optitype's own (non-JVM) memory use after the conversion step.
     export _JAVA_OPTIONS="${_JAVA_OPTIONS} -Xmx~{mem - 10}g"
 
     /bin/bash /usr/bin/hlahd_script_wdl.sh /tmp . \
-    ~{hlahd_name} ~{cram} ~{reference} ~{threads} ~{mem}
+      ~{hlahd_name} ~{cram} ~{reference} ~{threads} ~{mem}
   >>>
 
   output {
