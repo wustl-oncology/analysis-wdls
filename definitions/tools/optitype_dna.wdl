@@ -23,8 +23,19 @@ task optitypeDna {
   }
 
   command <<<
+    # optitype_script_wdl.sh internally runs Picard SamToFastq to convert the
+    # input CRAM before HLA typing, but it never applies the `mem` argument to
+    # that Java invocation - it defaults to Java 8's unconfigured heap (~4GB)
+    # regardless of how much memory this task actually requested/received.
+    #
+    # Workaround: _JAVA_OPTIONS is honored by every JVM launched in this shell,
+    # so appending -Xmx here forces SamToFastq to actually use the memory reserved for this task.
+    # Leave ~10GB of headroom for optitype's own (non-JVM) memory use after the
+    # conversion step.
+    export _JAVA_OPTIONS="${_JAVA_OPTIONS} -Xmx~{mem - 10}g"
+
     /bin/bash /usr/bin/optitype_script_wdl.sh /tmp . \
-    ~{optitype_name} ~{cram} ~{reference} ~{threads} ~{mem}
+      ~{optitype_name} ~{cram} ~{reference} ~{threads} ~{mem}
   >>>
 
   output {
