@@ -1,7 +1,10 @@
 version 1.0
 
 # StringTie 3 quantification of long-read (Iso-Seq / ONT) alignments.
-# reference guided and transcript estimation mode. (to be used for vcf annotation for pvacseq input)
+# compare to StringTie2, StringTie3 is better at handling pacbio hifi isoseq data
+# StringTie3 features an optimized module designed to better handle and discard incomplete transcripts caused by internal poly(A)-priming artifacts (common in pacbio hifi).
+
+# this wld uses reference guided and transcript estimation mode. (to be used for vcf annotation for pvacseq input)
 # might want to add more options (short read , denovo modes) in this tool wdl in the future to support other use cases.
 
 task stringtie3 {
