@@ -1,20 +1,9 @@
 version 1.0
 
 # StringTie 3 quantification of long-read (Iso-Seq / ONT) alignments.
-#
-# Differences from tools/stringtie.wdl (the short-read version):
-#   -L   long-read mode; treats each read as a full-length transcript
-#   -e   restrict output to transcripts already present in the reference GTF
-#
-# `-e` matters for the pVACseq path. Without it StringTie invents novel
-# transcript IDs (MSTRG.*), which will not join against the Ensembl transcript
-# IDs that VEP writes into the CSQ, and vcf-expression-annotator will annotate
-# nothing. With `-e` every row in both output files carries a reference
-# ENST/ENSG id.
-#
-# Both outputs feed vcf-expression-annotator directly:
-#   gene mode       <- gene_expression_tsv   (the -A file)
-#   transcript mode <- transcript_gtf        (the -o file)
+# reference guided and transcript estimation mode. (to be used for vcf annotation for pvacseq input)
+# might want to add more options (short read , denovo modes) in this tool wdl in the future to support other use cases.
+
 task stringtie3 {
   input {
     File bam
@@ -26,8 +15,6 @@ task stringtie3 {
     String strand = "unstranded"  # [first, second, unstranded]
     Boolean reference_only = true
     Int cores = 12
-    # NOTE: verify this build hash against
-    # https://quay.io/repository/biocontainers/stringtie?tab=tags
     String docker_image = "quay.io/biocontainers/stringtie:3.0.3--h29c0135_0"
   }
 
