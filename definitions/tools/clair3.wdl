@@ -1,15 +1,7 @@
 version 1.0
 
 # Clair3 germline small-variant calling on HiFi reads.
-#
-# Two reasons this exists in the pVACseq path:
-#   1. HiPhase needs a dense set of heterozygous germline sites as the phasing
-#      backbone. You cannot phase a sparse somatic vcf on its own.
-#   2. pVACseq's --phased-proximal-variants-vcf (-p) needs germline calls so it
-#      can correct the wild-type peptide context when a germline variant sits in
-#      the same codon window as a somatic one.
-#
-# This is the HiFi replacement for GATK HaplotypeCaller in germline_exome.wdl.
+
 task clair3 {
   input {
     File bam
