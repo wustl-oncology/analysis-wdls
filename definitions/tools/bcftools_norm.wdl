@@ -2,12 +2,12 @@ version 1.0
 
 # Goal: Normalize/Process vcf , to make them suitable for downstream analysis (eg. by pVACseq)
 # Decomposes multiple-allelic records (variants with multiple alternate alleles) into single-allele records
-# Left align idels
 # Fix formating issue
+# Left align indels
 
 # Steps:
-# Approach: read input VCF file (bcftools view)
-# fix AD field format (with sed) (change header from AD,Number=. to AD, Number=R)
+# read input VCF file (bcftools view)
+# fix AD field format (sed) (change header from AD,Number=. to AD, Number=R)
 # normalize variants (bcftools norm) (split multip-allelic sites into separate records)(and left-align indels using the reference genome)
 # sort and index
 
