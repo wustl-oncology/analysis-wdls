@@ -6,11 +6,9 @@ version 1.0
 # pVACseq requires one ALT allele per record; a multi-allelic site will either
 # be skipped or mis-annotated.
 #
-# The sed is not cosmetic. DeepSomatic writes `##FORMAT=<ID=AD,Number=.>`, and
-# with Number=. bcftools does not know AD is per-allele, so when it splits a
-# multi-allelic record it copies the whole AD array to both output records
-# instead of subsetting it. Rewriting the header to Number=R before norm makes
-# the split correct. Downstream this is what pVACseq reads for --tdna-cov.
+# DeepSomatic writes `##FORMAT=<ID=AD,Number=.>`, but
+# with Number=. bcftools does not know AD is per-allele. Using Number=R
+# ensures it subsets correctly (instead of copying the whole AD array to both output records). Downstream this is what pVACseq reads for --tdna-cov.
 task bcftoolsNorm {
   input {
     File input_vcf

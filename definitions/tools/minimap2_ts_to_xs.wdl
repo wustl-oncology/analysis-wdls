@@ -13,8 +13,7 @@ version 1.0
 # instead. Without this conversion regtools finds no strand information on
 # minimap2 junctions.
 #
-# THE SIGN FLIP
-# ts is the transcript strand RELATIVE TO THE READ; XS is relative to the
+# N.B., ts is the transcript strand RELATIVE TO THE READ; XS is relative to the
 # REFERENCE. For a read aligned to the reverse strand (FLAG 0x10 set) the two
 # are opposite, so ts must be inverted. Forward-strand reads pass through.
 #

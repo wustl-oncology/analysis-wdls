@@ -3,7 +3,6 @@ version 1.0
 # Guarantee a named sample column exists in a VCF, adding an all-missing one if
 # it does not.
 #
-# WHY THIS EXISTS
 # DeepSomatic in tumor/normal mode does not reliably emit a normal genotype
 # column, even though it takes --sample_name_normal. Both bam-readcount and
 # vcf-readcount-annotator look the sample up by name and hard-fail when it is
@@ -11,12 +10,9 @@ version 1.0
 #
 #     sample_index = vcf_file.samples.index(sample)   # ValueError
 #
-# So you cannot annotate normal AD/AF/DP onto a VCF that has no normal column --
-# you have to create the column first, then let vcf-readcount-annotator fill it.
-# That is all this task does.
-#
-# Idempotent: if the sample is already present the VCF passes through unchanged
-# (just bgzipped and indexed), so it is safe to leave in the pipeline once
+# This task ensures the normal column exists by adding it when necessary.
+# If the sample is already present, the VCF passes through unchanged (just
+# bgzipped and indexed), so it is safe to leave in the pipeline once
 # DeepSomatic's behaviour is confirmed either way.
 task ensureVcfSample {
   input {
