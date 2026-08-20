@@ -1,14 +1,17 @@
 version 1.0
 
-# Decompose multi-allelic records and left-align indels.
-#
-# This is the HiFi equivalent of tools/vt_decompose.wdl in the short-read arm.
-# pVACseq requires one ALT allele per record; a multi-allelic site will either
-# be skipped or mis-annotated.
-#
-# DeepSomatic writes `##FORMAT=<ID=AD,Number=.>`, but
-# with Number=. bcftools does not know AD is per-allele. Using Number=R
-# ensures it subsets correctly (instead of copying the whole AD array to both output records). Downstream this is what pVACseq reads for --tdna-cov.
+# Goal: Normalize/Process vcf , to make them suitable for downstream analysis (eg. by pVACseq)
+# Decomposes multiple-allelic records (variants with multiple alternate alleles) into single-allele records
+# Left align idels
+# Fix formating issue
+
+# Steps:
+# Approach: read input VCF file (bcftools view)
+# fix AD field format (with sed) (change header from AD,Number=. to AD, Number=R)
+# normalize variants (bcftools norm) (split multip-allelic sites into separate records)(and left-align indels using the reference genome)
+# sort and index
+
+
 task bcftoolsNorm {
   input {
     File input_vcf
