@@ -224,7 +224,17 @@ immuno.allele_specific_anchors: true
 
 #pvacseq v5 modifications
 percentile_threshold_strategy: "exploratory"
-percentile_threshold: 1
+
+#pvacseq v7 modifications
+immuno.binding_percentile_threshold: 1
+immuno.presentation_percentile_threshold: 1
+immuno.immunogenicity_percentile_threshold: 1
+
+#if normalized percentiles are desired, set the following
+#immuno.use_normalized_percentiles: true
+
+#if ML predictions are desired, set the following
+#immuno.run_ml_predictions: true
 
 # ------------------ If you have clinical or otherwise known HLA typing, include here and it will be integrated with HLA calls from the sequence data  ---------------
 #immuno.clinical_mhc_classI_alleles:

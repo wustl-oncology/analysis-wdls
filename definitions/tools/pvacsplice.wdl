@@ -17,14 +17,16 @@ workflow pvacsplice_workflow {
     Array[Int]? epitope_lengths_class_i
     Array[Int]? epitope_lengths_class_ii
     Int? binding_threshold
-    Int? percentile_threshold
+    Float? binding_percentile_threshold
+    Float? presentation_percentile_threshold
+    Float? immunogenicity_percentile_threshold
     String? percentile_threshold_strategy
     Int? iedb_retries
 
     String? normal_sample_name
     String? net_chop_method  # enum [cterm , 20s]
     String? top_score_metric  # enum [lowest, median]
-    String? top_score_metric2  # enum [ic50, percentile]
+    Array[String]? top_score_metric2
     Float? net_chop_threshold
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
@@ -77,7 +79,9 @@ workflow pvacsplice_workflow {
       epitope_lengths_class_i = epitope_lengths_class_i,
       epitope_lengths_class_ii = epitope_lengths_class_ii,
       binding_threshold = binding_threshold,
-      percentile_threshold = percentile_threshold,
+      binding_percentile_threshold = binding_percentile_threshold,
+      presentation_percentile_threshold = presentation_percentile_threshold,
+      immunogenicity_percentile_threshold = immunogenicity_percentile_threshold,
       percentile_threshold_strategy = percentile_threshold_strategy,
       iedb_retries = iedb_retries,
       normal_sample_name = normal_sample_name,
@@ -144,14 +148,16 @@ task pvacsplice {
     Array[Int]? epitope_lengths_class_i
     Array[Int]? epitope_lengths_class_ii
     Int? binding_threshold
-    Int? percentile_threshold
+    Float? binding_percentile_threshold
+    Float? presentation_percentile_threshold
+    Float? immunogenicity_percentile_threshold
     String? percentile_threshold_strategy
     Int? iedb_retries
 
     String? normal_sample_name
     String? net_chop_method  # enum [cterm , 20s]
     String? top_score_metric  # enum [lowest, median]
-    String? top_score_metric2  # enum [ic50, percentile]
+    Array[String]? top_score_metric2
     Float? net_chop_threshold
     String? additional_report_columns  # enum [sample_name]
     Int? fasta_size
@@ -193,7 +199,7 @@ task pvacsplice {
     maxRetries: 2
     memory: "32GB"
     cpu: n_threads
-    docker: "griffithlab/pvactools:6.1.2"
+    docker: "griffithlab/pvactools:7.1.2"
     disks: "local-disk ~{space_needed_gb} HDD"
   }
 
@@ -204,6 +210,7 @@ task pvacsplice {
   Array[String] biotypes_list = select_first([biotypes, []])
   Array[String] transcript_prioritization_strategy_list = select_first([transcript_prioritization_strategy, []])
   Array[String] junction_anchor_types_list = select_first([junction_anchor_types,[]])
+  Array[String] tsm2 = select_first([top_score_metric2, []])
 
 
   command <<<
@@ -217,7 +224,9 @@ task pvacsplice {
     ~{if length(epitope_i ) > 0 then "-e1 " else ""} ~{sep="," epitope_i} \
     ~{if length(epitope_ii) > 0 then "-e2 " else ""} ~{sep="," epitope_ii} \
     ~{if defined(binding_threshold) then "-b ~{binding_threshold}" else ""} \
-    ~{if defined(percentile_threshold) then "--percentile-threshold ~{percentile_threshold}" else ""} \
+    ~{if defined(binding_percentile_threshold) then "--binding-percentile-threshold ~{binding_percentile_threshold}" else ""} \
+    ~{if defined(presentation_percentile_threshold) then "--presentation-percentile-threshold ~{presentation_percentile_threshold}" else ""} \
+    ~{if defined(immunogenicity_percentile_threshold) then "--immunogenicity-percentile-threshold ~{immunogenicity_percentile_threshold}" else ""} \
     ~{if defined(percentile_threshold_strategy) then "--percentile-threshold-strategy ~{percentile_threshold_strategy}" else ""} \
     ~{if allele_specific_binding_thresholds then "--allele-specific-binding-thresholds" else ""} \
     ~{if defined(aggregate_inclusion_binding_threshold) then "--aggregate-inclusion-binding-threshold ~{aggregate_inclusion_binding_threshold}" else ""} \
@@ -230,7 +239,7 @@ task pvacsplice {
     ~{if run_reference_proteome_similarity then "--run-reference-proteome-similarity" else ""} \
     ~{if defined(peptide_fasta) then "--peptide-fasta ~{peptide_fasta}" else ""} \
     ~{if defined(top_score_metric) then "-m ~{top_score_metric}" else ""} \
-    ~{if defined(top_score_metric2) then "--top-score-metric2 ~{top_score_metric2}" else ""} \
+    ~{if length(tsm2) > 0 then "--top-score-metric2 " else ""} ~{sep="," tsm2} \
     ~{if defined(net_chop_threshold) then "--net-chop-threshold ~{net_chop_threshold}" else ""} \
     ~{if defined(additional_report_columns) then "-a ~{additional_report_columns}" else ""} \
     ~{if defined(fasta_size) then "-s ~{fasta_size}" else ""} \
