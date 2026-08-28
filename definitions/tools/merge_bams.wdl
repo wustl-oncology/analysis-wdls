@@ -30,7 +30,7 @@ task mergeBams {
 
     my $nthreads = ~{cores};
     my $outfilename = "~{outname}";
-    my $sorted = ~{true=1 false=0 sorted};
+    my $sorted = ~{true="1" false="0" sorted};
 
     my @bams = ("~{sep="\", \"" bams}");
     die 'missing input bams' unless scalar(@bams);

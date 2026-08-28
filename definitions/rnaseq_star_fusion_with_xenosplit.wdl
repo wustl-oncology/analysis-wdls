@@ -83,9 +83,12 @@ workflow rnaseqStarFusionWithXenosplit {
     hostbam=hostStarAlignFusion.aligned_bam
   }
 
+  Sequence graft_sequence = object {bam: xenosplit.graft_bam}
+  SequenceData graft_sequence_data = object {sequence: graft_sequence}
+
   call sttf.sequenceToTrimmedFastq as graftbamToFastq {
     input:
-    unaligned={"sequence": {"bam": xenosplit.graft_bam}},
+    unaligned=graft_sequence_data,
     adapters=trimming_adapters,
     adapter_trim_end=trimming_adapter_trim_end,
     adapter_min_overlap=trimming_adapter_min_overlap,

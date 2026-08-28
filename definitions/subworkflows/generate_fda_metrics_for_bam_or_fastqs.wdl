@@ -80,7 +80,7 @@ workflow generateFdaMetricsForBamOrFastqs {
         input:
           files = unaligned_data[idx],
           output_name = stats_output_name,
-          suffix = idx + 1
+          suffix = "~{idx + 1}"
       }
     }
   }

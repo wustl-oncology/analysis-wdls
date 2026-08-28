@@ -73,7 +73,7 @@ workflow mergeSvs {
   call af.annotsvFilter as bcftoolsAnnotsvFilter {
     input:
     annotsv_tsv=bcftoolsAnnotateVariants.sv_variants_tsv,
-    filtering_frequency="0.05"
+    filtering_frequency=0.05
   }
 
   output {
