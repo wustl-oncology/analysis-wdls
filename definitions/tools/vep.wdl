@@ -98,7 +98,7 @@ task parseVepCustomAnnotationIntoArg {
         "~{obj.annotation.name}",
         "~{obj.annotation.data_format}",
         "~{obj.method}",
-        "~{true=1 false=0 obj.force_report_coordinates}",
+        "~{true="1" false="0" obj.force_report_coordinates}",
         "~{sep="," obj.annotation.vcf_fields}"
     ])
     print(f"{check_existing} --custom {custom}")
