@@ -8,6 +8,7 @@ import "somatic_exome.wdl" as se
 import "subworkflows/phase_vcf.wdl" as pv
 import "pvacsplice.wdl" as pspl
 import "pvacseq.wdl" as p
+import "pvacnc.wdl" as pnc
 import "subworkflows/generate_fda_metrics.wdl" as generate_fda_metrics
 import "tools/extract_hla_alleles.wdl" as eha
 import "tools/hla_consensus.wdl" as hc
@@ -98,6 +99,11 @@ struct MHC {
   File? splice_fasta_fai
   File? splice_gtf
   RegtoolsOutput? regtools_output
+}
+
+struct Pvacnc {
+  Array[File] orfanage
+  Array[File] transdecoder
 }
 
 workflow immuno {
@@ -284,6 +290,13 @@ workflow immuno {
     Boolean? run_ml_predictions
     Float? ml_threshold_accept
     Float? ml_threshold_reject
+
+    # --------- pVACnc Inputs -------------------------------------------
+    Boolean enable_pvacnc = false
+    String pvacnc_orfanage_docker = "quay.io/biocontainers/orfanage:1.2.0--heaafb18_2"
+    String pvacnc_transdecoder_docker = "quay.io/biocontainers/transdecoder:6.0.0--pl5321hdfd78af_0"
+    Int pvacnc_transdecoder_minimum_orf_length = 30
+    String pvacnc_preparation_docker = "jinglunli/pvacnc:0.2.2"
 
 
     # --------- PVACsplice Inputs -----------------------------------------
@@ -604,6 +617,77 @@ workflow immuno {
     run_ml_predictions=run_ml_predictions,
     ml_threshold_accept=ml_threshold_accept,
     ml_threshold_reject=ml_threshold_reject
+  }
+
+  if (enable_pvacnc) {
+    call pnc.pvacnc as pvacncWorkflow {
+      input:
+      sample_name=sample_name,
+      tumor_sample_name=tumor_sample_name,
+      normal_sample_name=normal_sample_name,
+      rnaseq_bam=rna.final_bam,
+      strand=strand,
+      with_e_stringtie_gtf=rna.stringtie_transcript_gtf,
+      source_vcf=pvacseq.annotated_vcf,
+      reference=reference,
+      reference_fai=reference_fai,
+      reference_annotation=reference_annotation,
+      canonical_pvacseq_outputs=pvacseq.combined,
+      alleles=hlaConsensus.consensus_alleles,
+      prediction_algorithms=prediction_algorithms,
+      peptide_fasta=peptide_fasta,
+      genes_of_interest_file=genes_of_interest_file,
+      phased_proximal_variants_vcf=phaseVcf.phased_vcf,
+      phased_proximal_variants_vcf_tbi=phaseVcf.phased_vcf_tbi,
+      epitope_lengths_class_i=epitope_lengths_class_i,
+      epitope_lengths_class_ii=epitope_lengths_class_ii,
+      binding_threshold=binding_threshold,
+      binding_percentile_threshold=binding_percentile_threshold,
+      presentation_percentile_threshold=presentation_percentile_threshold,
+      immunogenicity_percentile_threshold=immunogenicity_percentile_threshold,
+      percentile_threshold_strategy=percentile_threshold_strategy,
+      iedb_retries=iedb_retries,
+      net_chop_method=net_chop_method,
+      top_score_metric=top_score_metric,
+      top_score_metric2=top_score_metric2,
+      net_chop_threshold=net_chop_threshold,
+      additional_report_columns=additional_report_columns,
+      fasta_size=fasta_size,
+      downstream_sequence_length=downstream_sequence_length,
+      exclude_nas=select_first([exclude_nas, false]),
+      minimum_fold_change=minimum_fold_change,
+      normal_cov=normal_cov,
+      tdna_cov=tdna_cov,
+      trna_cov=trna_cov,
+      normal_vaf=normal_vaf,
+      tdna_vaf=tdna_vaf,
+      trna_vaf=trna_vaf,
+      expn_val=expn_val,
+      maximum_transcript_support_level=maximum_transcript_support_level,
+      transcript_prioritization_strategy=transcript_prioritization_strategy,
+      aggregate_inclusion_binding_threshold=aggregate_inclusion_binding_threshold,
+      aggregate_inclusion_count_limit=aggregate_inclusion_count_limit,
+      problematic_amino_acids=problematic_amino_acids,
+      anchor_contribution_threshold=anchor_contribution_threshold,
+      biotypes=biotypes,
+      netmhciipan_version=netmhciipan_version,
+      reference_scores_zip=reference_scores_zip,
+      allele_specific_binding_thresholds=select_first([allele_specific_binding_thresholds, false]),
+      netmhc_stab=select_first([netmhc_stab, false]),
+      run_reference_proteome_similarity=select_first([run_reference_proteome_similarity, false]),
+      allele_specific_anchors=select_first([allele_specific_anchors, false]),
+      allow_incomplete_transcripts=select_first([allow_incomplete_transcripts, false]),
+      use_normalized_percentiles=select_first([use_normalized_percentiles, false]),
+      tumor_purity=tumor_purity,
+      run_ml_predictions=select_first([run_ml_predictions, false]),
+      ml_threshold_accept=ml_threshold_accept,
+      ml_threshold_reject=ml_threshold_reject,
+      n_threads=pvacseq_threads,
+      orfanage_docker=pvacnc_orfanage_docker,
+      transdecoder_docker=pvacnc_transdecoder_docker,
+      transdecoder_minimum_orf_length=pvacnc_transdecoder_minimum_orf_length,
+      preparation_docker=pvacnc_preparation_docker
+    }
   }
 
   call pspl.pvacsplice {
@@ -933,6 +1017,45 @@ workflow immuno {
       mhc_ii_log: pvacseq.mhc_ii_log,
       combined: pvacseq.combined,
       phase_vcf: [phaseVcf.phased_vcf, phaseVcf.phased_vcf_tbi]
+    }
+
+    # Optional noncanonical candidate bundles are separated by ORF caller.
+    # The lowercase output key publishes the parent directory as pvacnc/.
+    Pvacnc pvacnc = object {
+      orfanage: flatten([
+        select_all([
+          pvacncWorkflow.no_e_stringtie_gtf,
+          pvacncWorkflow.with_e_orfanage_gtf,
+          pvacncWorkflow.no_e_orfanage_gtf,
+          pvacncWorkflow.orfanage_input_vcf_gz,
+          pvacncWorkflow.orfanage_input_vcf_tbi,
+          pvacncWorkflow.orfanage_mapping_tsv,
+          pvacncWorkflow.orfanage_routing_tsv,
+          pvacncWorkflow.orfanage_effects_tsv,
+          pvacncWorkflow.orfanage_pvacview_annotation_log
+        ]),
+        select_first([pvacncWorkflow.orfanage_preparation_outputs, []]),
+        select_first([pvacncWorkflow.orfanage_mhc_i, []]),
+        select_first([pvacncWorkflow.orfanage_mhc_ii, []]),
+        select_first([pvacncWorkflow.orfanage_combined, []])
+      ]),
+      transdecoder: flatten([
+        select_all([
+          pvacncWorkflow.no_e_stringtie_gtf,
+          pvacncWorkflow.transdecoder_input_vcf_gz,
+          pvacncWorkflow.transdecoder_input_vcf_tbi,
+          pvacncWorkflow.transdecoder_mapping_tsv,
+          pvacncWorkflow.transdecoder_routing_tsv,
+          pvacncWorkflow.transdecoder_effects_tsv,
+          pvacncWorkflow.transdecoder_pvacview_annotation_log
+        ]),
+        select_first([pvacncWorkflow.with_e_transdecoder_outputs, []]),
+        select_first([pvacncWorkflow.no_e_transdecoder_outputs, []]),
+        select_first([pvacncWorkflow.transdecoder_preparation_outputs, []]),
+        select_first([pvacncWorkflow.transdecoder_mhc_i, []]),
+        select_first([pvacncWorkflow.transdecoder_mhc_ii, []]),
+        select_first([pvacncWorkflow.transdecoder_combined, []])
+      ])
     }
 
     MHC pVACfuse = object {

@@ -6,6 +6,7 @@ task stringtie {
     File reference_annotation
     String sample_name
     File bam
+    Boolean reference_estimation_only = true
   }
 
   Int cores = 12
@@ -24,9 +25,10 @@ task stringtie {
   Map[String, String] strandness = {
     "first": "--rf", "second": "--fr", "unstranded": ""
   }
+  String reference_only_option = if reference_estimation_only then "-e" else ""
   command <<<
     /usr/local/bin/stringtie -o ~{transcripts} -A ~{expression} \
-    -p ~{cores} -e ~{strandness[strand]} -G ~{reference_annotation} \
+    -p ~{cores} ~{reference_only_option} ~{strandness[strand]} -G ~{reference_annotation} \
     -l ~{sample_name} ~{bam}
   >>>
 
