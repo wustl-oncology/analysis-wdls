@@ -5,6 +5,7 @@ import "types.wdl"  # !UnusedImport
 
 import "subworkflows/sequence_to_bqsr.wdl" as s2b
 import "subworkflows/qc_exome.wdl" as qe
+import "subworkflows/facets_suite.wdl" as fs
 
 import "tools/bam_to_cram.wdl" as btc
 import "tools/cnvkit_batch.wdl" as cb
@@ -37,6 +38,10 @@ workflow somaticExome {
 
     Array[File] bqsr_known_sites
     Array[File] bqsr_known_sites_tbi
+
+    # Optional FACETS analysis (hg38): omit both to disable; supply both to enable.
+    File? facets_snps_vcf
+    File? facets_snps_vcf_tbi
 
     File bait_intervals
     File target_intervals
@@ -240,6 +245,24 @@ workflow somaticExome {
     max_var_mm_qualsum=max_var_mm_qualsum
   }
 
+  # Enter for either input so a missing partner fails instead of silently skipping FACETS.
+  if (defined(facets_snps_vcf) || defined(facets_snps_vcf_tbi)) {
+    call fs.facetsSuite {
+      input:
+      tumor_bam=tumorAlignment.final_bam,
+      tumor_bam_bai=tumorAlignment.final_bam_bai,
+      normal_bam=normalAlignment.final_bam,
+      normal_bam_bai=normalAlignment.final_bam_bai,
+      snps_vcf=select_first([facets_snps_vcf]),
+      snps_vcf_tbi=select_first([facets_snps_vcf_tbi]),
+      variants_vcf=detectVariants.final_filtered_vcf,
+      tumor_sample_name=tumor_sample_name,
+      normal_sample_name=normal_sample_name,
+      reference=reference,
+      reference_fai=reference_fai
+    }
+  }
+
   call cb.cnvkitBatch as cnvkit {
     input:
     tumor_bam=tumorAlignment.final_bam,
@@ -330,6 +353,18 @@ workflow somaticExome {
     File tumor_indel_bam_readcount_tsv = detectVariants.tumor_indel_bam_readcount_tsv
     File normal_snv_bam_readcount_tsv = detectVariants.normal_snv_bam_readcount_tsv
     File normal_indel_bam_readcount_tsv = detectVariants.normal_indel_bam_readcount_tsv
+
+    File? facets_ccf_maf = facetsSuite.facets_ccf_maf
+    File? facets_purity_rds = facetsSuite.facets_purity_rds
+    File? facets_purity_seg = facetsSuite.facets_purity_seg
+    File? facets_purity_png = facetsSuite.facets_purity_png
+    File? facets_hisens_rds = facetsSuite.facets_hisens_rds
+    File? facets_hisens_seg = facetsSuite.facets_hisens_seg
+    File? facets_hisens_png = facetsSuite.facets_hisens_png
+    File? facets_run_details = facetsSuite.facets_run_details
+    File? facets_qc = facetsSuite.facets_qc
+    File? facets_gene_level = facetsSuite.facets_gene_level
+    File? facets_arm_level = facetsSuite.facets_arm_level
 
     File? intervals_antitarget = cnvkit.intervals_antitarget
     File? intervals_target = cnvkit.intervals_target

@@ -68,6 +68,7 @@ struct Variants {
 
 struct Cnv {
   Array[File?] cnvkit
+  Array[File?] facets
 }
 
 struct Sv {
@@ -150,6 +151,11 @@ workflow immuno {
 
     Array[File] bqsr_known_sites
     Array[File] bqsr_known_sites_tbi
+
+    # Optional FACETS analysis (hg38): omit both to disable; supply both to enable.
+    File? facets_snps_vcf
+    File? facets_snps_vcf_tbi
+
     File bait_intervals
     File target_intervals
     Int target_interval_padding = 100
@@ -374,6 +380,8 @@ workflow immuno {
     normal_name=normal_name,
     bqsr_known_sites=bqsr_known_sites,
     bqsr_known_sites_tbi=bqsr_known_sites_tbi,
+    facets_snps_vcf=facets_snps_vcf,
+    facets_snps_vcf_tbi=facets_snps_vcf_tbi,
     bait_intervals=bait_intervals,
     target_intervals=target_intervals,
     target_interval_padding=target_interval_padding,
@@ -882,6 +890,18 @@ workflow immuno {
         somaticExome.tumor_target_coverage,
         somaticExome.tumor_bin_level_ratios,
         somaticExome.tumor_segmented_ratios
+      ], facets: [
+        somaticExome.facets_ccf_maf,
+        somaticExome.facets_purity_rds,
+        somaticExome.facets_purity_seg,
+        somaticExome.facets_purity_png,
+        somaticExome.facets_hisens_rds,
+        somaticExome.facets_hisens_seg,
+        somaticExome.facets_hisens_png,
+        somaticExome.facets_run_details,
+        somaticExome.facets_qc,
+        somaticExome.facets_gene_level,
+        somaticExome.facets_arm_level
       ]},
       sv: object {manta: [
         somaticExome.diploid_variants,

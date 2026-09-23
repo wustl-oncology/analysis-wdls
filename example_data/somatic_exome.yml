@@ -1,4 +1,10 @@
 ---
+# Optional FACETS (hg38): omit both keys to disable; uncomment and set BOTH to enable.
+# Use a genome-wide SNP VCF matching the reference, such as the Blass dbSNP138 input.
+# The small HLA/BRCA example dataset below is not a FACETS concordance dataset.
+# somaticExome.facets_snps_vcf: /path/to/Homo_sapiens_assembly38.dbsnp138.vcf.gz
+# somaticExome.facets_snps_vcf_tbi: /path/to/Homo_sapiens_assembly38.dbsnp138.vcf.gz.tbi
+
 somaticExome.vep_ensembl_species: homo_sapiens
 
 somaticExome.vep_ensembl_assembly: GRCh38
