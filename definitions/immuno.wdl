@@ -296,7 +296,19 @@ workflow immuno {
     String pvacnc_orfanage_docker = "quay.io/biocontainers/orfanage:1.2.0--heaafb18_2"
     String pvacnc_transdecoder_docker = "quay.io/biocontainers/transdecoder:6.0.0--pl5321hdfd78af_0"
     Int pvacnc_transdecoder_minimum_orf_length = 30
-    String pvacnc_preparation_docker = "jinglunli/pvacnc:0.2.2"
+    String pvacnc_preparation_docker = "jinglunli/pvacnc:0.3.1"
+    Boolean enable_pvacnc_riboseq_support = false
+    String pvacnc_riboseq_docker = "jinglunli/pvacnc:0.3.2"
+    Array[File] pvacnc_riboseq_bams = []
+    Array[File] pvacnc_riboseq_bais = []
+    Array[String] pvacnc_riboseq_sample_labels = []
+    Int pvacnc_riboseq_minimum_mapping_quality = 0
+    Int pvacnc_riboseq_minimum_base_quality = 0
+    Int pvacnc_riboseq_minimum_alt_reads = 1
+    Boolean pvacnc_riboseq_exclude_secondary = false
+    Boolean pvacnc_riboseq_exclude_supplementary = false
+    Boolean pvacnc_riboseq_exclude_qcfail = false
+    Boolean pvacnc_riboseq_exclude_duplicates = false
 
 
     # --------- PVACsplice Inputs -----------------------------------------
@@ -632,7 +644,6 @@ workflow immuno {
       reference=reference,
       reference_fai=reference_fai,
       reference_annotation=reference_annotation,
-      canonical_pvacseq_outputs=pvacseq.combined,
       alleles=hlaConsensus.consensus_alleles,
       prediction_algorithms=prediction_algorithms,
       peptide_fasta=peptide_fasta,
@@ -686,7 +697,19 @@ workflow immuno {
       orfanage_docker=pvacnc_orfanage_docker,
       transdecoder_docker=pvacnc_transdecoder_docker,
       transdecoder_minimum_orf_length=pvacnc_transdecoder_minimum_orf_length,
-      preparation_docker=pvacnc_preparation_docker
+      preparation_docker=pvacnc_preparation_docker,
+      enable_riboseq_support=enable_pvacnc_riboseq_support,
+      riboseq_docker=pvacnc_riboseq_docker,
+      riboseq_bams=pvacnc_riboseq_bams,
+      riboseq_bais=pvacnc_riboseq_bais,
+      riboseq_sample_labels=pvacnc_riboseq_sample_labels,
+      riboseq_minimum_mapping_quality=pvacnc_riboseq_minimum_mapping_quality,
+      riboseq_minimum_base_quality=pvacnc_riboseq_minimum_base_quality,
+      riboseq_minimum_alt_reads=pvacnc_riboseq_minimum_alt_reads,
+      riboseq_exclude_secondary=pvacnc_riboseq_exclude_secondary,
+      riboseq_exclude_supplementary=pvacnc_riboseq_exclude_supplementary,
+      riboseq_exclude_qcfail=pvacnc_riboseq_exclude_qcfail,
+      riboseq_exclude_duplicates=pvacnc_riboseq_exclude_duplicates
     }
   }
 
@@ -1025,8 +1048,6 @@ workflow immuno {
       orfanage: flatten([
         select_all([
           pvacncWorkflow.no_e_stringtie_gtf,
-          pvacncWorkflow.with_e_orfanage_gtf,
-          pvacncWorkflow.no_e_orfanage_gtf,
           pvacncWorkflow.orfanage_input_vcf_gz,
           pvacncWorkflow.orfanage_input_vcf_tbi,
           pvacncWorkflow.orfanage_mapping_tsv,
@@ -1034,10 +1055,14 @@ workflow immuno {
           pvacncWorkflow.orfanage_effects_tsv,
           pvacncWorkflow.orfanage_pvacview_annotation_log
         ]),
+        select_first([pvacncWorkflow.with_e_orfanage_outputs, []]),
+        select_first([pvacncWorkflow.no_e_orfanage_outputs, []]),
         select_first([pvacncWorkflow.orfanage_preparation_outputs, []]),
         select_first([pvacncWorkflow.orfanage_mhc_i, []]),
         select_first([pvacncWorkflow.orfanage_mhc_ii, []]),
-        select_first([pvacncWorkflow.orfanage_combined, []])
+        select_first([pvacncWorkflow.orfanage_combined, []]),
+        select_first([pvacncWorkflow.orfanage_prediction_logs, []]),
+        select_first([pvacncWorkflow.orfanage_riboseq_support, []])
       ]),
       transdecoder: flatten([
         select_all([
@@ -1054,7 +1079,9 @@ workflow immuno {
         select_first([pvacncWorkflow.transdecoder_preparation_outputs, []]),
         select_first([pvacncWorkflow.transdecoder_mhc_i, []]),
         select_first([pvacncWorkflow.transdecoder_mhc_ii, []]),
-        select_first([pvacncWorkflow.transdecoder_combined, []])
+        select_first([pvacncWorkflow.transdecoder_combined, []]),
+        select_first([pvacncWorkflow.transdecoder_prediction_logs, []]),
+        select_first([pvacncWorkflow.transdecoder_riboseq_support, []])
       ])
     }
 

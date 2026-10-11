@@ -4,6 +4,7 @@ import "./tools/orfanage.wdl" as orfanage
 import "./tools/pvacnc_prepare.wdl" as prep
 import "./tools/pvacnc_transdecoder_prepare.wdl" as tdprep
 import "./tools/pvacnc_annotate_pvacview.wdl" as view
+import "./tools/pvacnc_riboseq_support.wdl" as riboseq
 import "./tools/pvacseq.wdl" as pvacseq
 import "./tools/stringtie.wdl" as stringtie
 import "./tools/transdecoder.wdl" as transdecoder
@@ -20,7 +21,6 @@ workflow pvacnc {
     File reference
     File reference_fai
     File reference_annotation
-    Array[File] canonical_pvacseq_outputs
     Array[String] alleles
     Array[String] prediction_algorithms
     File? peptide_fasta
@@ -76,7 +76,20 @@ workflow pvacnc {
     String orfanage_docker = "quay.io/biocontainers/orfanage:1.2.0--heaafb18_2"
     String transdecoder_docker = "quay.io/biocontainers/transdecoder:6.0.0--pl5321hdfd78af_0"
     Int transdecoder_minimum_orf_length = 30
-    String preparation_docker = "jinglunli/pvacnc:0.2.2"
+    String preparation_docker = "jinglunli/pvacnc:0.3.1"
+
+    Boolean enable_riboseq_support = false
+    String riboseq_docker = "jinglunli/pvacnc:0.3.2"
+    Array[File] riboseq_bams = []
+    Array[File] riboseq_bais = []
+    Array[String] riboseq_sample_labels = []
+    Int riboseq_minimum_mapping_quality = 0
+    Int riboseq_minimum_base_quality = 0
+    Int riboseq_minimum_alt_reads = 1
+    Boolean riboseq_exclude_secondary = false
+    Boolean riboseq_exclude_supplementary = false
+    Boolean riboseq_exclude_qcfail = false
+    Boolean riboseq_exclude_duplicates = false
   }
 
   call stringtie.stringtie as stringtieNoE {
@@ -93,7 +106,7 @@ workflow pvacnc {
       stringtie_gtf = with_e_stringtie_gtf,
       reference_annotation = reference_annotation,
       reference = reference,
-      output_prefix = sample_name + ".with_e",
+      output_prefix = sample_name + ".with_e.orfanage",
       docker_image = orfanage_docker
   }
 
@@ -102,7 +115,7 @@ workflow pvacnc {
       stringtie_gtf = stringtieNoE.transcript_gtf,
       reference_annotation = reference_annotation,
       reference = reference,
-      output_prefix = sample_name + ".no_e",
+      output_prefix = sample_name + ".no_e.orfanage",
       docker_image = orfanage_docker
   }
 
@@ -136,7 +149,6 @@ workflow pvacnc {
       reference_annotation = reference_annotation,
       with_e_orfanage_gtf = withEOrfanage.best_gtf,
       no_e_orfanage_gtf = noEOrfanage.best_gtf,
-      canonical_pvacseq_outputs = canonical_pvacseq_outputs,
       docker_image = preparation_docker
   }
 
@@ -160,7 +172,6 @@ workflow pvacnc {
       no_e_transdecoder_cdna_fasta = noETransdecoder.cdna_fasta,
       no_e_transdecoder_cds_fasta = noETransdecoder.cds_fasta,
       no_e_transdecoder_peptide_fasta = noETransdecoder.peptide_fasta,
-      canonical_pvacseq_outputs = canonical_pvacseq_outputs,
       docker_image = preparation_docker
   }
 
@@ -282,6 +293,7 @@ workflow pvacnc {
 
   call view.pvacncAnnotatePvacview as orfanageAnnotatePvacview {
     input:
+      output_prefix = sample_name + ".orfanage",
       mapping_tsv = pvacncPrepare.mapping_tsv,
       source_mhc_i = orfanagePredict.mhc_i,
       source_mhc_ii = orfanagePredict.mhc_ii,
@@ -291,6 +303,7 @@ workflow pvacnc {
 
   call view.pvacncAnnotatePvacview as transdecoderAnnotatePvacview {
     input:
+      output_prefix = sample_name + ".transdecoder",
       mapping_tsv = pvacncTransdecoderPrepare.mapping_tsv,
       source_mhc_i = transdecoderPredict.mhc_i,
       source_mhc_ii = transdecoderPredict.mhc_ii,
@@ -298,23 +311,77 @@ workflow pvacnc {
       docker_image = preparation_docker
   }
 
+  if (enable_riboseq_support) {
+    call riboseq.pvacncRiboseqSupport as orfanageRiboseqSupport {
+      input:
+        sample_name = sample_name,
+        caller = "orfanage",
+        mapping_tsv = pvacncPrepare.mapping_tsv,
+        noncanonical_orf_blocks = pvacncPrepare.noncanonical_orf_blocks,
+        filtered_report = select_first([orfanagePredict.combined_filtered_epitopes]),
+        riboseq_bams = riboseq_bams,
+        riboseq_bais = riboseq_bais,
+        riboseq_sample_labels = riboseq_sample_labels,
+        minimum_mapping_quality = riboseq_minimum_mapping_quality,
+        minimum_base_quality = riboseq_minimum_base_quality,
+        minimum_alt_reads = riboseq_minimum_alt_reads,
+        exclude_secondary = riboseq_exclude_secondary,
+        exclude_supplementary = riboseq_exclude_supplementary,
+        exclude_qcfail = riboseq_exclude_qcfail,
+        exclude_duplicates = riboseq_exclude_duplicates,
+        docker_image = riboseq_docker
+    }
+
+    call riboseq.pvacncRiboseqSupport as transdecoderRiboseqSupport {
+      input:
+        sample_name = sample_name,
+        caller = "transdecoder",
+        mapping_tsv = pvacncTransdecoderPrepare.mapping_tsv,
+        noncanonical_orf_blocks = pvacncTransdecoderPrepare.noncanonical_orf_blocks,
+        filtered_report = select_first([transdecoderPredict.combined_filtered_epitopes]),
+        riboseq_bams = riboseq_bams,
+        riboseq_bais = riboseq_bais,
+        riboseq_sample_labels = riboseq_sample_labels,
+        minimum_mapping_quality = riboseq_minimum_mapping_quality,
+        minimum_base_quality = riboseq_minimum_base_quality,
+        minimum_alt_reads = riboseq_minimum_alt_reads,
+        exclude_secondary = riboseq_exclude_secondary,
+        exclude_supplementary = riboseq_exclude_supplementary,
+        exclude_qcfail = riboseq_exclude_qcfail,
+        exclude_duplicates = riboseq_exclude_duplicates,
+        docker_image = riboseq_docker
+    }
+  }
+
   output {
     File no_e_stringtie_gtf = stringtieNoE.transcript_gtf
 
-    File with_e_orfanage_gtf = withEOrfanage.best_gtf
-    File no_e_orfanage_gtf = noEOrfanage.best_gtf
+    Array[File] with_e_orfanage_outputs = [withEOrfanage.best_gtf]
+    Array[File] no_e_orfanage_outputs = [noEOrfanage.best_gtf]
     File orfanage_input_vcf_gz = pvacncPrepare.pvacnc_input_vcf_gz
     File orfanage_input_vcf_tbi = pvacncPrepare.pvacnc_input_vcf_tbi
     File orfanage_mapping_tsv = pvacncPrepare.mapping_tsv
+    File orfanage_noncanonical_orf_blocks = pvacncPrepare.noncanonical_orf_blocks
+    File orfanage_skipped_candidates_tsv = pvacncPrepare.skipped_candidates_tsv
     File orfanage_routing_tsv = pvacncPrepare.routing_tsv
     File orfanage_effects_tsv = pvacncPrepare.effects_tsv
     Array[File] orfanage_preparation_outputs = pvacncPrepare.preparation_outputs
     Array[File] orfanage_mhc_i = orfanageAnnotatePvacview.mhc_i
-    File? orfanage_mhc_i_log = orfanagePredict.mhc_i_log
     Array[File] orfanage_mhc_ii = orfanageAnnotatePvacview.mhc_ii
-    File? orfanage_mhc_ii_log = orfanagePredict.mhc_ii_log
+    Array[File] orfanage_prediction_logs = select_all([
+      orfanagePredict.mhc_i_log,
+      orfanagePredict.mhc_ii_log
+    ])
     Array[File] orfanage_combined = orfanageAnnotatePvacview.combined
     File orfanage_pvacview_annotation_log = orfanageAnnotatePvacview.annotation_log
+    Array[File] orfanage_riboseq_support = select_all([
+      orfanageRiboseqSupport.support_by_bam,
+      orfanageRiboseqSupport.allele_summary,
+      orfanageRiboseqSupport.candidate_summary,
+      orfanageRiboseqSupport.run_summary,
+      orfanageRiboseqSupport.orf_support_by_bam,
+      orfanageRiboseqSupport.orf_candidate_summary
+    ])
 
     Array[File] with_e_transdecoder_outputs = [
       withETransdecoder.cdna_fasta,
@@ -335,14 +402,26 @@ workflow pvacnc {
     File transdecoder_input_vcf_gz = pvacncTransdecoderPrepare.pvacnc_input_vcf_gz
     File transdecoder_input_vcf_tbi = pvacncTransdecoderPrepare.pvacnc_input_vcf_tbi
     File transdecoder_mapping_tsv = pvacncTransdecoderPrepare.mapping_tsv
+    File transdecoder_noncanonical_orf_blocks = pvacncTransdecoderPrepare.noncanonical_orf_blocks
+    File transdecoder_skipped_candidates_tsv = pvacncTransdecoderPrepare.skipped_candidates_tsv
     File transdecoder_routing_tsv = pvacncTransdecoderPrepare.routing_tsv
     File transdecoder_effects_tsv = pvacncTransdecoderPrepare.effects_tsv
     Array[File] transdecoder_preparation_outputs = pvacncTransdecoderPrepare.preparation_outputs
     Array[File] transdecoder_mhc_i = transdecoderAnnotatePvacview.mhc_i
-    File? transdecoder_mhc_i_log = transdecoderPredict.mhc_i_log
     Array[File] transdecoder_mhc_ii = transdecoderAnnotatePvacview.mhc_ii
-    File? transdecoder_mhc_ii_log = transdecoderPredict.mhc_ii_log
+    Array[File] transdecoder_prediction_logs = select_all([
+      transdecoderPredict.mhc_i_log,
+      transdecoderPredict.mhc_ii_log
+    ])
     Array[File] transdecoder_combined = transdecoderAnnotatePvacview.combined
     File transdecoder_pvacview_annotation_log = transdecoderAnnotatePvacview.annotation_log
+    Array[File] transdecoder_riboseq_support = select_all([
+      transdecoderRiboseqSupport.support_by_bam,
+      transdecoderRiboseqSupport.allele_summary,
+      transdecoderRiboseqSupport.candidate_summary,
+      transdecoderRiboseqSupport.run_summary,
+      transdecoderRiboseqSupport.orf_support_by_bam,
+      transdecoderRiboseqSupport.orf_candidate_summary
+    ])
   }
 }

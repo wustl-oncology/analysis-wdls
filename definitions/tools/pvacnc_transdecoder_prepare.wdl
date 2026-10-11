@@ -20,8 +20,7 @@ task pvacncTransdecoderPrepare {
     File no_e_transdecoder_cdna_fasta
     File no_e_transdecoder_cds_fasta
     File no_e_transdecoder_peptide_fasta
-    Array[File] canonical_pvacseq_outputs
-    String docker_image = "jinglunli/pvacnc:0.2.2"
+    String docker_image = "jinglunli/pvacnc:0.3.1"
   }
 
   runtime {
@@ -35,15 +34,6 @@ task pvacncTransdecoderPrepare {
 
   command <<<
     set -e
-    mkdir -p canonical_outputs
-    for output in ~{sep=' ' canonical_pvacseq_outputs}; do
-      case "$(basename "$output")" in
-        *Combined.all_epitopes.tsv)
-          cp -L "$output" "canonical_outputs/$(basename "$output")"
-          ;;
-      esac
-    done
-    test -f canonical_outputs/*Combined.all_epitopes.tsv
     pvacnc-transdecoder-prepare \
       ~{sample_name} \
       ~{tumor_sample_name} \
@@ -62,16 +52,28 @@ task pvacncTransdecoderPrepare {
       ~{no_e_transdecoder_transcript_gff3} \
       ~{no_e_transdecoder_cdna_fasta} \
       ~{no_e_transdecoder_cds_fasta} \
-      ~{no_e_transdecoder_peptide_fasta} \
-      canonical_outputs
+      ~{no_e_transdecoder_peptide_fasta}
+
+    # Apply the caller-specific publication prefix after preparation finishes.
+    for directory in with_e/results no_e/results results pvacseq_input; do
+      for file in "$directory/~{sample_name}."*; do
+        [ -f "$file" ] || continue
+        name=$(basename "$file")
+        suffix=${name#~{sample_name}.}
+        suffix=${suffix#transdecoder_}
+        mv "$file" "$directory/~{sample_name}.transdecoder.$suffix"
+      done
+    done
   >>>
 
   output {
-    File pvacnc_input_vcf_gz = "pvacseq_input/~{sample_name}.transdecoder_pvacnc_input.vcf.gz"
-    File pvacnc_input_vcf_tbi = "pvacseq_input/~{sample_name}.transdecoder_pvacnc_input.vcf.gz.tbi"
-    File mapping_tsv = "pvacseq_input/~{sample_name}.transdecoder_pvacnc_mapping.tsv"
-    File routing_tsv = "results/~{sample_name}.e_first_no_e_rescue_routing.tsv"
-    File effects_tsv = "results/~{sample_name}.e_first_no_e_rescue_transdecoder_effects.tsv"
+    File noncanonical_orf_blocks = "results/~{sample_name}.transdecoder.noncanonical_orf_blocks.tsv"
+    File pvacnc_input_vcf_gz = "pvacseq_input/~{sample_name}.transdecoder.pvacnc_input.vcf.gz"
+    File pvacnc_input_vcf_tbi = "pvacseq_input/~{sample_name}.transdecoder.pvacnc_input.vcf.gz.tbi"
+    File mapping_tsv = "pvacseq_input/~{sample_name}.transdecoder.pvacnc_mapping.tsv"
+    File skipped_candidates_tsv = "pvacseq_input/~{sample_name}.transdecoder.pvacnc_skipped_candidates.tsv"
+    File routing_tsv = "results/~{sample_name}.transdecoder.e_first_no_e_rescue_routing.tsv"
+    File effects_tsv = "results/~{sample_name}.transdecoder.e_first_no_e_rescue_transdecoder_effects.tsv"
     Array[File] preparation_outputs = flatten([
       glob("with_e/results/*"),
       glob("no_e/results/*"),
