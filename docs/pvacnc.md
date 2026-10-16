@@ -20,32 +20,6 @@ Both callers:
 Routing is independent between callers. An ORFanage hit does not suppress
 a TransDecoder result.
 
-### Pending preparation image 0.3.4 (source implemented 2026-10-16)
-
-The numbered policy above describes the unchanged current image default.
-New Docker source replaces coordinate-only suppression with protein-event rescue:
-supported no-e missense/frameshift/in-frame indel events proceed even with e
-overlap. Final VCF construction prefers a successful e representation only for
-exact WT/MT protein-sequence equivalents of the same allele and genomic strand.
-Distinct events remain no-e rescue. Mapping JSON `equivalent_orf_provenance`
-and the existing caller skip table preserve equivalent origins. Stop-gained/lost
-consequence support was not added. No phasing or combined nearby-variant
-translation was added; C24R/G34S on the EO771 no-e ORF remain independent events.
-
-User build/publication, container smoke test and fresh-output candidate audit are
-pending. WDL files, defaults, outputs and archive are unchanged. After validation,
-select `pvacnc.preparation_docker: jinglunli/pvacnc:0.3.4` (standalone) or
-`immuno.pvacnc_preparation_docker` (integrated). The Docker-source
-`ROUTING_034_HANDOFF.md` has the complete policy, tests and build instructions.
-
-The same unpublished 0.3.4 source additionally masks reference `CDS + stop_codon`
-on either strand for supplemental noncanonical ORF blocks. Standalone selected
-event reclipping uses the same shared mask. This region-evidence fix does not
-change the source-variant eligibility mask or peptide generation. Old block
-files must be regenerated/reclipped and region support recounted; swapping the
-counting image alone does not remove false stop-only blocks. Local stop-codon
-regressions pass; production count differences remain unmeasured.
-
 Canonical pVACseq prediction reports are not required. The integrated human
 workflow still obtains the expression-annotated VCF from the canonical
 pVACseq subworkflow. Moving that annotation upstream is needed for independent
