@@ -26,6 +26,27 @@ CDSs. Canonical pVACseq prediction reports are not required.
 Optional Ribo-seq support produces caller-specific evidence tables without
 changing candidate filtering or pVACview tiers.
 
+### Protein-event rescue: image 0.3.4 source prepared
+
+EO771 WDL034 30-aa example: `11:54757309 G>A` is synonymous in the
+selected with-`-e` ORF `ENSMUST00000117710.p1`, but missense **G34S**
+(`GGC` to `AGC`, CDS position 100) in no-`-e` ORF
+`EO771_unstimulated.no_e.4747.1.p3`. Current coordinate-only priority
+suppresses the no-`-e` result and omits this candidate before pVACseq.
+Nearby `11:54757279 T>C` is retained as C24R in that same no-`-e` ORF.
+
+- Docker source now admits supported protein-changing no-`-e` events even with
+  with-`-e` overlap. Exact final WT/MT sequence equivalents for the same allele
+  and strand prefer with-`-e`; both origins remain traceable in mapping/skip logs.
+- Build/publish/smoke-test image `jinglunli/pvacnc:0.3.4`, then explicitly select
+  it for NEW runs and audit candidate differences. WDL defaults are unchanged.
+- Nearby C24R/G34S variants are still applied individually, not phased or combined.
+- The same pending image also masks reference `CDS + stop_codon` for Level-3
+  block generation/reclipping; variant eligibility is unchanged. Regenerate
+  blocks and region-support counts rather than reuse old results.
+- Source handoff: `MS_TA_work/Noncanonical_ORF_Variant_Projection_wdl/pvacnc_container/pvacnc/ROUTING_034_HANDOFF.md`
+  under the shared allen project. Local regressions pass; production validation pending.
+
 See [configuration and outputs](docs/pvacnc.md) and the
 [WDL changelog](PVACNC_WDL_CHANGELOG.md). Record interface, image and runtime
 changes in both documents.
