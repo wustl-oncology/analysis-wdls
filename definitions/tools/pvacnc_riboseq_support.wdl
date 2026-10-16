@@ -18,7 +18,7 @@ task pvacncRiboseqSupport {
     Boolean exclude_supplementary = false
     Boolean exclude_qcfail = false
     Boolean exclude_duplicates = false
-    String docker_image = "jinglunli/pvacnc:0.3.5"
+    String docker_image = "jinglunli/pvacnc:latest"
   }
 
   String output_prefix = sample_name + "." + caller
@@ -95,7 +95,7 @@ workflow wf {
     Boolean exclude_supplementary = false
     Boolean exclude_qcfail = false
     Boolean exclude_duplicates = false
-    String docker_image = "jinglunli/pvacnc:0.3.5"
+    String docker_image = "jinglunli/pvacnc:latest"
   }
 
   call pvacncRiboseqSupport {

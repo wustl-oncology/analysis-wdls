@@ -296,9 +296,9 @@ workflow immuno {
     String pvacnc_orfanage_docker = "quay.io/biocontainers/orfanage:1.2.0--heaafb18_2"
     String pvacnc_transdecoder_docker = "quay.io/biocontainers/transdecoder:6.0.0--pl5321hdfd78af_0"
     Int pvacnc_transdecoder_minimum_orf_length = 30
-    String pvacnc_preparation_docker = "jinglunli/pvacnc:0.3.5"
+    String pvacnc_preparation_docker = "jinglunli/pvacnc:latest"
     Boolean enable_pvacnc_riboseq_support = false
-    String pvacnc_riboseq_docker = "jinglunli/pvacnc:0.3.5"
+    String pvacnc_riboseq_docker = "jinglunli/pvacnc:latest"
     Array[File] pvacnc_riboseq_bams = []
     Array[File] pvacnc_riboseq_bais = []
     Array[String] pvacnc_riboseq_sample_labels = []

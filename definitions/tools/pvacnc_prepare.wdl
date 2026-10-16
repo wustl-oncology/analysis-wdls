@@ -10,7 +10,7 @@ task pvacncPrepare {
     File reference_annotation
     File with_e_orfanage_gtf
     File no_e_orfanage_gtf
-    String docker_image = "jinglunli/pvacnc:0.3.5"
+    String docker_image = "jinglunli/pvacnc:latest"
   }
 
   runtime {

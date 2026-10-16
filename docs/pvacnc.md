@@ -32,11 +32,11 @@ scheduling.
 |---|---|
 | ORFanage | `quay.io/biocontainers/orfanage:1.2.0--heaafb18_2` |
 | TransDecoder | `quay.io/biocontainers/transdecoder:6.0.0--pl5321hdfd78af_0` |
-| Preparation and pVACview annotation | `jinglunli/pvacnc:0.3.5` |
-| Ribo-seq support | `jinglunli/pvacnc:0.3.5` |
+| Preparation and pVACview annotation | `jinglunli/pvacnc:latest` |
+| Ribo-seq support | `jinglunli/pvacnc:latest` |
 
-Images can be overridden through workflow inputs. Preparation and Ribo-seq
-image versions are independent of the WDL interface version.
+Images can be overridden through workflow inputs. Publish `latest` alongside
+each versioned image and record the resolved digest for reproducibility.
 
 The preparation image is maintained outside this repository. It includes
 Python, `bgzip`, `tabix` and three entry points:
@@ -159,7 +159,7 @@ expression/read counts, optional phasing and empty-result behavior before
 integrating the non-human parent workflow.
 # Official same-noncanonical-block support (2026-10-16)
 
-WDL interface `0.3.5` uses `jinglunli/pvacnc:0.3.5` for preparation,
+WDL interface `0.3.5` uses `jinglunli/pvacnc:latest` for preparation,
 pVACview annotation and Ribo support. The pVACtools image is unchanged. Level 3
 requires coverage in the residual noncanonical block containing the full REF
 span, not any block in the ORF. Existing reference_annotation is forwarded

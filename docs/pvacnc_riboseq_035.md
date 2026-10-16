@@ -1,7 +1,8 @@
 # pVACnc 0.3.5
 
 Preparation, pVACview annotation and Ribo-seq tasks default to
-`jinglunli/pvacnc:0.3.5`. ORFanage, TransDecoder and pVACtools use their
+`jinglunli/pvacnc:latest`. Publish image 0.3.5 under both its version tag and
+`latest`. ORFanage, TransDecoder and pVACtools use their
 existing images. Image build and runtime validation are required before use.
 
 ## Candidate routing

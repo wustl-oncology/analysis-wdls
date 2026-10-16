@@ -8,7 +8,7 @@ Optional noncanonical variant-peptide analysis in `definitions/immuno.wdl`.
 Enable with `enable_pvacnc: true`, or run `definitions/pvacnc.wdl` standalone.
 
 - WDL interface: `0.3.5`.
-- pVACnc image: `jinglunli/pvacnc:0.3.5` for preparation, annotation and Ribo-seq.
+- pVACnc image: `jinglunli/pvacnc:latest` for preparation, annotation and Ribo-seq.
 - ORF callers: ORFanage 1.2.0 (`BEST`) and TransDecoder 6.0.0
   (30-aa minimum by default).
 

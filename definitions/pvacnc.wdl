@@ -76,10 +76,10 @@ workflow pvacnc {
     String orfanage_docker = "quay.io/biocontainers/orfanage:1.2.0--heaafb18_2"
     String transdecoder_docker = "quay.io/biocontainers/transdecoder:6.0.0--pl5321hdfd78af_0"
     Int transdecoder_minimum_orf_length = 30
-    String preparation_docker = "jinglunli/pvacnc:0.3.5"
+    String preparation_docker = "jinglunli/pvacnc:latest"
 
     Boolean enable_riboseq_support = false
-    String riboseq_docker = "jinglunli/pvacnc:0.3.5"
+    String riboseq_docker = "jinglunli/pvacnc:latest"
     Array[File] riboseq_bams = []
     Array[File] riboseq_bais = []
     Array[String] riboseq_sample_labels = []
