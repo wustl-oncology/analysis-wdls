@@ -5,6 +5,7 @@ changes are tracked in the preparation-image `CHANGELOG.md`.
 
 | Version | WDL changes |
 |---|---|
+| `0.3.5` | All pVACnc preparation, annotation and Ribo image defaults use 0.3.5. Both callers retain distinct no-e protein events. Ribo support uses the variant-containing noncanonical block and reference CDS/stop-codon masking. No new top-level inputs; pVACtools image unchanged. Build and runtime validation pending. |
 | `0.3.4` | Separate Ribo image inputs (`riboseq_docker`, `pvacnc_riboseq_docker`), defaulting to 0.3.2. Region support requires matching BAM/ORF strand. Preparation and coordinate/ALT checks unchanged. Runtime validation pending. |
 | `0.3.3` | Caller-prefixed preparation files and annotation logs; separate prediction-log arrays. Standard report names retained within caller directories. Preparation image remains 0.3.1; biological settings unchanged. |
 | `0.3.2` | ORFanage model outputs now use caller/branch folders matching TransDecoder. Replaces scalar GTF outputs with `with_e_orfanage_outputs` and `no_e_orfanage_outputs` arrays. Preparation image remains 0.3.1; existing results unchanged. |

@@ -76,10 +76,10 @@ workflow pvacnc {
     String orfanage_docker = "quay.io/biocontainers/orfanage:1.2.0--heaafb18_2"
     String transdecoder_docker = "quay.io/biocontainers/transdecoder:6.0.0--pl5321hdfd78af_0"
     Int transdecoder_minimum_orf_length = 30
-    String preparation_docker = "jinglunli/pvacnc:0.3.1"
+    String preparation_docker = "jinglunli/pvacnc:0.3.5"
 
     Boolean enable_riboseq_support = false
-    String riboseq_docker = "jinglunli/pvacnc:0.3.2"
+    String riboseq_docker = "jinglunli/pvacnc:0.3.5"
     Array[File] riboseq_bams = []
     Array[File] riboseq_bais = []
     Array[String] riboseq_sample_labels = []
@@ -318,6 +318,7 @@ workflow pvacnc {
         caller = "orfanage",
         mapping_tsv = pvacncPrepare.mapping_tsv,
         noncanonical_orf_blocks = pvacncPrepare.noncanonical_orf_blocks,
+        reference_annotation = reference_annotation,
         filtered_report = select_first([orfanagePredict.combined_filtered_epitopes]),
         riboseq_bams = riboseq_bams,
         riboseq_bais = riboseq_bais,
@@ -338,6 +339,7 @@ workflow pvacnc {
         caller = "transdecoder",
         mapping_tsv = pvacncTransdecoderPrepare.mapping_tsv,
         noncanonical_orf_blocks = pvacncTransdecoderPrepare.noncanonical_orf_blocks,
+        reference_annotation = reference_annotation,
         filtered_report = select_first([transdecoderPredict.combined_filtered_epitopes]),
         riboseq_bams = riboseq_bams,
         riboseq_bais = riboseq_bais,

@@ -13,8 +13,9 @@ Both callers:
 
 1. Retain `FILTER=PASS` ALT alleles from the source VCF.
 2. Exclude alleles whose reference span overlaps any annotated reference CDS.
-3. Project variants into predicted ORFs, prioritizing `-e` CDS coverage.
-4. Use no-`-e` ORFs only where the caller's `-e` ORFs do not cover the allele.
+3. Project variants into predicted ORFs from both transcript branches.
+4. Retain distinct no-`-e` protein-changing events; prefer successful `-e`
+   events for identical WT/MT protein sequences of the same allele and strand.
 5. Generate a derived VCF and run pVACseq and pVACview annotation.
 
 Routing is independent between callers. An ORFanage hit does not suppress
@@ -31,8 +32,8 @@ scheduling.
 |---|---|
 | ORFanage | `quay.io/biocontainers/orfanage:1.2.0--heaafb18_2` |
 | TransDecoder | `quay.io/biocontainers/transdecoder:6.0.0--pl5321hdfd78af_0` |
-| Preparation and pVACview annotation | `jinglunli/pvacnc:0.3.1` |
-| Ribo-seq support | `jinglunli/pvacnc:0.3.2` |
+| Preparation and pVACview annotation | `jinglunli/pvacnc:0.3.5` |
+| Ribo-seq support | `jinglunli/pvacnc:0.3.5` |
 
 Images can be overridden through workflow inputs. Preparation and Ribo-seq
 image versions are independent of the WDL interface version.
@@ -156,3 +157,11 @@ mouse configuration: PRIME failed on H-2 alleles. The EO771 configuration uses:
 Check contig consistency, species-specific transcript identifiers, VEP fields,
 expression/read counts, optional phasing and empty-result behavior before
 integrating the non-human parent workflow.
+# Official same-noncanonical-block support (2026-10-16)
+
+WDL interface `0.3.5` uses `jinglunli/pvacnc:0.3.5` for preparation,
+pVACview annotation and Ribo support. The pVACtools image is unchanged. Level 3
+requires coverage in the residual noncanonical block containing the full REF
+span, not any block in the ORF. Existing reference_annotation is forwarded
+internally to both callers for CDS+stop_codon masking. Coordinate/ALT and read
+quality settings are unchanged. See [configuration, contract and tests](pvacnc_riboseq_035.md).

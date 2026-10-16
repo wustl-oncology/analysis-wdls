@@ -7,7 +7,7 @@ task pvacncAnnotatePvacview {
     Array[File] source_mhc_ii
     Array[File] source_combined
     String output_prefix = "pvacnc"
-    String docker_image = "jinglunli/pvacnc:0.3.0"
+    String docker_image = "jinglunli/pvacnc:0.3.5"
   }
 
   runtime {

@@ -6,6 +6,7 @@ task pvacncRiboseqSupport {
     String caller
     File mapping_tsv
     File noncanonical_orf_blocks
+    File? reference_annotation
     File? filtered_report
     Array[File] riboseq_bams
     Array[File] riboseq_bais
@@ -17,7 +18,7 @@ task pvacncRiboseqSupport {
     Boolean exclude_supplementary = false
     Boolean exclude_qcfail = false
     Boolean exclude_duplicates = false
-    String docker_image = "jinglunli/pvacnc:0.3.2"
+    String docker_image = "jinglunli/pvacnc:0.3.5"
   }
 
   String output_prefix = sample_name + "." + caller
@@ -54,6 +55,7 @@ task pvacncRiboseqSupport {
     pvacnc-riboseq-orf-support \
       --candidate-summary ~{output_prefix}.riboseq_candidate_summary.tsv \
       --noncanonical-blocks ~{noncanonical_orf_blocks} \
+      ~{if defined(reference_annotation) then "--reference-gtf " + select_first([reference_annotation]) else ""} \
       --bam ~{sep=' --bam ' riboseq_bams} \
       --bam-index ~{sep=' --bam-index ' riboseq_bais} \
       --label ~{sep=' --label ' riboseq_sample_labels} \
@@ -81,6 +83,7 @@ workflow wf {
     String caller
     File mapping_tsv
     File noncanonical_orf_blocks
+    File? reference_annotation
     File? filtered_report
     Array[File] riboseq_bams
     Array[File] riboseq_bais
@@ -92,7 +95,7 @@ workflow wf {
     Boolean exclude_supplementary = false
     Boolean exclude_qcfail = false
     Boolean exclude_duplicates = false
-    String docker_image = "jinglunli/pvacnc:0.3.2"
+    String docker_image = "jinglunli/pvacnc:0.3.5"
   }
 
   call pvacncRiboseqSupport {
@@ -101,6 +104,7 @@ workflow wf {
       caller = caller,
       mapping_tsv = mapping_tsv,
       noncanonical_orf_blocks = noncanonical_orf_blocks,
+      reference_annotation = reference_annotation,
       filtered_report = filtered_report,
       riboseq_bams = riboseq_bams,
       riboseq_bais = riboseq_bais,

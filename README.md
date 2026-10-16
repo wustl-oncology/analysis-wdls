@@ -7,14 +7,13 @@ A collection of WDL workflows for analysis of genomic sequencing data. These ena
 Optional noncanonical variant-peptide analysis in `definitions/immuno.wdl`.
 Enable with `enable_pvacnc: true`, or run `definitions/pvacnc.wdl` standalone.
 
-- WDL interface: `0.3.4`.
-- Preparation image: `jinglunli/pvacnc:0.3.1`.
-- Ribo-seq image: `jinglunli/pvacnc:0.3.2` (configured separately).
+- WDL interface: `0.3.5`.
+- pVACnc image: `jinglunli/pvacnc:0.3.5` for preparation, annotation and Ribo-seq.
 - ORF callers: ORFanage 1.2.0 (`BEST`) and TransDecoder 6.0.0
   (30-aa minimum by default).
 
-Both callers use StringTie `-e` models first, with no-`-e` assembly as
-coordinate-level rescue. Each has separate variant projection, VCF,
+Both callers use StringTie `-e` models and retain distinct protein-changing
+events from no-`-e` assembly. Each has separate variant projection, VCF,
 pVACseq and pVACview outputs under `pvacnc/orfanage/` and
 `pvacnc/transdecoder/`.
 
@@ -25,6 +24,15 @@ CDSs. Canonical pVACseq prediction reports are not required.
 
 Optional Ribo-seq support produces caller-specific evidence tables without
 changing candidate filtering or pVACview tiers.
+
+Level3 now requires same-strand aligned-base coverage in the specific residual
+noncanonical CDS block containing the variant, not elsewhere in that CDS/ORF.
+Both callers follow the same rule; reference CDS+stop_codon intervals on either
+strand are excluded. The existing reference GTF is passed internally for
+reclipping; no new top-level input is required. Coordinate/ALT rules and quality
+settings remain unchanged. Support tables now identify allele+ORF+strand and
+the tested block. Preparation defaults are deliberately unchanged. See
+[0.3.5 implementation and validation](docs/pvacnc_riboseq_035.md).
 
 See [configuration and outputs](docs/pvacnc.md) and the
 [WDL changelog](PVACNC_WDL_CHANGELOG.md). Record interface, image and runtime

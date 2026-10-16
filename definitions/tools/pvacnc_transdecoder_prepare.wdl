@@ -20,7 +20,7 @@ task pvacncTransdecoderPrepare {
     File no_e_transdecoder_cdna_fasta
     File no_e_transdecoder_cds_fasta
     File no_e_transdecoder_peptide_fasta
-    String docker_image = "jinglunli/pvacnc:0.3.1"
+    String docker_image = "jinglunli/pvacnc:0.3.5"
   }
 
   runtime {
